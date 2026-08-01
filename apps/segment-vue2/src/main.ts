@@ -67,9 +67,10 @@ if (!window.__PAVILION_MFE_ENV__) {
   if (mountEl) {
     console.log('[PavilionMfe 微前端] standalone mount', appCode)
     mountEl.classList.add(`pavilion-mfe-${appCode}`)
-    new Vue({
+    const instance = new Vue({
       router: createVue2Router(),
       render: (h) => h(App),
-    }).$mount(mountEl)
+    }).$mount()
+    mountEl.appendChild(instance.$el)
   }
 }
