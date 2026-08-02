@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PavilionMfe Segment Main (React)</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // GitHub Pages SPA fallback: 404.html → sessionStorage → 恢复路径
+      (function () {
+        var redirect = sessionStorage.getItem('pavilion-redirect');
+        if (redirect) {
+          sessionStorage.removeItem('pavilion-redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

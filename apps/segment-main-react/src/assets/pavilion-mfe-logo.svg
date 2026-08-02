@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="64" height="64">
+  <defs>
+    <!-- 原图蓝紫渐变背景 -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5b68d9" />
+      <stop offset="100%" stop-color="#4f58bb" />
+    </linearGradient>
+  </defs>
+
+  <!-- 四个圆角背景 -->
+  <rect x="0" y="0" width="300" height="300" rx="90" ry="90" fill="url(#bg)" />
+
+  <!-- 内部图形：三角形稍微向内缩小，留出呼吸空间 -->
+  <g stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    
+    <!-- 1. 右侧大三角形 (缩小后更协调) -->
+    <polygon points="150,94 94,194 206,194" />
+
+    <!-- 2. 左侧小三角形 (同步按比例缩小) -->
+    <polygon points="110,104 76,164 144,164" opacity="0.5" />
+    
+  </g>
+</svg>
