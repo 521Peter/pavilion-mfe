@@ -10,3 +10,4 @@ coverage/
 @mf-types/
 docs/*
 vite.config.ts.timestamp-*
+release
