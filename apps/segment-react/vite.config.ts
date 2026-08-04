@@ -31,6 +31,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         },
         openDevServe: true,
         port: 6030,
+        shared: [],
         dts: false,
       }),
     ],

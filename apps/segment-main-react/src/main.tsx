@@ -6,8 +6,8 @@ import App from './App.tsx'
 import { createRouter as createPavilionMfeRouter, configureLog, createPathMatcher } from '@pavilion-mfe/router'
 import mfeConfig from '../mfe.json'
 import { loadRemote } from '@module-federation/runtime'
-import { fetchMenus } from './api/menu'
-import { deployBasePath } from './utils/path'
+import { fetchMenus } from './api/menu.ts'
+import { deployBasePath } from './utils/path.ts'
 
 // ─── PavilionMfe log configuration ───
 // Toggle per-module: router | sandbox | preload | bridge

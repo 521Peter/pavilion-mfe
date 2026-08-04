@@ -2,7 +2,7 @@
   "name": "pavilion-mfe-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel -r dev",
+    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "dev:desktop": "pnpm --filter @pavilion-mfe/segment-main --filter @pavilion-mfe/demo-segment --filter @pavilion-mfe/demo-segment-react --filter @pavilion-mfe/demo-segment-vue2 --parallel dev & pnpm --filter @pavilion-mfe/desktop dev",

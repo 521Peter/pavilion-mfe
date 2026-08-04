@@ -21,6 +21,13 @@
       "cdn": "",
       "routes": ["/vue2"],
       "devPort": 6040
+    },
+    {
+      "appCode": "git-report-generator",
+      "name": "git 报告",
+      "cdn": "",
+      "routes": ["/git"],
+      "devPort": 6050
     }
   ]
 }
