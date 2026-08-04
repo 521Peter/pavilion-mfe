@@ -72,6 +72,25 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     },
   } as PluginOption)
 
+ // ─── 1a. Dev config: absolute base URL for sub-apps ───
+ // In dev mode, sub-app code runs inside the main app's page. Asset paths
+ // like "/src/assets/hero.png" would resolve to the main app's origin
+ // instead of the sub-app's dev server. Setting server.origin ensures
+ // Vite generates absolute asset URLs that always point to the sub-app,
+ // regardless of which host page the code runs in.
+if ((options.role === 'sub-app' || options.role === 'runtime') && options.port) {
+  plugins.push({
+    name: 'pavilion-mfe:dev-base',
+    apply: 'serve',
+    config: (config) => {
+      const server = config.server ?? (config.server = {})
+      if (!server.origin) {
+        server.origin = `http://localhost:${options.port}`
+      }
+    },
+  } as PluginOption)
+}
+
   // ─── 1b. Mark vite/module-runner as external ───
   // @module-federation/vite dynamically imports it for SSR (Vite 8+),
   // but it doesn't exist in Vite 5.x. The import is wrapped in try/catch
