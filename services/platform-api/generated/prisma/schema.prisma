@@ -1,0 +1,41 @@
+// PavilionMfe AI 平台 — Prisma Schema
+// 数据库: PostgreSQL 16 + pgvector 扩展
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── pgvector 扩展 (RAG 向量存储) ───
+// 需在数据库中执行: CREATE EXTENSION IF NOT EXISTS vector;
+// Prisma 通过 Unsupported("vector") 标记 + 原生 SQL 查询使用
+
+// ─── 用户 ───
+model User {
+  id        String     @id @default(uuid())
+  username  String     @unique
+  password  String // bcrypt hash
+  nickname  String?
+  avatar    String?
+  status    UserStatus @default(ACTIVE)
+  roles     UserRole[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}

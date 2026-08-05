@@ -56,7 +56,15 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     // 用户页面 (username.github.io):     "/" 或不设置
     // 项目页面 (username.github.io/repo): "/<repo>/"
     base: deployBase,
-    server: { port: 6019 },
+    server: {
+      port: 6019,
+      proxy: {
+        "/api": {
+          target: "http://localhost:3000",
+          changeOrigin: true,
+        },
+      },
+    },
     build: {
       rollupOptions: {
         onwarn(warning, defaultHandler) {

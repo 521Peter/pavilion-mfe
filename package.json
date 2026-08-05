@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' dev",
+    "dev:service":"pnpm --filter @pavilion-mfe/platform-api dev",
     "build": "pnpm -r build",
     "build:dev":"pnpm --parallel -r --filter '!@pavilion-mfe/desktop' build:dev",
     "typecheck": "pnpm -r typecheck",

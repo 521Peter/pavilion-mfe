@@ -1,6 +1,7 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import MainLayout from '../layout/MainLayout'
 import Home from '../pages/Home'
+import Login from '../pages/Login'
 import Test from '../pages/Test'
 import Env from '../pages/Env'
 import Forbidden from '../pages/Forbidden'
@@ -8,6 +9,7 @@ import NotFound from '../pages/NotFound'
 import ServerError from '../pages/ServerError'
 import MFPage from './MFPage'
 import { deployBasePath } from '../utils/path'
+import { getToken } from '../api/http'
 
 /** 主应用自有路由 → 标题（用于 Tab / 菜单标题查找） */
 export const routeMeta: Record<string, string> = {
@@ -24,12 +26,24 @@ export function isMainAppRoutePath(path: string): boolean {
   return path in routeMeta
 }
 
+/** 鉴权守卫：无 token 时跳转登录页 */
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  if (!getToken()) {
+    return <Navigate to="/login" replace />
+  }
+  return <>{children}</>
+}
+
 // Vite 的 base 配置自动注入为 import.meta.env.BASE_URL
-// 本地开发时为 "/"，GitHub Pages 部署时为 "/<repo>/"
+// 本地开发时为 "/"，GitHub Pages �署时为 "/<repo>/"
 export const router = createBrowserRouter(
   [
     {
-      element: <MainLayout />,
+      path: '/login',
+      element: <Login />,
+    },
+    {
+      element: <RequireAuth><MainLayout /></RequireAuth>,
       children: [
         { path: '/', element: <Home /> },
         { path: '/test', element: <Test /> },
