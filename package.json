@@ -2,15 +2,15 @@
   "name": "pavilion-mfe-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' dev",
-    "dev:service":"pnpm --filter @pavilion-mfe/platform-api dev",
-    "build": "pnpm -r build",
-    "build:dev":"pnpm --parallel -r --filter '!@pavilion-mfe/desktop' build:dev",
-    "typecheck": "pnpm -r typecheck",
+    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' --filter '!@pavilion-mfe/platform-api' dev",
+    "dev:service": "pnpm --filter @pavilion-mfe/platform-api dev",
     "dev:desktop": "pnpm dev & pnpm --filter @pavilion-mfe/desktop dev",
+    "build": "pnpm -r build",
+    "build:dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' --filter '!@pavilion-mfe/platform-api' build:dev",
     "build:desktop": "pnpm build:dev && pnpm --filter @pavilion-mfe/desktop build",
     "package:desktop": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package",
-    "package:desktop:dir": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package:dir"
+    "package:desktop:dir": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package:dir",
+    "typecheck": "pnpm -r typecheck"
   },
   "engines": {
     "node": ">=18",
