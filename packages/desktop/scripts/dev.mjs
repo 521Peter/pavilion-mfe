@@ -1,5 +1,5 @@
 // Compiles the Electron main/preload TS with esbuild, waits for the Vite dev
-// server (the main-app on :6010) to be reachable, then launches Electron with
+// server (the main-app on :6019) to be reachable, then launches Electron with
 // DEV_SERVER_URL pointing at it. The MF sub-apps are served by their own Vite
 // dev servers (6020/6030/6040) and resolved at runtime.
 import { build } from 'esbuild'
@@ -11,7 +11,7 @@ import { dirname, resolve } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const appDir = resolve(__dirname, '..')
 
-const devUrl = process.env.DEV_SERVER_URL || 'http://localhost:6010'
+const devUrl = process.env.DEV_SERVER_URL || 'http://localhost:6019'
 
 function run(bin, args, opts = {}) {
   return new Promise((resolveP, rejectP) => {
