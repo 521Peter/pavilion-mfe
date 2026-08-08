@@ -105,9 +105,36 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LlmProviderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  baseUrl: 'baseUrl',
+  apiKey: 'apiKey',
+  isActive: 'isActive',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LlmModelScalarFieldEnum = {
+  id: 'id',
+  providerId: 'providerId',
+  modelName: 'modelName',
+  displayName: 'displayName',
+  isActive: 'isActive',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -118,6 +145,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
@@ -130,7 +163,9 @@ exports.UserRole = exports.$Enums.UserRole = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  LlmProvider: 'LlmProvider',
+  LlmModel: 'LlmModel'
 };
 /**
  * Create the Client
@@ -161,7 +196,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
@@ -171,7 +206,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -180,13 +214,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// PavilionMfe AI 平台 — Prisma Schema\n// 数据库: PostgreSQL 16 + pgvector 扩展\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ─── pgvector 扩展 (RAG 向量存储) ───\n// 需在数据库中执行: CREATE EXTENSION IF NOT EXISTS vector;\n// Prisma 通过 Unsupported(\"vector\") 标记 + 原生 SQL 查询使用\n\n// ─── 用户 ───\nmodel User {\n  id        String     @id @default(uuid())\n  username  String     @unique\n  password  String // bcrypt hash\n  nickname  String?\n  avatar    String?\n  status    UserStatus @default(ACTIVE)\n  roles     UserRole[]\n  createdAt DateTime   @default(now()) @map(\"created_at\")\n  updatedAt DateTime   @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nenum UserStatus {\n  ACTIVE\n  DISABLED\n}\n\nenum UserRole {\n  ADMIN\n  USER\n}\n",
-  "inlineSchemaHash": "d06a376c464dc31445cc3e3157eb11832aa89d98ed15a30004bac5b0ca389dea",
+  "inlineSchema": "// PavilionMfe AI 平台 — Prisma Schema\n// 数据库: PostgreSQL 16 + pgvector 扩展\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ─── pgvector 扩展 (RAG 向量存储) ───\n// 需在数据库中执行: CREATE EXTENSION IF NOT EXISTS vector;\n// Prisma 通过 Unsupported(\"vector\") 标记 + 原生 SQL 查询使用\n\n// ─── 用户 ───\nmodel User {\n  id        String     @id @default(uuid())\n  username  String     @unique\n  password  String // bcrypt hash\n  nickname  String?\n  avatar    String?\n  status    UserStatus @default(ACTIVE)\n  roles     UserRole[]\n  createdAt DateTime   @default(now()) @map(\"created_at\")\n  updatedAt DateTime   @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nenum UserStatus {\n  ACTIVE\n  DISABLED\n}\n\nenum UserRole {\n  ADMIN\n  USER\n}\n\n// ─── LLM Provider 供应商 ───\nmodel LlmProvider {\n  id        String     @id @default(uuid())\n  name      String // 显示名，如 \"OpenAI 官方\"\n  type      String // 供应商类型: openai | ollama（可扩展，String 而非 enum）\n  baseUrl   String? // API 地址，如 https://api.openai.com/v1 / http://localhost:11434\n  apiKey    String? // API Key（加密存储）\n  isActive  Boolean    @default(true) // 是否启用\n  config    Json       @default(\"{}\") // 扩展配置（headers、timeout 等）\n  models    LlmModel[]\n  createdAt DateTime   @default(now()) @map(\"created_at\")\n  updatedAt DateTime   @updatedAt @map(\"updated_at\")\n\n  @@map(\"llm_providers\")\n}\n\n// ─── LLM 模型 ───\nmodel LlmModel {\n  id          String      @id @default(uuid())\n  providerId  String\n  provider    LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)\n  modelName   String // 模型标识，如 gpt-4o / llama3.2\n  displayName String? // 展示别名\n  isActive    Boolean     @default(true)\n  config      Json        @default(\"{}\") // 模型级默认参数（temperature、maxTokens 等）\n  createdAt   DateTime    @default(now()) @map(\"created_at\")\n  updatedAt   DateTime    @updatedAt @map(\"updated_at\")\n\n  @@unique([providerId, modelName])\n  @@map(\"llm_models\")\n}\n",
+  "inlineSchemaHash": "82e4d18ef4cae2bc41ce163f2423e62c45f4b3f14e645f534478aad0a5481cc8",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nickname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"roles\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"users\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nickname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"roles\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"users\"},\"LlmProvider\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"baseUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"apiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"models\",\"kind\":\"object\",\"type\":\"LlmModel\",\"relationName\":\"LlmModelToLlmProvider\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"llm_providers\"},\"LlmModel\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"object\",\"type\":\"LlmProvider\",\"relationName\":\"LlmModelToLlmProvider\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"llm_models\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

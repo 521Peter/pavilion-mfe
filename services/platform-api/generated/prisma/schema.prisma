@@ -39,3 +39,35 @@ enum UserRole {
   ADMIN
   USER
 }
+
+// ─── LLM Provider 供应商 ───
+model LlmProvider {
+  id        String     @id @default(uuid())
+  name      String // 显示名，如 "OpenAI 官方"
+  type      String // 供应商类型: openai | ollama（可扩展，String 而非 enum）
+  baseUrl   String? // API 地址，如 https://api.openai.com/v1 / http://localhost:11434
+  apiKey    String? // API Key（加密存储）
+  isActive  Boolean    @default(true) // 是否启用
+  config    Json       @default("{}") // 扩展配置（headers、timeout 等）
+  models    LlmModel[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("llm_providers")
+}
+
+// ─── LLM 模型 ───
+model LlmModel {
+  id          String      @id @default(uuid())
+  providerId  String
+  provider    LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  modelName   String // 模型标识，如 gpt-4o / llama3.2
+  displayName String? // 展示别名
+  isActive    Boolean     @default(true)
+  config      Json        @default("{}") // 模型级默认参数（temperature、maxTokens 等）
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@unique([providerId, modelName])
+  @@map("llm_models")
+}

@@ -2,7 +2,7 @@
   "name": "pavilion-mfe-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' --filter '!@pavilion-mfe/platform-api' dev",
+    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' --filter '!@pavilion-mfe/platform-api' --filter '!@pavilion-mfe/segment-main' dev",
     "dev:service": "pnpm --filter @pavilion-mfe/platform-api dev",
     "dev:desktop": "pnpm dev & pnpm --filter @pavilion-mfe/desktop dev",
     "build": "pnpm -r build",
