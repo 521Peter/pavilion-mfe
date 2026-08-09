@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv, type ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { PavilionMfe } from "@pavilion-mfe/vite";
 import chalk from "chalk";
 import mfeConfig from "./mfe.json" with { type: "json" };
@@ -37,6 +38,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   return {
     plugins: [
       react(),
+      tailwindcss(),
       PavilionMfe({
         role: "main-app",
         name: appCode,

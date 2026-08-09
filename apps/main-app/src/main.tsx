@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { TabsProvider } from '@pavilion-mfe/tabs/react'
+import './tailwind.css'
 import './index.css'
 import App from './App.tsx'
 import { createRouter as createPavilionMfeRouter, configureLog, createPathMatcher } from '@pavilion-mfe/router'
