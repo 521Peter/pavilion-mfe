@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useTabs } from '@pavilion-mfe/tabs/react'
 import { Button } from '../components/Ui'
-import styles from './Error.module.css'
 
 export default function ErrorPage({
   img,
@@ -21,10 +20,10 @@ export default function ErrorPage({
   }
 
   return (
-    <div className={styles.errorPage}>
-      <img src={img} alt={title} className={styles.errorImg} />
-      <h2 className={styles.errorTitle}>{title}</h2>
-      <p className={styles.errorDesc}>{desc}</p>
+    <div className="flex flex-col justify-center items-center h-full gap-4">
+      <img src={img} alt={title} className="w-80 max-w-[60%]" />
+      <h2 className="text-xl font-bold text-text-primary m-0">{title}</h2>
+      <p className="text-sm font-medium text-text-muted m-0">{desc}</p>
       <Button type="primary" icon="Back" onClick={goHome}>
         返回首页
       </Button>

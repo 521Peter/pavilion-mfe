@@ -8,7 +8,7 @@ import { Icon } from '../components/Icon'
 import { deployBasePath, normalizePath } from '../utils/path'
 import { isMainAppRoutePath, routeMeta } from '../router'
 import Logo from './Logo'
-import styles from './Sidebar.module.css'
+import { cn } from '@/lib/utils'
 
 /** 折叠后悬浮弹出的子菜单（替代 el-menu--popup） */
 interface PopupState {
@@ -77,7 +77,6 @@ export default function Sidebar() {
 
   /** el-menu 选中回调 */
   function handleSelect(index: string) {
-    // 查找菜单标题：路由 meta → 后端菜单 → 降级路径
     let title = index
     const metaTitle = routeMeta[index]
     if (metaTitle) {
@@ -97,7 +96,6 @@ export default function Sidebar() {
       }
     }
 
-    // 错误页面不创建 Tab
     if (!['/403', '/404', '/500'].includes(index)) {
       openTab({ path: index, title })
     }
@@ -105,118 +103,160 @@ export default function Sidebar() {
     if (isMainAppRoutePath(index)) {
       navigate(index)
     } else {
-      // 子应用路由：navigateTo 使用 window.history.pushState，需手动加上部署前缀
       navigateTo(deployBasePath + index)
     }
   }
 
-  const sidebarClass = `${styles.sidebar}${isCollapse ? ` ${styles.collapsed}` : ''}`
-
   return (
-    <aside className={sidebarClass}>
+    <aside className="bg-sidebar-bg flex flex-col overflow-hidden relative transition-[width] duration-300 ease">
       {/* Logo */}
       <div
-        className={`${styles.logo}${isCollapse ? ` ${styles.logoCollapsed}` : ''}`}
+        className={cn(
+          'flex items-center cursor-pointer select-none min-h-[60px] border-b border-white/[0.08] transition-[padding] duration-300',
+          isCollapse ? 'px-4' : 'px-[22px]',
+        )}
         onClick={() => navigate('/')}
       >
         <Logo />
-        <span className={styles.logoText}>PavilionMfe</span>
+        <span
+          className={cn(
+            'text-white text-[17px] font-bold tracking-[0.5px] whitespace-nowrap overflow-hidden min-w-0 max-w-[150px] ml-2.5 opacity-100 transition-[max-width,opacity,margin] duration-300',
+            isCollapse && 'max-w-0 opacity-0 ml-0',
+          )}
+        >
+          PavilionMfe
+        </span>
       </div>
 
-      {/* 菜单（全部从接口数据动态渲染） */}
-      <nav className={styles.menu}>
+      {/* 菜单 */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden">
         {menuList.map((menu) =>
           menu.childrenMenuInfoList?.length ? (
             <div
               key={menu.menuCode}
-              className={styles.subMenuWrap}
               onMouseEnter={(e) => isCollapse && openPopup(e, menu)}
               onMouseLeave={() => isCollapse && setPopup(null)}
             >
               <div
-                className={styles.subMenuTitle}
+                className={cn(
+                  'relative flex items-center gap-2.5 h-14 text-sm text-white/60 cursor-pointer transition-colors duration-200',
+                  isCollapse ? 'justify-center px-0' : 'px-5 hover:bg-white/[0.07]',
+                )}
                 onClick={() => !isCollapse && toggleExpand(menu.menuCode)}
               >
-                <Icon name={menu.menuIcon} size={16} className={styles.menuIcon} />
-                {!isCollapse && <span className={styles.menuText}>{menu.menuName}</span>}
+                <Icon name={menu.menuIcon} size={16} className="shrink-0" />
+                {!isCollapse && <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-ellipsis">{menu.menuName}</span>}
                 {!isCollapse && (
                   <span
-                    className={`${styles.arrow}${
-                      expandedKeys.has(menu.menuCode) ? ` ${styles.arrowOpen}` : ''
-                    }`}
+                    className={cn(
+                      'w-2 h-2 border-r-[1.5px] border-b-[1.5px] border-current rotate-45 transition-transform duration-200 shrink-0',
+                      expandedKeys.has(menu.menuCode) && '-rotate-[135deg]',
+                    )}
                   />
                 )}
               </div>
               {!isCollapse && expandedKeys.has(menu.menuCode) && (
-                <div className={styles.subMenuItems}>
-                  {menu.childrenMenuInfoList.map((child) => (
-                    <div
-                      key={child.menuUrl}
-                      className={`${styles.menuItem}${
-                        currentPath === child.menuUrl ? ` ${styles.menuItemActive}` : ''
-                      }`}
-                      onClick={() => handleSelect(child.menuUrl)}
-                    >
-                      <Icon name={child.menuIcon} size={16} className={styles.menuIcon} />
-                      <span className={styles.menuText}>{child.menuName}</span>
-                    </div>
-                  ))}
+                <div className="bg-black/[0.15]">
+                  {menu.childrenMenuInfoList.map((child) => {
+                    const isActive = currentPath === child.menuUrl
+                    return (
+                      <div
+                        key={child.menuUrl}
+                        className={cn(
+                          'relative flex items-center gap-2.5 h-14 pl-10 pr-5 text-sm cursor-pointer transition-colors duration-200 menu-accent',
+                          isActive
+                            ? 'bg-[rgba(99,91,255,0.15)] text-white menu-accent-active'
+                            : 'text-white/60 hover:bg-white/[0.07]',
+                        )}
+                        onClick={() => handleSelect(child.menuUrl)}
+                      >
+                        <Icon name={child.menuIcon} size={16} className="shrink-0" />
+                        <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-ellipsis">{child.menuName}</span>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
           ) : (
-            <div
-              key={menu.menuUrl}
-              className={`${styles.menuItem}${
-                currentPath === menu.menuUrl ? ` ${styles.menuItemActive}` : ''
-              }`}
-              onClick={() => handleSelect(menu.menuUrl)}
-            >
-              <Icon name={menu.menuIcon} size={16} className={styles.menuIcon} />
-              {!isCollapse && <span className={styles.menuText}>{menu.menuName}</span>}
-            </div>
+            (() => {
+              const isActive = currentPath === menu.menuUrl
+              return (
+                <div
+                  key={menu.menuUrl}
+                  className={cn(
+                    'relative flex items-center gap-2.5 h-14 text-sm cursor-pointer transition-colors duration-200 menu-accent',
+                    isCollapse ? 'justify-center px-0' : 'px-5',
+                    isActive
+                      ? 'bg-[rgba(99,91,255,0.15)] text-white menu-accent-active'
+                      : 'text-white/60 hover:bg-white/[0.07]',
+                  )}
+                  onClick={() => handleSelect(menu.menuUrl)}
+                >
+                  <Icon name={menu.menuIcon} size={16} className="shrink-0" />
+                  {!isCollapse && <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-ellipsis">{menu.menuName}</span>}
+                </div>
+              )
+            })()
           ),
         )}
       </nav>
 
       {/* 底部：用户信息 + 折叠按钮 */}
-      <div className={`${styles.sidebarFooter}${isCollapse ? ` ${styles.footerCollapsed}` : ''}`}>
-        <div className={styles.userInfoLeft}>
-          <div className={styles.userAvatar}>PA</div>
-          <div className={styles.userDetail}>
-            <div className={styles.userName}>Admin</div>
-            <div className={styles.userRole}>管理员</div>
+      <div
+        className={cn(
+          'flex items-center justify-between py-3 border-t border-white/[0.08] transition-[padding,justify-content] duration-300',
+          isCollapse ? 'justify-center px-0' : 'pl-6 pr-4',
+        )}
+      >
+        <div
+          className={cn(
+            'flex items-center gap-2.5 overflow-hidden max-w-[160px] opacity-100 transition-[max-width,opacity] duration-300',
+            isCollapse && 'max-w-0 opacity-0',
+          )}
+        >
+          <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold shrink-0">PA</div>
+          <div className="overflow-hidden whitespace-nowrap">
+            <div className="text-white text-[13px] font-medium leading-[1.4]">Admin</div>
+            <div className="text-white/40 text-[11px] leading-[1.4]">管理员</div>
           </div>
         </div>
-        <div className={styles.collapseBtn} onClick={() => setIsCollapse((c) => !c)}>
-          <Icon name={isCollapse ? 'Expand' : 'Fold'} size={18} className={styles.collapseIcon} />
+        <div
+          className="flex justify-center items-center w-8 h-8 rounded-sm text-white/40 transition-colors shrink-0 hover:text-white/80 hover:bg-white/[0.08]"
+          onClick={() => setIsCollapse((c) => !c)}
+        >
+          <Icon name={isCollapse ? 'Expand' : 'Fold'} size={18} className="animate-icon-swap" />
         </div>
       </div>
 
-      {/* 折叠后悬浮的子菜单（固定定位，挂到 body 下避免被 overflow 裁剪） */}
+      {/* 折叠后悬浮的子菜单 */}
       {popup &&
         isCollapse &&
         createPortal(
-          <div className={styles.menuPopup} style={{ top: popup.top, left: 64 }}>
-            <div className={styles.popupTitle}>
+          <div className="fixed z-[9999] min-w-[180px] bg-sidebar-bg rounded-md shadow-lg py-1" style={{ top: popup.top, left: 64 }}>
+            <div className="flex items-center gap-2 py-2.5 px-4 text-[13px] text-white/50">
               <Icon name={popup.menu.menuIcon} size={14} />
               <span>{popup.menu.menuName}</span>
             </div>
-            {popup.menu.childrenMenuInfoList?.map((child) => (
-              <div
-                key={child.menuUrl}
-                className={`${styles.popupItem}${
-                  currentPath === child.menuUrl ? ` ${styles.popupItemActive}` : ''
-                }`}
-                onClick={() => {
-                  handleSelect(child.menuUrl)
-                  setPopup(null)
-                }}
-              >
-                <Icon name={child.menuIcon} size={14} />
-                <span>{child.menuName}</span>
-              </div>
-            ))}
+            {popup.menu.childrenMenuInfoList?.map((child) => {
+              const isActive = currentPath === child.menuUrl
+              return (
+                <div
+                  key={child.menuUrl}
+                  className={cn(
+                    'flex items-center gap-2 py-2.5 px-4 text-[13px] cursor-pointer transition-colors',
+                    isActive ? 'bg-primary-active text-white' : 'text-white/60 hover:bg-white/[0.07]',
+                  )}
+                  onClick={() => {
+                    handleSelect(child.menuUrl)
+                    setPopup(null)
+                  }}
+                >
+                  <Icon name={child.menuIcon} size={14} />
+                  <span>{child.menuName}</span>
+                </div>
+              )
+            })}
           </div>,
           document.body,
         )}

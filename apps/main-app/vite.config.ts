@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv, type ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath, URL } from "node:url";
 import { PavilionMfe } from "@pavilion-mfe/vite";
 import chalk from "chalk";
 import mfeConfig from "./mfe.json" with { type: "json" };
@@ -58,6 +59,11 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     // 用户页面 (username.github.io):     "/" 或不设置
     // 项目页面 (username.github.io/repo): "/<repo>/"
     base: deployBase,
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
     server: {
       port: 6019,
       proxy: {

@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Icon } from './Icon'
+import { Button as ShadcnButton } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
-/* ─── Button（复刻 el-button） ─── */
+/* ─── Button（复刻 el-button，底层使用 shadcn Button） ─── */
 
 export function Button({
   type = 'default',
@@ -17,19 +19,26 @@ export function Button({
   children?: ReactNode
 }) {
   return (
-    <button
-      type="button"
-      className={`ui-btn${type === 'primary' ? ' ui-btn--primary' : ''}`}
+    <ShadcnButton
+      variant={type === 'primary' ? 'primary' : 'default'}
       style={style}
       onClick={onClick}
     >
       {icon ? <Icon name={icon} size={16} /> : null}
       {children}
-    </button>
+    </ShadcnButton>
   )
 }
 
 /* ─── Tag（复刻 el-tag） ─── */
+
+const tagVariants: Record<string, string> = {
+  primary: 'text-primary bg-primary-light border-[rgba(99,91,255,0.2)]',
+  success: 'text-[#67c23a] bg-[rgba(103,194,58,0.1)] border-[rgba(103,194,58,0.2)]',
+  warning: 'text-[#e6a23c] bg-[rgba(230,162,60,0.1)] border-[rgba(230,162,60,0.2)]',
+  danger: 'text-[#f56c6c] bg-[rgba(245,108,108,0.1)] border-[rgba(245,108,108,0.2)]',
+  info: 'text-[#909399] bg-[rgba(144,147,153,0.1)] border-[rgba(144,147,153,0.2)]',
+}
 
 export function Tag({
   type = 'primary',
@@ -41,7 +50,13 @@ export function Tag({
   children?: ReactNode
 }) {
   return (
-    <span className={`ui-tag ui-tag--${type}${size === 'small' ? ' ui-tag--small' : ''}`}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 h-7 px-2.5 text-xs font-medium leading-none rounded border whitespace-nowrap',
+        tagVariants[type],
+        size === 'small' && 'h-6 px-2',
+      )}
+    >
       {children}
     </span>
   )
@@ -60,10 +75,19 @@ export function Space({
   style?: CSSProperties
   children?: ReactNode
 }) {
-  const cls = ['ui-space']
-  if (size) cls.push(`ui-space--${size}`)
-  if (wrap) cls.push('ui-space--wrap')
-  return <div className={cls.join(' ')} style={style}>{children}</div>
+  return (
+    <div
+      className={cn(
+        'flex gap-2',
+        size === 'small' && 'gap-1',
+        size === 'large' && 'gap-4',
+        wrap && 'flex-wrap',
+      )}
+      style={style}
+    >
+      {children}
+    </div>
+  )
 }
 
 /* ─── Table（复刻 el-table stripe） ─── */
@@ -75,6 +99,13 @@ export interface TableColumn<T> {
   render?: (row: T) => ReactNode
 }
 
+const tableClass =
+  'w-full border-collapse text-sm text-text-primary ' +
+  '[&_th]:text-left [&_th]:py-3 [&_th]:border-b [&_th]:border-[#ebeef5] [&_th]:bg-[#f5f7fa] [&_th]:text-[#909399] [&_th]:font-medium ' +
+  '[&_td]:text-left [&_td]:py-3 [&_td]:border-b [&_td]:border-[#ebeef5] ' +
+  '[&_th:first-child]:pl-0 [&_td:first-child]:pl-0 ' +
+  '[&_tbody_tr:nth-child(even)]:bg-[#fafafa] [&_tbody_tr:hover]:bg-[#f5f7fa]'
+
 export function Table<T>({
   columns,
   data,
@@ -83,7 +114,7 @@ export function Table<T>({
   data: T[]
 }) {
   return (
-    <table className="ui-table">
+    <table className={tableClass}>
       <thead>
         <tr>
           {columns.map((col) => (
@@ -117,6 +148,10 @@ export interface DescriptionsItem {
   value: ReactNode
 }
 
+const descThClass =
+  'p-3 px-4 border border-[#ebeef5] text-left bg-[#f5f7fa] text-[#909399] font-medium whitespace-nowrap w-px'
+const descTdClass = 'p-3 px-4 border border-[#ebeef5] text-left'
+
 export function Descriptions({
   items,
   column = 2,
@@ -129,14 +164,14 @@ export function Descriptions({
     rows.push(items.slice(i, i + column))
   }
   return (
-    <table className="ui-descriptions">
+    <table className="w-full border-collapse text-sm text-text-primary">
       <tbody>
         {rows.map((row, rowIdx) => (
           <tr key={rowIdx}>
-            {row.map((item) => (
+            {row.map((item, itemIdx) => (
               <>
-                <th>{item.label}</th>
-                <td>{item.value}</td>
+                <th key={`${rowIdx}-${itemIdx}-th`} className={descThClass}>{item.label}</th>
+                <td key={`${rowIdx}-${itemIdx}-td`} className={descTdClass}>{item.value}</td>
               </>
             ))}
           </tr>
@@ -152,7 +187,15 @@ export function Skeleton({ rows = 6 }: { rows?: number }) {
   return (
     <div>
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="ui-skeleton-item" />
+        <div
+          key={i}
+          className="h-4 my-4 rounded animate-skeleton"
+          style={{
+            background:
+              'linear-gradient(90deg, #f2f3f5 25%, #e6e8eb 37%, #f2f3f5 63%)',
+            backgroundSize: '400% 100%',
+          }}
+        />
       ))}
     </div>
   )

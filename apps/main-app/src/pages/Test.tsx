@@ -1,6 +1,5 @@
 import { navigateTo } from '@pavilion-mfe/router'
 import { Button, Space, Table } from '../components/Ui'
-import styles from './Page.module.css'
 
 const tableData = [
   { label: '当前路径', value: window.location.pathname },
@@ -11,12 +10,12 @@ const tableData = [
 
 export default function Test() {
   return (
-    <div className={styles.pageWrapper}>
-      <h2>测试页</h2>
-      <p className={styles.pageDesc}>这是主应用自带的页面，不经过子应用加载。</p>
+    <div>
+      <h2 className="m-0 text-[22px] text-text-primary font-bold">测试页</h2>
+      <p className="my-2 mb-6 text-[13px] text-text-muted">这是主应用自带的页面，不经过子应用加载。</p>
 
-      <div className={styles.card}>
-        <div className={styles.cardTitle}>环境信息</div>
+      <div className="bg-card-bg border border-border rounded-lg p-5">
+        <div className="text-sm font-bold text-text-primary mb-4">环境信息</div>
         <Table
           columns={[
             { prop: 'label', label: '项目', width: 120 },
@@ -26,8 +25,8 @@ export default function Test() {
         />
       </div>
 
-      <div className={styles.card} style={{ marginTop: 16 }}>
-        <div className={styles.cardTitle}>导航测试</div>
+      <div className="bg-card-bg border border-border rounded-lg p-5 mt-4">
+        <div className="text-sm font-bold text-text-primary mb-4">导航测试</div>
         <Space wrap>
           <Button type="primary" onClick={() => navigateTo('/demo/list')}>
             Vue 列表页

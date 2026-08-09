@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTabs, type TabsAPI } from '@pavilion-mfe/tabs/react'
 import { navigateTo } from '@pavilion-mfe/router'
 import { deployBasePath, isSubAppPath } from '../utils/path'
-import styles from './TabBar.module.css'
+import { cn } from '@/lib/utils'
 
 type Tab = TabsAPI['tabs'][number]
 
@@ -56,9 +56,7 @@ export default function TabBar() {
   useEffect(() => {
     const el = tabListRef.current
     if (!el) return
-    const activeEl = el.querySelector(
-      `.${styles.tabItem}.${styles.tabItemActive}`,
-    ) as HTMLElement | null
+    const activeEl = el.querySelector('[data-active="true"]') as HTMLElement | null
     if (!activeEl) return
     const listRect = el.getBoundingClientRect()
     const tabRect = activeEl.getBoundingClientRect()
@@ -97,28 +95,41 @@ export default function TabBar() {
   }
 
   return (
-    <div ref={tabBarRef} className={styles.tabBar}>
+    <div
+      ref={tabBarRef}
+      className="shrink-0 h-10 bg-card-bg border-b border-border overflow-hidden select-none px-2"
+    >
       <div
         ref={tabListRef}
-        className={styles.tabList}
+        className="flex items-stretch h-full transition-transform duration-150 ease-in whitespace-nowrap"
         style={{ transform: `translateX(${scrollLeft}px)` }}
       >
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`${styles.tabItem}${
-              tab.id === activeTabId ? ` ${styles.tabItemActive}` : ''
-            }`}
+            data-active={tab.id === activeTabId ? 'true' : undefined}
+            className={cn(
+              'group flex items-center gap-1.5 h-full min-w-[110px] max-w-[180px] px-4 text-[13px] text-text-muted bg-transparent border-b-2 border-transparent cursor-pointer transition-colors',
+              tab.id === activeTabId
+                ? 'text-text-primary bg-background border-b-primary font-medium'
+                : 'hover:text-text-primary hover:bg-black/[0.03]',
+            )}
             onClick={() => handleTabClick(tab)}
             onContextMenu={(e) => {
               e.preventDefault()
               onContextMenu(e, tab)
             }}
           >
-            <span className={styles.tabTitle}>{tab.title}</span>
+            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+              {tab.title}
+            </span>
             {tab.id !== '/' && (
               <span
-                className={styles.tabClose}
+                className={cn(
+                  'shrink-0 w-[18px] h-[18px] leading-[18px] text-center text-sm text-text-muted rounded opacity-0 transition-opacity',
+                  'group-hover:opacity-100 hover:bg-primary-light hover:text-primary',
+                  tab.id === activeTabId && 'opacity-100',
+                )}
                 onClick={(e) => {
                   e.stopPropagation()
                   closeTab(tab.id)
@@ -136,12 +147,12 @@ export default function TabBar() {
         createPortal(
           <>
             <div
-              className={styles.tabContextMenu}
+              className="fixed z-[9999] min-w-[120px] bg-card-bg rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.1)] py-1 border border-border"
               style={{ left: contextMenu.x, top: contextMenu.y }}
               onClick={(e) => e.stopPropagation()}
             >
               <div
-                className={styles.contextItem}
+                className="py-2 px-4 text-[13px] text-text-primary cursor-pointer transition-colors hover:bg-background"
                 onClick={() => {
                   closeOthers(contextMenu.tabId)
                   hideContextMenu()
@@ -150,7 +161,7 @@ export default function TabBar() {
                 关闭其他
               </div>
               <div
-                className={styles.contextItem}
+                className="py-2 px-4 text-[13px] text-text-primary cursor-pointer transition-colors hover:bg-background"
                 onClick={() => {
                   closeAll()
                   hideContextMenu()
@@ -160,7 +171,7 @@ export default function TabBar() {
                 关闭全部
               </div>
             </div>
-            <div className={styles.contextOverlay} onClick={hideContextMenu} />
+            <div className="fixed inset-0 z-[9998]" onClick={hideContextMenu} />
           </>,
           document.body,
         )}

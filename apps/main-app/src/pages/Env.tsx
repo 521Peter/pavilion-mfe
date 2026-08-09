@@ -1,7 +1,5 @@
 import { useMenus } from '../api/menu'
 import { Descriptions, Table, Tag } from '../components/Ui'
-import styles from './Env.module.css'
-import pageStyles from './Page.module.css'
 
 type TagType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 
@@ -27,20 +25,20 @@ export default function Env() {
   ]
 
   return (
-    <div className={pageStyles.pageWrapper}>
-      <h2>环境信息</h2>
+    <div>
+      <h2 className="m-0 text-[22px] text-text-primary font-bold">环境信息</h2>
 
-      <div className={styles.infoCardsRow}>
+      <div className="grid grid-cols-3 gap-4 mt-6 max-[900px]:grid-cols-1">
         {infoCards.map((item) => (
-          <div key={item.label} className={`${pageStyles.card} ${styles.infoCard}`}>
-            <div className={styles.infoCardLabel}>{item.label}</div>
+          <div key={item.label} className="flex items-center justify-between bg-card-bg border border-border rounded-lg p-5 mb-4">
+            <div className="text-[13px] font-semibold text-text-muted">{item.label}</div>
             <Tag type={item.tagType}>{item.value}</Tag>
           </div>
         ))}
       </div>
 
-      <div className={pageStyles.card} style={{ marginTop: 16 }}>
-        <div className={pageStyles.cardTitle}>已注册菜单</div>
+      <div className="bg-card-bg border border-border rounded-lg p-5 mt-4">
+        <div className="text-sm font-bold text-text-primary mb-4">已注册菜单</div>
         <Table
           columns={[
             { prop: 'menuCode', label: '菜单编码' },
@@ -71,8 +69,8 @@ export default function Env() {
         />
       </div>
 
-      <div className={pageStyles.card} style={{ marginTop: 16 }}>
-        <div className={pageStyles.cardTitle}>环境配置</div>
+      <div className="bg-card-bg border border-border rounded-lg p-5 mt-4">
+        <div className="text-sm font-bold text-text-primary mb-4">环境配置</div>
         <Descriptions
           items={[
             { label: '当前环境', value: <Tag type={envTagType}>{pavilionMfeEnv}</Tag> },
@@ -82,8 +80,8 @@ export default function Env() {
         />
       </div>
 
-      <div className={pageStyles.card} style={{ marginTop: 16 }}>
-        <div className={pageStyles.cardTitle}>运行时信息</div>
+      <div className="bg-card-bg border border-border rounded-lg p-5 mt-4">
+        <div className="text-sm font-bold text-text-primary mb-4">运行时信息</div>
         <Descriptions
           items={[
             { label: '当前路径', value: currentPath },

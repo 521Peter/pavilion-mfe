@@ -7,7 +7,7 @@ import { isSubAppPath, normalizePath } from '../utils/path'
 import Sidebar from './Sidebar'
 import TabBar from './TabBar'
 import { Skeleton } from '../components/Ui'
-import styles from './MainLayout.module.css'
+import { cn } from '@/lib/utils'
 
 export default function MainLayout() {
   const location = useLocation()
@@ -101,12 +101,15 @@ export default function MainLayout() {
   }, [])
 
   return (
-    <div className={styles.segmentMain}>
+    <div className="h-full flex">
       <Sidebar />
-      <main className={styles.main}>
+      <main className="flex-1 min-w-0 bg-background overflow-hidden flex flex-col">
         <TabBar />
         <div
-          className={`${styles.mainContent}${isSubAppRoute ? ` ${styles.subAppMode}` : ''}`}
+          className={cn(
+            'flex-1 overflow-auto',
+            isSubAppRoute ? 'p-0' : 'py-7 px-8',
+          )}
         >
           {/* 主应用页面（v-show 语义：子应用路由时隐藏但保持 DOM 存活） */}
           <div style={{ display: isSubAppRoute ? 'none' : undefined }}>
@@ -114,11 +117,11 @@ export default function MainLayout() {
           </div>
           {/* 子应用容器（始终在 DOM 中，保证 keep-alive 缓存不被销毁） */}
           <div
-            className={styles.subAppWrapper}
+            className="relative h-full min-h-[400px]"
             style={{ display: isSubAppRoute ? undefined : 'none' }}
           >
             {isSubAppLoading && (
-              <div className={styles.subAppLoading}>
+              <div className="absolute inset-0 z-10 py-7 px-8 bg-card-bg animate-fade-in">
                 <Skeleton rows={6} />
               </div>
             )}
