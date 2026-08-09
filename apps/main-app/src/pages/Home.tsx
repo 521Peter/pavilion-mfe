@@ -2,6 +2,7 @@ import { useMemo, type CSSProperties } from 'react'
 import { navigateTo } from '@pavilion-mfe/router'
 import { useMenus } from '../api/menu'
 import { Icon } from '../components/Icon'
+import { Card, Chip } from '@heroui/react'
 import logoSvg from '../assets/pavilion-mfe-logo.svg'
 
 /** 卡片 accent 色板（按索引循环） */
@@ -33,15 +34,15 @@ export default function Home() {
             <p className="text-sm text-text-regular m-0 mb-3.5 leading-[1.5] max-w-[480px]">
               基于 Module Federation 的微前端开源框架，支持 Vue / React 混合渲染
             </p>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-[20px] text-[13px] font-medium leading-[1.4] bg-card-bg border border-border text-text-regular transition-transform hover:-translate-y-px hover:border-primary hover:shadow-[0_2px_8px_rgba(99,91,255,0.1)]">
-                <span className="font-bold text-primary text-[15px]">{appCards.length}</span>
-                <span>个子应用</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-[20px] text-[13px] font-medium leading-[1.4] bg-card-bg border border-border text-text-regular transition-transform hover:-translate-y-px hover:border-primary hover:shadow-[0_2px_8px_rgba(99,91,255,0.1)]">
-                <span className="font-bold text-primary text-[15px]">{totalPages}</span>
-                <span>个页面</span>
-              </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip variant="secondary" className="bg-card-bg border border-border text-text-regular py-1 px-3">
+                <span className="font-bold text-primary text-sm">{appCards.length}</span>
+                <span className="ml-1">个子应用</span>
+              </Chip>
+              <Chip variant="secondary" className="bg-card-bg border border-border text-text-regular py-1 px-3">
+                <span className="font-bold text-primary text-sm">{totalPages}</span>
+                <span className="ml-1">个页面</span>
+              </Chip>
             </div>
           </div>
         </div>
@@ -58,9 +59,10 @@ export default function Home() {
           {appCards.map((app, index) => {
             const accent = accents[index % accents.length]
             return (
-              <article
+              <Card
                 key={app.menuCode}
-                className="relative flex bg-card-bg border border-border rounded-lg overflow-hidden min-h-[130px] opacity-0 translate-y-4 animate-card-entrance transition-transform hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)] hover:border-[color-mix(in_srgb,var(--accent)_40%,var(--border))]"
+                variant="default"
+                className="relative flex flex-row overflow-hidden min-h-[96px] opacity-0 translate-y-4 animate-card-entrance transition-transform hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)] hover:border-[color-mix(in_srgb,var(--accent)_40%,var(--border))]"
                 style={
                   {
                     '--accent': accent,
@@ -69,10 +71,10 @@ export default function Home() {
                 }
               >
                 <div
-                  className="w-1 shrink-0 rounded-l rounded-r-none"
+                  className="w-1 shrink-0"
                   style={{ background: accent }}
                 />
-                <div className="flex-1 p-5 px-6 flex flex-col gap-4 min-w-0">
+                <div className="flex-1 p-4 px-5 flex flex-col gap-3 min-w-0">
                   <div className="flex items-center gap-3.5">
                     <div
                       className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center shrink-0"
@@ -110,12 +112,11 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-              </article>
+              </Card>
             )
           })}
         </div>
       </section>
-
     </div>
   )
 }

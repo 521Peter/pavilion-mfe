@@ -8,12 +8,14 @@ import Forbidden from '../pages/Forbidden'
 import NotFound from '../pages/NotFound'
 import ServerError from '../pages/ServerError'
 import MFPage from './MFPage'
+import LlmProviders from '../pages/LlmProviders'
 import { deployBasePath } from '../utils/path'
 import { getToken } from '../api/http'
 
 /** 主应用自有路由 → 标题（用于 Tab / 菜单标题查找） */
 export const routeMeta: Record<string, string> = {
   '/': '首页',
+  '/llm-providers': 'Provider 管理',
   '/test': '测试页',
   '/env': '环境信息',
   '/403': '403',
@@ -46,6 +48,7 @@ export const router = createBrowserRouter(
       element: <RequireAuth><MainLayout /></RequireAuth>,
       children: [
         { path: '/', element: <Home /> },
+        { path: '/llm-providers', element: <LlmProviders /> },
         { path: '/test', element: <Test /> },
         { path: '/env', element: <Env /> },
         { path: '/403', element: <Forbidden /> },

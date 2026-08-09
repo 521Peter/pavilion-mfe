@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useTabs } from '@pavilion-mfe/tabs/react'
-import { Button } from '../components/Ui'
+import { Button } from '@heroui/react'
+import { Icon } from '../components/Icon'
 
 export default function ErrorPage({
   img,
@@ -24,7 +25,8 @@ export default function ErrorPage({
       <img src={img} alt={title} className="w-80 max-w-[60%]" />
       <h2 className="text-xl font-bold text-text-primary m-0">{title}</h2>
       <p className="text-sm font-medium text-text-muted m-0">{desc}</p>
-      <Button type="primary" icon="Back" onClick={goHome}>
+      <Button variant="primary" onPress={goHome}>
+        <Icon name="Back" size={16} />
         返回首页
       </Button>
     </div>

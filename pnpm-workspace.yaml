@@ -1,11 +1,12 @@
 packages:
-  - 'packages/*'
-  - 'apps/*'
-  - 'services/*'
+  - "packages/*"
+  - "apps/*"
+  - "services/*"
 
 allowBuilds:
-  '@prisma/client': true
-  '@prisma/engines': true
+  "@prisma/client": true
+  "@prisma/engines": true
+  "@swc/core": true
   bcrypt: true
   electron: true
   esbuild: true
@@ -15,8 +16,8 @@ allowBuilds:
 onlyBuiltDependencies:
   - electron
   - esbuild
-  - '@prisma/engines'
-  - '@prisma/client'
+  - "@prisma/engines"
+  - "@prisma/client"
   - bcrypt
   - prisma
   - unrs-resolver

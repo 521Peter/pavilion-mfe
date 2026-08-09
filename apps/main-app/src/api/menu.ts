@@ -73,6 +73,19 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       menuUrl: '/',
       menuIcon: 'HomeFilled',
     },
+    {
+      menuCode: 'ai-center',
+      menuName: 'AI 能力中心',
+      menuTp: '0',
+      parentCode: '',
+      orderNo: 1,
+      status: '1',
+      menuUrl: '',
+      menuIcon: 'Setting',
+      childrenMenuInfoList: [
+        { menuCode: 'ai-center/llm-providers', menuName: 'Provider 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 1, status: '1', menuUrl: '/llm-providers', menuIcon: 'Link' },
+      ],
+    },
     // {
     //   menuCode: 'demo-app',
     //   menuName: 'Demo (Vue)',

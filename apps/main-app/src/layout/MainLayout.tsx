@@ -6,7 +6,7 @@ import { useMenus } from '../api/menu'
 import { isSubAppPath, normalizePath } from '../utils/path'
 import Sidebar from './Sidebar'
 import TabBar from './TabBar'
-import { Skeleton } from '../components/Ui'
+import { Skeleton } from '@heroui/react'
 import { cn } from '@/lib/utils'
 
 export default function MainLayout() {
@@ -122,7 +122,11 @@ export default function MainLayout() {
           >
             {isSubAppLoading && (
               <div className="absolute inset-0 z-10 py-7 px-8 bg-card-bg animate-fade-in">
-                <Skeleton rows={6} />
+                <div className="flex flex-col gap-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} className="h-4 w-full rounded" />
+                  ))}
+                </div>
               </div>
             )}
             <div id="pavilion-mfe-container"></div>
