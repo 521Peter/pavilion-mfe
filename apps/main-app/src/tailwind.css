@@ -189,3 +189,15 @@ body {
     background-color: #635bff;
   }
 }
+
+/* ─── 宽 Modal ─── */
+@utility modal-wide {
+  width: 900px;
+  max-width: calc(100vw - 48px);
+}
+
+/* ─── 中等宽度 Modal ─── */
+@utility modal-medium {
+  width: 600px;
+  max-width: calc(100vw - 48px);
+}

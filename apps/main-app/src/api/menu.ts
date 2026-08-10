@@ -82,9 +82,11 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       status: '1',
       menuUrl: '',
       menuIcon: 'Setting',
-      childrenMenuInfoList: [
-        { menuCode: 'ai-center/llm-providers', menuName: 'Provider 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 1, status: '1', menuUrl: '/llm-providers', menuIcon: 'Link' },
-      ],
+     childrenMenuInfoList: [
+       { menuCode: 'ai-center/llm-providers', menuName: 'Provider 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 1, status: '1', menuUrl: '/llm-providers', menuIcon: 'Link' },
+       { menuCode: 'ai-center/mcp-servers', menuName: 'MCP 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 2, status: '1', menuUrl: '/mcp-servers', menuIcon: 'Connection' },
+       { menuCode: 'ai-center/skills', menuName: 'Skill 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 3, status: '1', menuUrl: '/skills', menuIcon: 'Reading' },
+     ],
     },
     // {
     //   menuCode: 'demo-app',

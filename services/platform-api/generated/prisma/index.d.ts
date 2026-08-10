@@ -28,6 +28,21 @@ export type LlmProvider = $Result.DefaultSelection<Prisma.$LlmProviderPayload>
  * 
  */
 export type LlmModel = $Result.DefaultSelection<Prisma.$LlmModelPayload>
+/**
+ * Model McpServer
+ * 
+ */
+export type McpServer = $Result.DefaultSelection<Prisma.$McpServerPayload>
+/**
+ * Model Skill
+ * 
+ */
+export type Skill = $Result.DefaultSelection<Prisma.$SkillPayload>
+/**
+ * Model SkillRepo
+ * 
+ */
+export type SkillRepo = $Result.DefaultSelection<Prisma.$SkillRepoPayload>
 
 /**
  * Enums
@@ -205,6 +220,36 @@ export class PrismaClient<
     * ```
     */
   get llmModel(): Prisma.LlmModelDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.mcpServer`: Exposes CRUD operations for the **McpServer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more McpServers
+    * const mcpServers = await prisma.mcpServer.findMany()
+    * ```
+    */
+  get mcpServer(): Prisma.McpServerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.skill`: Exposes CRUD operations for the **Skill** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Skills
+    * const skills = await prisma.skill.findMany()
+    * ```
+    */
+  get skill(): Prisma.SkillDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.skillRepo`: Exposes CRUD operations for the **SkillRepo** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SkillRepos
+    * const skillRepos = await prisma.skillRepo.findMany()
+    * ```
+    */
+  get skillRepo(): Prisma.SkillRepoDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -648,7 +693,10 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     LlmProvider: 'LlmProvider',
-    LlmModel: 'LlmModel'
+    LlmModel: 'LlmModel',
+    McpServer: 'McpServer',
+    Skill: 'Skill',
+    SkillRepo: 'SkillRepo'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -667,7 +715,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "llmProvider" | "llmModel"
+      modelProps: "user" | "llmProvider" | "llmModel" | "mcpServer" | "skill" | "skillRepo"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -893,6 +941,228 @@ export namespace Prisma {
           }
         }
       }
+      McpServer: {
+        payload: Prisma.$McpServerPayload<ExtArgs>
+        fields: Prisma.McpServerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.McpServerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.McpServerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          findFirst: {
+            args: Prisma.McpServerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.McpServerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          findMany: {
+            args: Prisma.McpServerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>[]
+          }
+          create: {
+            args: Prisma.McpServerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          createMany: {
+            args: Prisma.McpServerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.McpServerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>[]
+          }
+          delete: {
+            args: Prisma.McpServerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          update: {
+            args: Prisma.McpServerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          deleteMany: {
+            args: Prisma.McpServerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.McpServerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.McpServerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>[]
+          }
+          upsert: {
+            args: Prisma.McpServerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$McpServerPayload>
+          }
+          aggregate: {
+            args: Prisma.McpServerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMcpServer>
+          }
+          groupBy: {
+            args: Prisma.McpServerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<McpServerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.McpServerCountArgs<ExtArgs>
+            result: $Utils.Optional<McpServerCountAggregateOutputType> | number
+          }
+        }
+      }
+      Skill: {
+        payload: Prisma.$SkillPayload<ExtArgs>
+        fields: Prisma.SkillFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SkillFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SkillFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          findFirst: {
+            args: Prisma.SkillFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SkillFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          findMany: {
+            args: Prisma.SkillFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          create: {
+            args: Prisma.SkillCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          createMany: {
+            args: Prisma.SkillCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SkillCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          delete: {
+            args: Prisma.SkillDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          update: {
+            args: Prisma.SkillUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          deleteMany: {
+            args: Prisma.SkillDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SkillUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SkillUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          upsert: {
+            args: Prisma.SkillUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          aggregate: {
+            args: Prisma.SkillAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSkill>
+          }
+          groupBy: {
+            args: Prisma.SkillGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SkillGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SkillCountArgs<ExtArgs>
+            result: $Utils.Optional<SkillCountAggregateOutputType> | number
+          }
+        }
+      }
+      SkillRepo: {
+        payload: Prisma.$SkillRepoPayload<ExtArgs>
+        fields: Prisma.SkillRepoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SkillRepoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SkillRepoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          findFirst: {
+            args: Prisma.SkillRepoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SkillRepoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          findMany: {
+            args: Prisma.SkillRepoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>[]
+          }
+          create: {
+            args: Prisma.SkillRepoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          createMany: {
+            args: Prisma.SkillRepoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SkillRepoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>[]
+          }
+          delete: {
+            args: Prisma.SkillRepoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          update: {
+            args: Prisma.SkillRepoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          deleteMany: {
+            args: Prisma.SkillRepoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SkillRepoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SkillRepoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>[]
+          }
+          upsert: {
+            args: Prisma.SkillRepoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillRepoPayload>
+          }
+          aggregate: {
+            args: Prisma.SkillRepoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSkillRepo>
+          }
+          groupBy: {
+            args: Prisma.SkillRepoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SkillRepoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SkillRepoCountArgs<ExtArgs>
+            result: $Utils.Optional<SkillRepoCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -992,6 +1262,9 @@ export namespace Prisma {
     user?: UserOmit
     llmProvider?: LlmProviderOmit
     llmModel?: LlmModelOmit
+    mcpServer?: McpServerOmit
+    skill?: SkillOmit
+    skillRepo?: SkillRepoOmit
   }
 
   /* Types for Logging */
@@ -4357,6 +4630,3269 @@ export namespace Prisma {
 
 
   /**
+   * Model McpServer
+   */
+
+  export type AggregateMcpServer = {
+    _count: McpServerCountAggregateOutputType | null
+    _avg: McpServerAvgAggregateOutputType | null
+    _sum: McpServerSumAggregateOutputType | null
+    _min: McpServerMinAggregateOutputType | null
+    _max: McpServerMaxAggregateOutputType | null
+  }
+
+  export type McpServerAvgAggregateOutputType = {
+    timeout: number | null
+  }
+
+  export type McpServerSumAggregateOutputType = {
+    timeout: number | null
+  }
+
+  export type McpServerMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    identifier: string | null
+    description: string | null
+    icon: string | null
+    transport: string | null
+    command: string | null
+    url: string | null
+    timeout: number | null
+    isActive: boolean | null
+    lastSyncAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type McpServerMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    identifier: string | null
+    description: string | null
+    icon: string | null
+    transport: string | null
+    command: string | null
+    url: string | null
+    timeout: number | null
+    isActive: boolean | null
+    lastSyncAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type McpServerCountAggregateOutputType = {
+    id: number
+    name: number
+    identifier: number
+    description: number
+    icon: number
+    transport: number
+    command: number
+    args: number
+    env: number
+    url: number
+    headers: number
+    timeout: number
+    isActive: number
+    cachedTools: number
+    lastSyncAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type McpServerAvgAggregateInputType = {
+    timeout?: true
+  }
+
+  export type McpServerSumAggregateInputType = {
+    timeout?: true
+  }
+
+  export type McpServerMinAggregateInputType = {
+    id?: true
+    name?: true
+    identifier?: true
+    description?: true
+    icon?: true
+    transport?: true
+    command?: true
+    url?: true
+    timeout?: true
+    isActive?: true
+    lastSyncAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type McpServerMaxAggregateInputType = {
+    id?: true
+    name?: true
+    identifier?: true
+    description?: true
+    icon?: true
+    transport?: true
+    command?: true
+    url?: true
+    timeout?: true
+    isActive?: true
+    lastSyncAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type McpServerCountAggregateInputType = {
+    id?: true
+    name?: true
+    identifier?: true
+    description?: true
+    icon?: true
+    transport?: true
+    command?: true
+    args?: true
+    env?: true
+    url?: true
+    headers?: true
+    timeout?: true
+    isActive?: true
+    cachedTools?: true
+    lastSyncAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type McpServerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which McpServer to aggregate.
+     */
+    where?: McpServerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of McpServers to fetch.
+     */
+    orderBy?: McpServerOrderByWithRelationInput | McpServerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: McpServerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` McpServers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` McpServers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned McpServers
+    **/
+    _count?: true | McpServerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: McpServerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: McpServerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: McpServerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: McpServerMaxAggregateInputType
+  }
+
+  export type GetMcpServerAggregateType<T extends McpServerAggregateArgs> = {
+        [P in keyof T & keyof AggregateMcpServer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMcpServer[P]>
+      : GetScalarType<T[P], AggregateMcpServer[P]>
+  }
+
+
+
+
+  export type McpServerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: McpServerWhereInput
+    orderBy?: McpServerOrderByWithAggregationInput | McpServerOrderByWithAggregationInput[]
+    by: McpServerScalarFieldEnum[] | McpServerScalarFieldEnum
+    having?: McpServerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: McpServerCountAggregateInputType | true
+    _avg?: McpServerAvgAggregateInputType
+    _sum?: McpServerSumAggregateInputType
+    _min?: McpServerMinAggregateInputType
+    _max?: McpServerMaxAggregateInputType
+  }
+
+  export type McpServerGroupByOutputType = {
+    id: string
+    name: string
+    identifier: string
+    description: string | null
+    icon: string | null
+    transport: string
+    command: string | null
+    args: string[]
+    env: JsonValue
+    url: string | null
+    headers: JsonValue
+    timeout: number
+    isActive: boolean
+    cachedTools: JsonValue
+    lastSyncAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: McpServerCountAggregateOutputType | null
+    _avg: McpServerAvgAggregateOutputType | null
+    _sum: McpServerSumAggregateOutputType | null
+    _min: McpServerMinAggregateOutputType | null
+    _max: McpServerMaxAggregateOutputType | null
+  }
+
+  type GetMcpServerGroupByPayload<T extends McpServerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<McpServerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof McpServerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], McpServerGroupByOutputType[P]>
+            : GetScalarType<T[P], McpServerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type McpServerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    identifier?: boolean
+    description?: boolean
+    icon?: boolean
+    transport?: boolean
+    command?: boolean
+    args?: boolean
+    env?: boolean
+    url?: boolean
+    headers?: boolean
+    timeout?: boolean
+    isActive?: boolean
+    cachedTools?: boolean
+    lastSyncAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["mcpServer"]>
+
+  export type McpServerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    identifier?: boolean
+    description?: boolean
+    icon?: boolean
+    transport?: boolean
+    command?: boolean
+    args?: boolean
+    env?: boolean
+    url?: boolean
+    headers?: boolean
+    timeout?: boolean
+    isActive?: boolean
+    cachedTools?: boolean
+    lastSyncAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["mcpServer"]>
+
+  export type McpServerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    identifier?: boolean
+    description?: boolean
+    icon?: boolean
+    transport?: boolean
+    command?: boolean
+    args?: boolean
+    env?: boolean
+    url?: boolean
+    headers?: boolean
+    timeout?: boolean
+    isActive?: boolean
+    cachedTools?: boolean
+    lastSyncAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["mcpServer"]>
+
+  export type McpServerSelectScalar = {
+    id?: boolean
+    name?: boolean
+    identifier?: boolean
+    description?: boolean
+    icon?: boolean
+    transport?: boolean
+    command?: boolean
+    args?: boolean
+    env?: boolean
+    url?: boolean
+    headers?: boolean
+    timeout?: boolean
+    isActive?: boolean
+    cachedTools?: boolean
+    lastSyncAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type McpServerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "identifier" | "description" | "icon" | "transport" | "command" | "args" | "env" | "url" | "headers" | "timeout" | "isActive" | "cachedTools" | "lastSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mcpServer"]>
+
+  export type $McpServerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "McpServer"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      identifier: string
+      description: string | null
+      icon: string | null
+      transport: string
+      command: string | null
+      args: string[]
+      env: Prisma.JsonValue
+      url: string | null
+      headers: Prisma.JsonValue
+      timeout: number
+      isActive: boolean
+      cachedTools: Prisma.JsonValue
+      lastSyncAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mcpServer"]>
+    composites: {}
+  }
+
+  type McpServerGetPayload<S extends boolean | null | undefined | McpServerDefaultArgs> = $Result.GetResult<Prisma.$McpServerPayload, S>
+
+  type McpServerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<McpServerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: McpServerCountAggregateInputType | true
+    }
+
+  export interface McpServerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['McpServer'], meta: { name: 'McpServer' } }
+    /**
+     * Find zero or one McpServer that matches the filter.
+     * @param {McpServerFindUniqueArgs} args - Arguments to find a McpServer
+     * @example
+     * // Get one McpServer
+     * const mcpServer = await prisma.mcpServer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends McpServerFindUniqueArgs>(args: SelectSubset<T, McpServerFindUniqueArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one McpServer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {McpServerFindUniqueOrThrowArgs} args - Arguments to find a McpServer
+     * @example
+     * // Get one McpServer
+     * const mcpServer = await prisma.mcpServer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends McpServerFindUniqueOrThrowArgs>(args: SelectSubset<T, McpServerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first McpServer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerFindFirstArgs} args - Arguments to find a McpServer
+     * @example
+     * // Get one McpServer
+     * const mcpServer = await prisma.mcpServer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends McpServerFindFirstArgs>(args?: SelectSubset<T, McpServerFindFirstArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first McpServer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerFindFirstOrThrowArgs} args - Arguments to find a McpServer
+     * @example
+     * // Get one McpServer
+     * const mcpServer = await prisma.mcpServer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends McpServerFindFirstOrThrowArgs>(args?: SelectSubset<T, McpServerFindFirstOrThrowArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more McpServers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all McpServers
+     * const mcpServers = await prisma.mcpServer.findMany()
+     * 
+     * // Get first 10 McpServers
+     * const mcpServers = await prisma.mcpServer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mcpServerWithIdOnly = await prisma.mcpServer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends McpServerFindManyArgs>(args?: SelectSubset<T, McpServerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a McpServer.
+     * @param {McpServerCreateArgs} args - Arguments to create a McpServer.
+     * @example
+     * // Create one McpServer
+     * const McpServer = await prisma.mcpServer.create({
+     *   data: {
+     *     // ... data to create a McpServer
+     *   }
+     * })
+     * 
+     */
+    create<T extends McpServerCreateArgs>(args: SelectSubset<T, McpServerCreateArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many McpServers.
+     * @param {McpServerCreateManyArgs} args - Arguments to create many McpServers.
+     * @example
+     * // Create many McpServers
+     * const mcpServer = await prisma.mcpServer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends McpServerCreateManyArgs>(args?: SelectSubset<T, McpServerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many McpServers and returns the data saved in the database.
+     * @param {McpServerCreateManyAndReturnArgs} args - Arguments to create many McpServers.
+     * @example
+     * // Create many McpServers
+     * const mcpServer = await prisma.mcpServer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many McpServers and only return the `id`
+     * const mcpServerWithIdOnly = await prisma.mcpServer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends McpServerCreateManyAndReturnArgs>(args?: SelectSubset<T, McpServerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a McpServer.
+     * @param {McpServerDeleteArgs} args - Arguments to delete one McpServer.
+     * @example
+     * // Delete one McpServer
+     * const McpServer = await prisma.mcpServer.delete({
+     *   where: {
+     *     // ... filter to delete one McpServer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends McpServerDeleteArgs>(args: SelectSubset<T, McpServerDeleteArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one McpServer.
+     * @param {McpServerUpdateArgs} args - Arguments to update one McpServer.
+     * @example
+     * // Update one McpServer
+     * const mcpServer = await prisma.mcpServer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends McpServerUpdateArgs>(args: SelectSubset<T, McpServerUpdateArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more McpServers.
+     * @param {McpServerDeleteManyArgs} args - Arguments to filter McpServers to delete.
+     * @example
+     * // Delete a few McpServers
+     * const { count } = await prisma.mcpServer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends McpServerDeleteManyArgs>(args?: SelectSubset<T, McpServerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more McpServers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many McpServers
+     * const mcpServer = await prisma.mcpServer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends McpServerUpdateManyArgs>(args: SelectSubset<T, McpServerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more McpServers and returns the data updated in the database.
+     * @param {McpServerUpdateManyAndReturnArgs} args - Arguments to update many McpServers.
+     * @example
+     * // Update many McpServers
+     * const mcpServer = await prisma.mcpServer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more McpServers and only return the `id`
+     * const mcpServerWithIdOnly = await prisma.mcpServer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends McpServerUpdateManyAndReturnArgs>(args: SelectSubset<T, McpServerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one McpServer.
+     * @param {McpServerUpsertArgs} args - Arguments to update or create a McpServer.
+     * @example
+     * // Update or create a McpServer
+     * const mcpServer = await prisma.mcpServer.upsert({
+     *   create: {
+     *     // ... data to create a McpServer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the McpServer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends McpServerUpsertArgs>(args: SelectSubset<T, McpServerUpsertArgs<ExtArgs>>): Prisma__McpServerClient<$Result.GetResult<Prisma.$McpServerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of McpServers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerCountArgs} args - Arguments to filter McpServers to count.
+     * @example
+     * // Count the number of McpServers
+     * const count = await prisma.mcpServer.count({
+     *   where: {
+     *     // ... the filter for the McpServers we want to count
+     *   }
+     * })
+    **/
+    count<T extends McpServerCountArgs>(
+      args?: Subset<T, McpServerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], McpServerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a McpServer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends McpServerAggregateArgs>(args: Subset<T, McpServerAggregateArgs>): Prisma.PrismaPromise<GetMcpServerAggregateType<T>>
+
+    /**
+     * Group by McpServer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {McpServerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends McpServerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: McpServerGroupByArgs['orderBy'] }
+        : { orderBy?: McpServerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, McpServerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMcpServerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the McpServer model
+   */
+  readonly fields: McpServerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for McpServer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__McpServerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the McpServer model
+   */
+  interface McpServerFieldRefs {
+    readonly id: FieldRef<"McpServer", 'String'>
+    readonly name: FieldRef<"McpServer", 'String'>
+    readonly identifier: FieldRef<"McpServer", 'String'>
+    readonly description: FieldRef<"McpServer", 'String'>
+    readonly icon: FieldRef<"McpServer", 'String'>
+    readonly transport: FieldRef<"McpServer", 'String'>
+    readonly command: FieldRef<"McpServer", 'String'>
+    readonly args: FieldRef<"McpServer", 'String[]'>
+    readonly env: FieldRef<"McpServer", 'Json'>
+    readonly url: FieldRef<"McpServer", 'String'>
+    readonly headers: FieldRef<"McpServer", 'Json'>
+    readonly timeout: FieldRef<"McpServer", 'Int'>
+    readonly isActive: FieldRef<"McpServer", 'Boolean'>
+    readonly cachedTools: FieldRef<"McpServer", 'Json'>
+    readonly lastSyncAt: FieldRef<"McpServer", 'DateTime'>
+    readonly createdAt: FieldRef<"McpServer", 'DateTime'>
+    readonly updatedAt: FieldRef<"McpServer", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * McpServer findUnique
+   */
+  export type McpServerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter, which McpServer to fetch.
+     */
+    where: McpServerWhereUniqueInput
+  }
+
+  /**
+   * McpServer findUniqueOrThrow
+   */
+  export type McpServerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter, which McpServer to fetch.
+     */
+    where: McpServerWhereUniqueInput
+  }
+
+  /**
+   * McpServer findFirst
+   */
+  export type McpServerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter, which McpServer to fetch.
+     */
+    where?: McpServerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of McpServers to fetch.
+     */
+    orderBy?: McpServerOrderByWithRelationInput | McpServerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for McpServers.
+     */
+    cursor?: McpServerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` McpServers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` McpServers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of McpServers.
+     */
+    distinct?: McpServerScalarFieldEnum | McpServerScalarFieldEnum[]
+  }
+
+  /**
+   * McpServer findFirstOrThrow
+   */
+  export type McpServerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter, which McpServer to fetch.
+     */
+    where?: McpServerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of McpServers to fetch.
+     */
+    orderBy?: McpServerOrderByWithRelationInput | McpServerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for McpServers.
+     */
+    cursor?: McpServerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` McpServers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` McpServers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of McpServers.
+     */
+    distinct?: McpServerScalarFieldEnum | McpServerScalarFieldEnum[]
+  }
+
+  /**
+   * McpServer findMany
+   */
+  export type McpServerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter, which McpServers to fetch.
+     */
+    where?: McpServerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of McpServers to fetch.
+     */
+    orderBy?: McpServerOrderByWithRelationInput | McpServerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing McpServers.
+     */
+    cursor?: McpServerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` McpServers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` McpServers.
+     */
+    skip?: number
+    distinct?: McpServerScalarFieldEnum | McpServerScalarFieldEnum[]
+  }
+
+  /**
+   * McpServer create
+   */
+  export type McpServerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * The data needed to create a McpServer.
+     */
+    data: XOR<McpServerCreateInput, McpServerUncheckedCreateInput>
+  }
+
+  /**
+   * McpServer createMany
+   */
+  export type McpServerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many McpServers.
+     */
+    data: McpServerCreateManyInput | McpServerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * McpServer createManyAndReturn
+   */
+  export type McpServerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * The data used to create many McpServers.
+     */
+    data: McpServerCreateManyInput | McpServerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * McpServer update
+   */
+  export type McpServerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * The data needed to update a McpServer.
+     */
+    data: XOR<McpServerUpdateInput, McpServerUncheckedUpdateInput>
+    /**
+     * Choose, which McpServer to update.
+     */
+    where: McpServerWhereUniqueInput
+  }
+
+  /**
+   * McpServer updateMany
+   */
+  export type McpServerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update McpServers.
+     */
+    data: XOR<McpServerUpdateManyMutationInput, McpServerUncheckedUpdateManyInput>
+    /**
+     * Filter which McpServers to update
+     */
+    where?: McpServerWhereInput
+    /**
+     * Limit how many McpServers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * McpServer updateManyAndReturn
+   */
+  export type McpServerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * The data used to update McpServers.
+     */
+    data: XOR<McpServerUpdateManyMutationInput, McpServerUncheckedUpdateManyInput>
+    /**
+     * Filter which McpServers to update
+     */
+    where?: McpServerWhereInput
+    /**
+     * Limit how many McpServers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * McpServer upsert
+   */
+  export type McpServerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * The filter to search for the McpServer to update in case it exists.
+     */
+    where: McpServerWhereUniqueInput
+    /**
+     * In case the McpServer found by the `where` argument doesn't exist, create a new McpServer with this data.
+     */
+    create: XOR<McpServerCreateInput, McpServerUncheckedCreateInput>
+    /**
+     * In case the McpServer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<McpServerUpdateInput, McpServerUncheckedUpdateInput>
+  }
+
+  /**
+   * McpServer delete
+   */
+  export type McpServerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+    /**
+     * Filter which McpServer to delete.
+     */
+    where: McpServerWhereUniqueInput
+  }
+
+  /**
+   * McpServer deleteMany
+   */
+  export type McpServerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which McpServers to delete
+     */
+    where?: McpServerWhereInput
+    /**
+     * Limit how many McpServers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * McpServer without action
+   */
+  export type McpServerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the McpServer
+     */
+    select?: McpServerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the McpServer
+     */
+    omit?: McpServerOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Skill
+   */
+
+  export type AggregateSkill = {
+    _count: SkillCountAggregateOutputType | null
+    _min: SkillMinAggregateOutputType | null
+    _max: SkillMaxAggregateOutputType | null
+  }
+
+  export type SkillMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    source: string | null
+    repoOwner: string | null
+    repoName: string | null
+    repoBranch: string | null
+    readmeUrl: string | null
+    isActive: boolean | null
+    contentHash: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SkillMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    source: string | null
+    repoOwner: string | null
+    repoName: string | null
+    repoBranch: string | null
+    readmeUrl: string | null
+    isActive: boolean | null
+    contentHash: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SkillCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    source: number
+    repoOwner: number
+    repoName: number
+    repoBranch: number
+    readmeUrl: number
+    isActive: number
+    contentHash: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SkillMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    source?: true
+    repoOwner?: true
+    repoName?: true
+    repoBranch?: true
+    readmeUrl?: true
+    isActive?: true
+    contentHash?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SkillMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    source?: true
+    repoOwner?: true
+    repoName?: true
+    repoBranch?: true
+    readmeUrl?: true
+    isActive?: true
+    contentHash?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SkillCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    source?: true
+    repoOwner?: true
+    repoName?: true
+    repoBranch?: true
+    readmeUrl?: true
+    isActive?: true
+    contentHash?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SkillAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Skill to aggregate.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Skills
+    **/
+    _count?: true | SkillCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SkillMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SkillMaxAggregateInputType
+  }
+
+  export type GetSkillAggregateType<T extends SkillAggregateArgs> = {
+        [P in keyof T & keyof AggregateSkill]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSkill[P]>
+      : GetScalarType<T[P], AggregateSkill[P]>
+  }
+
+
+
+
+  export type SkillGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SkillWhereInput
+    orderBy?: SkillOrderByWithAggregationInput | SkillOrderByWithAggregationInput[]
+    by: SkillScalarFieldEnum[] | SkillScalarFieldEnum
+    having?: SkillScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SkillCountAggregateInputType | true
+    _min?: SkillMinAggregateInputType
+    _max?: SkillMaxAggregateInputType
+  }
+
+  export type SkillGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    source: string
+    repoOwner: string | null
+    repoName: string | null
+    repoBranch: string | null
+    readmeUrl: string | null
+    isActive: boolean
+    contentHash: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: SkillCountAggregateOutputType | null
+    _min: SkillMinAggregateOutputType | null
+    _max: SkillMaxAggregateOutputType | null
+  }
+
+  type GetSkillGroupByPayload<T extends SkillGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SkillGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SkillGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SkillGroupByOutputType[P]>
+            : GetScalarType<T[P], SkillGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SkillSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    source?: boolean
+    repoOwner?: boolean
+    repoName?: boolean
+    repoBranch?: boolean
+    readmeUrl?: boolean
+    isActive?: boolean
+    contentHash?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    source?: boolean
+    repoOwner?: boolean
+    repoName?: boolean
+    repoBranch?: boolean
+    readmeUrl?: boolean
+    isActive?: boolean
+    contentHash?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    source?: boolean
+    repoOwner?: boolean
+    repoName?: boolean
+    repoBranch?: boolean
+    readmeUrl?: boolean
+    isActive?: boolean
+    contentHash?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    source?: boolean
+    repoOwner?: boolean
+    repoName?: boolean
+    repoBranch?: boolean
+    readmeUrl?: boolean
+    isActive?: boolean
+    contentHash?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SkillOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "source" | "repoOwner" | "repoName" | "repoBranch" | "readmeUrl" | "isActive" | "contentHash" | "createdAt" | "updatedAt", ExtArgs["result"]["skill"]>
+
+  export type $SkillPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Skill"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      source: string
+      repoOwner: string | null
+      repoName: string | null
+      repoBranch: string | null
+      readmeUrl: string | null
+      isActive: boolean
+      contentHash: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["skill"]>
+    composites: {}
+  }
+
+  type SkillGetPayload<S extends boolean | null | undefined | SkillDefaultArgs> = $Result.GetResult<Prisma.$SkillPayload, S>
+
+  type SkillCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SkillFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SkillCountAggregateInputType | true
+    }
+
+  export interface SkillDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Skill'], meta: { name: 'Skill' } }
+    /**
+     * Find zero or one Skill that matches the filter.
+     * @param {SkillFindUniqueArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SkillFindUniqueArgs>(args: SelectSubset<T, SkillFindUniqueArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Skill that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SkillFindUniqueOrThrowArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SkillFindUniqueOrThrowArgs>(args: SelectSubset<T, SkillFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Skill that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindFirstArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SkillFindFirstArgs>(args?: SelectSubset<T, SkillFindFirstArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Skill that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindFirstOrThrowArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SkillFindFirstOrThrowArgs>(args?: SelectSubset<T, SkillFindFirstOrThrowArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Skills that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Skills
+     * const skills = await prisma.skill.findMany()
+     * 
+     * // Get first 10 Skills
+     * const skills = await prisma.skill.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const skillWithIdOnly = await prisma.skill.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SkillFindManyArgs>(args?: SelectSubset<T, SkillFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Skill.
+     * @param {SkillCreateArgs} args - Arguments to create a Skill.
+     * @example
+     * // Create one Skill
+     * const Skill = await prisma.skill.create({
+     *   data: {
+     *     // ... data to create a Skill
+     *   }
+     * })
+     * 
+     */
+    create<T extends SkillCreateArgs>(args: SelectSubset<T, SkillCreateArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Skills.
+     * @param {SkillCreateManyArgs} args - Arguments to create many Skills.
+     * @example
+     * // Create many Skills
+     * const skill = await prisma.skill.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SkillCreateManyArgs>(args?: SelectSubset<T, SkillCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Skills and returns the data saved in the database.
+     * @param {SkillCreateManyAndReturnArgs} args - Arguments to create many Skills.
+     * @example
+     * // Create many Skills
+     * const skill = await prisma.skill.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Skills and only return the `id`
+     * const skillWithIdOnly = await prisma.skill.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SkillCreateManyAndReturnArgs>(args?: SelectSubset<T, SkillCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Skill.
+     * @param {SkillDeleteArgs} args - Arguments to delete one Skill.
+     * @example
+     * // Delete one Skill
+     * const Skill = await prisma.skill.delete({
+     *   where: {
+     *     // ... filter to delete one Skill
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SkillDeleteArgs>(args: SelectSubset<T, SkillDeleteArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Skill.
+     * @param {SkillUpdateArgs} args - Arguments to update one Skill.
+     * @example
+     * // Update one Skill
+     * const skill = await prisma.skill.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SkillUpdateArgs>(args: SelectSubset<T, SkillUpdateArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Skills.
+     * @param {SkillDeleteManyArgs} args - Arguments to filter Skills to delete.
+     * @example
+     * // Delete a few Skills
+     * const { count } = await prisma.skill.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SkillDeleteManyArgs>(args?: SelectSubset<T, SkillDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Skills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Skills
+     * const skill = await prisma.skill.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SkillUpdateManyArgs>(args: SelectSubset<T, SkillUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Skills and returns the data updated in the database.
+     * @param {SkillUpdateManyAndReturnArgs} args - Arguments to update many Skills.
+     * @example
+     * // Update many Skills
+     * const skill = await prisma.skill.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Skills and only return the `id`
+     * const skillWithIdOnly = await prisma.skill.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SkillUpdateManyAndReturnArgs>(args: SelectSubset<T, SkillUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Skill.
+     * @param {SkillUpsertArgs} args - Arguments to update or create a Skill.
+     * @example
+     * // Update or create a Skill
+     * const skill = await prisma.skill.upsert({
+     *   create: {
+     *     // ... data to create a Skill
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Skill we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SkillUpsertArgs>(args: SelectSubset<T, SkillUpsertArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Skills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillCountArgs} args - Arguments to filter Skills to count.
+     * @example
+     * // Count the number of Skills
+     * const count = await prisma.skill.count({
+     *   where: {
+     *     // ... the filter for the Skills we want to count
+     *   }
+     * })
+    **/
+    count<T extends SkillCountArgs>(
+      args?: Subset<T, SkillCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SkillCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Skill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SkillAggregateArgs>(args: Subset<T, SkillAggregateArgs>): Prisma.PrismaPromise<GetSkillAggregateType<T>>
+
+    /**
+     * Group by Skill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SkillGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SkillGroupByArgs['orderBy'] }
+        : { orderBy?: SkillGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SkillGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSkillGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Skill model
+   */
+  readonly fields: SkillFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Skill.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SkillClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Skill model
+   */
+  interface SkillFieldRefs {
+    readonly id: FieldRef<"Skill", 'String'>
+    readonly name: FieldRef<"Skill", 'String'>
+    readonly description: FieldRef<"Skill", 'String'>
+    readonly source: FieldRef<"Skill", 'String'>
+    readonly repoOwner: FieldRef<"Skill", 'String'>
+    readonly repoName: FieldRef<"Skill", 'String'>
+    readonly repoBranch: FieldRef<"Skill", 'String'>
+    readonly readmeUrl: FieldRef<"Skill", 'String'>
+    readonly isActive: FieldRef<"Skill", 'Boolean'>
+    readonly contentHash: FieldRef<"Skill", 'String'>
+    readonly createdAt: FieldRef<"Skill", 'DateTime'>
+    readonly updatedAt: FieldRef<"Skill", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Skill findUnique
+   */
+  export type SkillFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill findUniqueOrThrow
+   */
+  export type SkillFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill findFirst
+   */
+  export type SkillFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Skills.
+     */
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill findFirstOrThrow
+   */
+  export type SkillFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Skills.
+     */
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill findMany
+   */
+  export type SkillFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter, which Skills to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill create
+   */
+  export type SkillCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Skill.
+     */
+    data: XOR<SkillCreateInput, SkillUncheckedCreateInput>
+  }
+
+  /**
+   * Skill createMany
+   */
+  export type SkillCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Skills.
+     */
+    data: SkillCreateManyInput | SkillCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Skill createManyAndReturn
+   */
+  export type SkillCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data used to create many Skills.
+     */
+    data: SkillCreateManyInput | SkillCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Skill update
+   */
+  export type SkillUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Skill.
+     */
+    data: XOR<SkillUpdateInput, SkillUncheckedUpdateInput>
+    /**
+     * Choose, which Skill to update.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill updateMany
+   */
+  export type SkillUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Skills.
+     */
+    data: XOR<SkillUpdateManyMutationInput, SkillUncheckedUpdateManyInput>
+    /**
+     * Filter which Skills to update
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill updateManyAndReturn
+   */
+  export type SkillUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data used to update Skills.
+     */
+    data: XOR<SkillUpdateManyMutationInput, SkillUncheckedUpdateManyInput>
+    /**
+     * Filter which Skills to update
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill upsert
+   */
+  export type SkillUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Skill to update in case it exists.
+     */
+    where: SkillWhereUniqueInput
+    /**
+     * In case the Skill found by the `where` argument doesn't exist, create a new Skill with this data.
+     */
+    create: XOR<SkillCreateInput, SkillUncheckedCreateInput>
+    /**
+     * In case the Skill was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SkillUpdateInput, SkillUncheckedUpdateInput>
+  }
+
+  /**
+   * Skill delete
+   */
+  export type SkillDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Filter which Skill to delete.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill deleteMany
+   */
+  export type SkillDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Skills to delete
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill without action
+   */
+  export type SkillDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SkillRepo
+   */
+
+  export type AggregateSkillRepo = {
+    _count: SkillRepoCountAggregateOutputType | null
+    _min: SkillRepoMinAggregateOutputType | null
+    _max: SkillRepoMaxAggregateOutputType | null
+  }
+
+  export type SkillRepoMinAggregateOutputType = {
+    id: string | null
+    owner: string | null
+    name: string | null
+    branch: string | null
+    isEnabled: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SkillRepoMaxAggregateOutputType = {
+    id: string | null
+    owner: string | null
+    name: string | null
+    branch: string | null
+    isEnabled: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SkillRepoCountAggregateOutputType = {
+    id: number
+    owner: number
+    name: number
+    branch: number
+    isEnabled: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SkillRepoMinAggregateInputType = {
+    id?: true
+    owner?: true
+    name?: true
+    branch?: true
+    isEnabled?: true
+    createdAt?: true
+  }
+
+  export type SkillRepoMaxAggregateInputType = {
+    id?: true
+    owner?: true
+    name?: true
+    branch?: true
+    isEnabled?: true
+    createdAt?: true
+  }
+
+  export type SkillRepoCountAggregateInputType = {
+    id?: true
+    owner?: true
+    name?: true
+    branch?: true
+    isEnabled?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SkillRepoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SkillRepo to aggregate.
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SkillRepos to fetch.
+     */
+    orderBy?: SkillRepoOrderByWithRelationInput | SkillRepoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SkillRepoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SkillRepos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SkillRepos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SkillRepos
+    **/
+    _count?: true | SkillRepoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SkillRepoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SkillRepoMaxAggregateInputType
+  }
+
+  export type GetSkillRepoAggregateType<T extends SkillRepoAggregateArgs> = {
+        [P in keyof T & keyof AggregateSkillRepo]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSkillRepo[P]>
+      : GetScalarType<T[P], AggregateSkillRepo[P]>
+  }
+
+
+
+
+  export type SkillRepoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SkillRepoWhereInput
+    orderBy?: SkillRepoOrderByWithAggregationInput | SkillRepoOrderByWithAggregationInput[]
+    by: SkillRepoScalarFieldEnum[] | SkillRepoScalarFieldEnum
+    having?: SkillRepoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SkillRepoCountAggregateInputType | true
+    _min?: SkillRepoMinAggregateInputType
+    _max?: SkillRepoMaxAggregateInputType
+  }
+
+  export type SkillRepoGroupByOutputType = {
+    id: string
+    owner: string
+    name: string
+    branch: string
+    isEnabled: boolean
+    createdAt: Date
+    _count: SkillRepoCountAggregateOutputType | null
+    _min: SkillRepoMinAggregateOutputType | null
+    _max: SkillRepoMaxAggregateOutputType | null
+  }
+
+  type GetSkillRepoGroupByPayload<T extends SkillRepoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SkillRepoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SkillRepoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SkillRepoGroupByOutputType[P]>
+            : GetScalarType<T[P], SkillRepoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SkillRepoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    owner?: boolean
+    name?: boolean
+    branch?: boolean
+    isEnabled?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["skillRepo"]>
+
+  export type SkillRepoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    owner?: boolean
+    name?: boolean
+    branch?: boolean
+    isEnabled?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["skillRepo"]>
+
+  export type SkillRepoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    owner?: boolean
+    name?: boolean
+    branch?: boolean
+    isEnabled?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["skillRepo"]>
+
+  export type SkillRepoSelectScalar = {
+    id?: boolean
+    owner?: boolean
+    name?: boolean
+    branch?: boolean
+    isEnabled?: boolean
+    createdAt?: boolean
+  }
+
+  export type SkillRepoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "owner" | "name" | "branch" | "isEnabled" | "createdAt", ExtArgs["result"]["skillRepo"]>
+
+  export type $SkillRepoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SkillRepo"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      owner: string
+      name: string
+      branch: string
+      isEnabled: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["skillRepo"]>
+    composites: {}
+  }
+
+  type SkillRepoGetPayload<S extends boolean | null | undefined | SkillRepoDefaultArgs> = $Result.GetResult<Prisma.$SkillRepoPayload, S>
+
+  type SkillRepoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SkillRepoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SkillRepoCountAggregateInputType | true
+    }
+
+  export interface SkillRepoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SkillRepo'], meta: { name: 'SkillRepo' } }
+    /**
+     * Find zero or one SkillRepo that matches the filter.
+     * @param {SkillRepoFindUniqueArgs} args - Arguments to find a SkillRepo
+     * @example
+     * // Get one SkillRepo
+     * const skillRepo = await prisma.skillRepo.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SkillRepoFindUniqueArgs>(args: SelectSubset<T, SkillRepoFindUniqueArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SkillRepo that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SkillRepoFindUniqueOrThrowArgs} args - Arguments to find a SkillRepo
+     * @example
+     * // Get one SkillRepo
+     * const skillRepo = await prisma.skillRepo.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SkillRepoFindUniqueOrThrowArgs>(args: SelectSubset<T, SkillRepoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SkillRepo that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoFindFirstArgs} args - Arguments to find a SkillRepo
+     * @example
+     * // Get one SkillRepo
+     * const skillRepo = await prisma.skillRepo.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SkillRepoFindFirstArgs>(args?: SelectSubset<T, SkillRepoFindFirstArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SkillRepo that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoFindFirstOrThrowArgs} args - Arguments to find a SkillRepo
+     * @example
+     * // Get one SkillRepo
+     * const skillRepo = await prisma.skillRepo.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SkillRepoFindFirstOrThrowArgs>(args?: SelectSubset<T, SkillRepoFindFirstOrThrowArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SkillRepos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SkillRepos
+     * const skillRepos = await prisma.skillRepo.findMany()
+     * 
+     * // Get first 10 SkillRepos
+     * const skillRepos = await prisma.skillRepo.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const skillRepoWithIdOnly = await prisma.skillRepo.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SkillRepoFindManyArgs>(args?: SelectSubset<T, SkillRepoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SkillRepo.
+     * @param {SkillRepoCreateArgs} args - Arguments to create a SkillRepo.
+     * @example
+     * // Create one SkillRepo
+     * const SkillRepo = await prisma.skillRepo.create({
+     *   data: {
+     *     // ... data to create a SkillRepo
+     *   }
+     * })
+     * 
+     */
+    create<T extends SkillRepoCreateArgs>(args: SelectSubset<T, SkillRepoCreateArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SkillRepos.
+     * @param {SkillRepoCreateManyArgs} args - Arguments to create many SkillRepos.
+     * @example
+     * // Create many SkillRepos
+     * const skillRepo = await prisma.skillRepo.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SkillRepoCreateManyArgs>(args?: SelectSubset<T, SkillRepoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SkillRepos and returns the data saved in the database.
+     * @param {SkillRepoCreateManyAndReturnArgs} args - Arguments to create many SkillRepos.
+     * @example
+     * // Create many SkillRepos
+     * const skillRepo = await prisma.skillRepo.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SkillRepos and only return the `id`
+     * const skillRepoWithIdOnly = await prisma.skillRepo.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SkillRepoCreateManyAndReturnArgs>(args?: SelectSubset<T, SkillRepoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SkillRepo.
+     * @param {SkillRepoDeleteArgs} args - Arguments to delete one SkillRepo.
+     * @example
+     * // Delete one SkillRepo
+     * const SkillRepo = await prisma.skillRepo.delete({
+     *   where: {
+     *     // ... filter to delete one SkillRepo
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SkillRepoDeleteArgs>(args: SelectSubset<T, SkillRepoDeleteArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SkillRepo.
+     * @param {SkillRepoUpdateArgs} args - Arguments to update one SkillRepo.
+     * @example
+     * // Update one SkillRepo
+     * const skillRepo = await prisma.skillRepo.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SkillRepoUpdateArgs>(args: SelectSubset<T, SkillRepoUpdateArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SkillRepos.
+     * @param {SkillRepoDeleteManyArgs} args - Arguments to filter SkillRepos to delete.
+     * @example
+     * // Delete a few SkillRepos
+     * const { count } = await prisma.skillRepo.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SkillRepoDeleteManyArgs>(args?: SelectSubset<T, SkillRepoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SkillRepos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SkillRepos
+     * const skillRepo = await prisma.skillRepo.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SkillRepoUpdateManyArgs>(args: SelectSubset<T, SkillRepoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SkillRepos and returns the data updated in the database.
+     * @param {SkillRepoUpdateManyAndReturnArgs} args - Arguments to update many SkillRepos.
+     * @example
+     * // Update many SkillRepos
+     * const skillRepo = await prisma.skillRepo.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SkillRepos and only return the `id`
+     * const skillRepoWithIdOnly = await prisma.skillRepo.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SkillRepoUpdateManyAndReturnArgs>(args: SelectSubset<T, SkillRepoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SkillRepo.
+     * @param {SkillRepoUpsertArgs} args - Arguments to update or create a SkillRepo.
+     * @example
+     * // Update or create a SkillRepo
+     * const skillRepo = await prisma.skillRepo.upsert({
+     *   create: {
+     *     // ... data to create a SkillRepo
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SkillRepo we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SkillRepoUpsertArgs>(args: SelectSubset<T, SkillRepoUpsertArgs<ExtArgs>>): Prisma__SkillRepoClient<$Result.GetResult<Prisma.$SkillRepoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SkillRepos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoCountArgs} args - Arguments to filter SkillRepos to count.
+     * @example
+     * // Count the number of SkillRepos
+     * const count = await prisma.skillRepo.count({
+     *   where: {
+     *     // ... the filter for the SkillRepos we want to count
+     *   }
+     * })
+    **/
+    count<T extends SkillRepoCountArgs>(
+      args?: Subset<T, SkillRepoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SkillRepoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SkillRepo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SkillRepoAggregateArgs>(args: Subset<T, SkillRepoAggregateArgs>): Prisma.PrismaPromise<GetSkillRepoAggregateType<T>>
+
+    /**
+     * Group by SkillRepo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillRepoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SkillRepoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SkillRepoGroupByArgs['orderBy'] }
+        : { orderBy?: SkillRepoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SkillRepoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSkillRepoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SkillRepo model
+   */
+  readonly fields: SkillRepoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SkillRepo.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SkillRepoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SkillRepo model
+   */
+  interface SkillRepoFieldRefs {
+    readonly id: FieldRef<"SkillRepo", 'String'>
+    readonly owner: FieldRef<"SkillRepo", 'String'>
+    readonly name: FieldRef<"SkillRepo", 'String'>
+    readonly branch: FieldRef<"SkillRepo", 'String'>
+    readonly isEnabled: FieldRef<"SkillRepo", 'Boolean'>
+    readonly createdAt: FieldRef<"SkillRepo", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SkillRepo findUnique
+   */
+  export type SkillRepoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter, which SkillRepo to fetch.
+     */
+    where: SkillRepoWhereUniqueInput
+  }
+
+  /**
+   * SkillRepo findUniqueOrThrow
+   */
+  export type SkillRepoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter, which SkillRepo to fetch.
+     */
+    where: SkillRepoWhereUniqueInput
+  }
+
+  /**
+   * SkillRepo findFirst
+   */
+  export type SkillRepoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter, which SkillRepo to fetch.
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SkillRepos to fetch.
+     */
+    orderBy?: SkillRepoOrderByWithRelationInput | SkillRepoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SkillRepos.
+     */
+    cursor?: SkillRepoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SkillRepos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SkillRepos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SkillRepos.
+     */
+    distinct?: SkillRepoScalarFieldEnum | SkillRepoScalarFieldEnum[]
+  }
+
+  /**
+   * SkillRepo findFirstOrThrow
+   */
+  export type SkillRepoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter, which SkillRepo to fetch.
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SkillRepos to fetch.
+     */
+    orderBy?: SkillRepoOrderByWithRelationInput | SkillRepoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SkillRepos.
+     */
+    cursor?: SkillRepoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SkillRepos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SkillRepos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SkillRepos.
+     */
+    distinct?: SkillRepoScalarFieldEnum | SkillRepoScalarFieldEnum[]
+  }
+
+  /**
+   * SkillRepo findMany
+   */
+  export type SkillRepoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter, which SkillRepos to fetch.
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SkillRepos to fetch.
+     */
+    orderBy?: SkillRepoOrderByWithRelationInput | SkillRepoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SkillRepos.
+     */
+    cursor?: SkillRepoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SkillRepos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SkillRepos.
+     */
+    skip?: number
+    distinct?: SkillRepoScalarFieldEnum | SkillRepoScalarFieldEnum[]
+  }
+
+  /**
+   * SkillRepo create
+   */
+  export type SkillRepoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SkillRepo.
+     */
+    data: XOR<SkillRepoCreateInput, SkillRepoUncheckedCreateInput>
+  }
+
+  /**
+   * SkillRepo createMany
+   */
+  export type SkillRepoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SkillRepos.
+     */
+    data: SkillRepoCreateManyInput | SkillRepoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SkillRepo createManyAndReturn
+   */
+  export type SkillRepoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * The data used to create many SkillRepos.
+     */
+    data: SkillRepoCreateManyInput | SkillRepoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SkillRepo update
+   */
+  export type SkillRepoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SkillRepo.
+     */
+    data: XOR<SkillRepoUpdateInput, SkillRepoUncheckedUpdateInput>
+    /**
+     * Choose, which SkillRepo to update.
+     */
+    where: SkillRepoWhereUniqueInput
+  }
+
+  /**
+   * SkillRepo updateMany
+   */
+  export type SkillRepoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SkillRepos.
+     */
+    data: XOR<SkillRepoUpdateManyMutationInput, SkillRepoUncheckedUpdateManyInput>
+    /**
+     * Filter which SkillRepos to update
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * Limit how many SkillRepos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SkillRepo updateManyAndReturn
+   */
+  export type SkillRepoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * The data used to update SkillRepos.
+     */
+    data: XOR<SkillRepoUpdateManyMutationInput, SkillRepoUncheckedUpdateManyInput>
+    /**
+     * Filter which SkillRepos to update
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * Limit how many SkillRepos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SkillRepo upsert
+   */
+  export type SkillRepoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SkillRepo to update in case it exists.
+     */
+    where: SkillRepoWhereUniqueInput
+    /**
+     * In case the SkillRepo found by the `where` argument doesn't exist, create a new SkillRepo with this data.
+     */
+    create: XOR<SkillRepoCreateInput, SkillRepoUncheckedCreateInput>
+    /**
+     * In case the SkillRepo was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SkillRepoUpdateInput, SkillRepoUncheckedUpdateInput>
+  }
+
+  /**
+   * SkillRepo delete
+   */
+  export type SkillRepoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+    /**
+     * Filter which SkillRepo to delete.
+     */
+    where: SkillRepoWhereUniqueInput
+  }
+
+  /**
+   * SkillRepo deleteMany
+   */
+  export type SkillRepoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SkillRepos to delete
+     */
+    where?: SkillRepoWhereInput
+    /**
+     * Limit how many SkillRepos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SkillRepo without action
+   */
+  export type SkillRepoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillRepo
+     */
+    select?: SkillRepoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SkillRepo
+     */
+    omit?: SkillRepoOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4412,6 +7948,59 @@ export namespace Prisma {
   };
 
   export type LlmModelScalarFieldEnum = (typeof LlmModelScalarFieldEnum)[keyof typeof LlmModelScalarFieldEnum]
+
+
+  export const McpServerScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    identifier: 'identifier',
+    description: 'description',
+    icon: 'icon',
+    transport: 'transport',
+    command: 'command',
+    args: 'args',
+    env: 'env',
+    url: 'url',
+    headers: 'headers',
+    timeout: 'timeout',
+    isActive: 'isActive',
+    cachedTools: 'cachedTools',
+    lastSyncAt: 'lastSyncAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type McpServerScalarFieldEnum = (typeof McpServerScalarFieldEnum)[keyof typeof McpServerScalarFieldEnum]
+
+
+  export const SkillScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    source: 'source',
+    repoOwner: 'repoOwner',
+    repoName: 'repoName',
+    repoBranch: 'repoBranch',
+    readmeUrl: 'readmeUrl',
+    isActive: 'isActive',
+    contentHash: 'contentHash',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SkillScalarFieldEnum = (typeof SkillScalarFieldEnum)[keyof typeof SkillScalarFieldEnum]
+
+
+  export const SkillRepoScalarFieldEnum: {
+    id: 'id',
+    owner: 'owner',
+    name: 'name',
+    branch: 'branch',
+    isEnabled: 'isEnabled',
+    createdAt: 'createdAt'
+  };
+
+  export type SkillRepoScalarFieldEnum = (typeof SkillRepoScalarFieldEnum)[keyof typeof SkillRepoScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4547,6 +8136,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -4769,6 +8372,265 @@ export namespace Prisma {
     config?: JsonWithAggregatesFilter<"LlmModel">
     createdAt?: DateTimeWithAggregatesFilter<"LlmModel"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"LlmModel"> | Date | string
+  }
+
+  export type McpServerWhereInput = {
+    AND?: McpServerWhereInput | McpServerWhereInput[]
+    OR?: McpServerWhereInput[]
+    NOT?: McpServerWhereInput | McpServerWhereInput[]
+    id?: StringFilter<"McpServer"> | string
+    name?: StringFilter<"McpServer"> | string
+    identifier?: StringFilter<"McpServer"> | string
+    description?: StringNullableFilter<"McpServer"> | string | null
+    icon?: StringNullableFilter<"McpServer"> | string | null
+    transport?: StringFilter<"McpServer"> | string
+    command?: StringNullableFilter<"McpServer"> | string | null
+    args?: StringNullableListFilter<"McpServer">
+    env?: JsonFilter<"McpServer">
+    url?: StringNullableFilter<"McpServer"> | string | null
+    headers?: JsonFilter<"McpServer">
+    timeout?: IntFilter<"McpServer"> | number
+    isActive?: BoolFilter<"McpServer"> | boolean
+    cachedTools?: JsonFilter<"McpServer">
+    lastSyncAt?: DateTimeNullableFilter<"McpServer"> | Date | string | null
+    createdAt?: DateTimeFilter<"McpServer"> | Date | string
+    updatedAt?: DateTimeFilter<"McpServer"> | Date | string
+  }
+
+  export type McpServerOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    identifier?: SortOrder
+    description?: SortOrderInput | SortOrder
+    icon?: SortOrderInput | SortOrder
+    transport?: SortOrder
+    command?: SortOrderInput | SortOrder
+    args?: SortOrder
+    env?: SortOrder
+    url?: SortOrderInput | SortOrder
+    headers?: SortOrder
+    timeout?: SortOrder
+    isActive?: SortOrder
+    cachedTools?: SortOrder
+    lastSyncAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type McpServerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    identifier?: string
+    AND?: McpServerWhereInput | McpServerWhereInput[]
+    OR?: McpServerWhereInput[]
+    NOT?: McpServerWhereInput | McpServerWhereInput[]
+    name?: StringFilter<"McpServer"> | string
+    description?: StringNullableFilter<"McpServer"> | string | null
+    icon?: StringNullableFilter<"McpServer"> | string | null
+    transport?: StringFilter<"McpServer"> | string
+    command?: StringNullableFilter<"McpServer"> | string | null
+    args?: StringNullableListFilter<"McpServer">
+    env?: JsonFilter<"McpServer">
+    url?: StringNullableFilter<"McpServer"> | string | null
+    headers?: JsonFilter<"McpServer">
+    timeout?: IntFilter<"McpServer"> | number
+    isActive?: BoolFilter<"McpServer"> | boolean
+    cachedTools?: JsonFilter<"McpServer">
+    lastSyncAt?: DateTimeNullableFilter<"McpServer"> | Date | string | null
+    createdAt?: DateTimeFilter<"McpServer"> | Date | string
+    updatedAt?: DateTimeFilter<"McpServer"> | Date | string
+  }, "id" | "identifier">
+
+  export type McpServerOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    identifier?: SortOrder
+    description?: SortOrderInput | SortOrder
+    icon?: SortOrderInput | SortOrder
+    transport?: SortOrder
+    command?: SortOrderInput | SortOrder
+    args?: SortOrder
+    env?: SortOrder
+    url?: SortOrderInput | SortOrder
+    headers?: SortOrder
+    timeout?: SortOrder
+    isActive?: SortOrder
+    cachedTools?: SortOrder
+    lastSyncAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: McpServerCountOrderByAggregateInput
+    _avg?: McpServerAvgOrderByAggregateInput
+    _max?: McpServerMaxOrderByAggregateInput
+    _min?: McpServerMinOrderByAggregateInput
+    _sum?: McpServerSumOrderByAggregateInput
+  }
+
+  export type McpServerScalarWhereWithAggregatesInput = {
+    AND?: McpServerScalarWhereWithAggregatesInput | McpServerScalarWhereWithAggregatesInput[]
+    OR?: McpServerScalarWhereWithAggregatesInput[]
+    NOT?: McpServerScalarWhereWithAggregatesInput | McpServerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"McpServer"> | string
+    name?: StringWithAggregatesFilter<"McpServer"> | string
+    identifier?: StringWithAggregatesFilter<"McpServer"> | string
+    description?: StringNullableWithAggregatesFilter<"McpServer"> | string | null
+    icon?: StringNullableWithAggregatesFilter<"McpServer"> | string | null
+    transport?: StringWithAggregatesFilter<"McpServer"> | string
+    command?: StringNullableWithAggregatesFilter<"McpServer"> | string | null
+    args?: StringNullableListFilter<"McpServer">
+    env?: JsonWithAggregatesFilter<"McpServer">
+    url?: StringNullableWithAggregatesFilter<"McpServer"> | string | null
+    headers?: JsonWithAggregatesFilter<"McpServer">
+    timeout?: IntWithAggregatesFilter<"McpServer"> | number
+    isActive?: BoolWithAggregatesFilter<"McpServer"> | boolean
+    cachedTools?: JsonWithAggregatesFilter<"McpServer">
+    lastSyncAt?: DateTimeNullableWithAggregatesFilter<"McpServer"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"McpServer"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"McpServer"> | Date | string
+  }
+
+  export type SkillWhereInput = {
+    AND?: SkillWhereInput | SkillWhereInput[]
+    OR?: SkillWhereInput[]
+    NOT?: SkillWhereInput | SkillWhereInput[]
+    id?: StringFilter<"Skill"> | string
+    name?: StringFilter<"Skill"> | string
+    description?: StringNullableFilter<"Skill"> | string | null
+    source?: StringFilter<"Skill"> | string
+    repoOwner?: StringNullableFilter<"Skill"> | string | null
+    repoName?: StringNullableFilter<"Skill"> | string | null
+    repoBranch?: StringNullableFilter<"Skill"> | string | null
+    readmeUrl?: StringNullableFilter<"Skill"> | string | null
+    isActive?: BoolFilter<"Skill"> | boolean
+    contentHash?: StringNullableFilter<"Skill"> | string | null
+    createdAt?: DateTimeFilter<"Skill"> | Date | string
+    updatedAt?: DateTimeFilter<"Skill"> | Date | string
+  }
+
+  export type SkillOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    source?: SortOrder
+    repoOwner?: SortOrderInput | SortOrder
+    repoName?: SortOrderInput | SortOrder
+    repoBranch?: SortOrderInput | SortOrder
+    readmeUrl?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    contentHash?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SkillWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: SkillWhereInput | SkillWhereInput[]
+    OR?: SkillWhereInput[]
+    NOT?: SkillWhereInput | SkillWhereInput[]
+    description?: StringNullableFilter<"Skill"> | string | null
+    source?: StringFilter<"Skill"> | string
+    repoOwner?: StringNullableFilter<"Skill"> | string | null
+    repoName?: StringNullableFilter<"Skill"> | string | null
+    repoBranch?: StringNullableFilter<"Skill"> | string | null
+    readmeUrl?: StringNullableFilter<"Skill"> | string | null
+    isActive?: BoolFilter<"Skill"> | boolean
+    contentHash?: StringNullableFilter<"Skill"> | string | null
+    createdAt?: DateTimeFilter<"Skill"> | Date | string
+    updatedAt?: DateTimeFilter<"Skill"> | Date | string
+  }, "id" | "name">
+
+  export type SkillOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    source?: SortOrder
+    repoOwner?: SortOrderInput | SortOrder
+    repoName?: SortOrderInput | SortOrder
+    repoBranch?: SortOrderInput | SortOrder
+    readmeUrl?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    contentHash?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SkillCountOrderByAggregateInput
+    _max?: SkillMaxOrderByAggregateInput
+    _min?: SkillMinOrderByAggregateInput
+  }
+
+  export type SkillScalarWhereWithAggregatesInput = {
+    AND?: SkillScalarWhereWithAggregatesInput | SkillScalarWhereWithAggregatesInput[]
+    OR?: SkillScalarWhereWithAggregatesInput[]
+    NOT?: SkillScalarWhereWithAggregatesInput | SkillScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Skill"> | string
+    name?: StringWithAggregatesFilter<"Skill"> | string
+    description?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    source?: StringWithAggregatesFilter<"Skill"> | string
+    repoOwner?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    repoName?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    repoBranch?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    readmeUrl?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Skill"> | boolean
+    contentHash?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Skill"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Skill"> | Date | string
+  }
+
+  export type SkillRepoWhereInput = {
+    AND?: SkillRepoWhereInput | SkillRepoWhereInput[]
+    OR?: SkillRepoWhereInput[]
+    NOT?: SkillRepoWhereInput | SkillRepoWhereInput[]
+    id?: StringFilter<"SkillRepo"> | string
+    owner?: StringFilter<"SkillRepo"> | string
+    name?: StringFilter<"SkillRepo"> | string
+    branch?: StringFilter<"SkillRepo"> | string
+    isEnabled?: BoolFilter<"SkillRepo"> | boolean
+    createdAt?: DateTimeFilter<"SkillRepo"> | Date | string
+  }
+
+  export type SkillRepoOrderByWithRelationInput = {
+    id?: SortOrder
+    owner?: SortOrder
+    name?: SortOrder
+    branch?: SortOrder
+    isEnabled?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SkillRepoWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    owner_name?: SkillRepoOwnerNameCompoundUniqueInput
+    AND?: SkillRepoWhereInput | SkillRepoWhereInput[]
+    OR?: SkillRepoWhereInput[]
+    NOT?: SkillRepoWhereInput | SkillRepoWhereInput[]
+    owner?: StringFilter<"SkillRepo"> | string
+    name?: StringFilter<"SkillRepo"> | string
+    branch?: StringFilter<"SkillRepo"> | string
+    isEnabled?: BoolFilter<"SkillRepo"> | boolean
+    createdAt?: DateTimeFilter<"SkillRepo"> | Date | string
+  }, "id" | "owner_name">
+
+  export type SkillRepoOrderByWithAggregationInput = {
+    id?: SortOrder
+    owner?: SortOrder
+    name?: SortOrder
+    branch?: SortOrder
+    isEnabled?: SortOrder
+    createdAt?: SortOrder
+    _count?: SkillRepoCountOrderByAggregateInput
+    _max?: SkillRepoMaxOrderByAggregateInput
+    _min?: SkillRepoMinOrderByAggregateInput
+  }
+
+  export type SkillRepoScalarWhereWithAggregatesInput = {
+    AND?: SkillRepoScalarWhereWithAggregatesInput | SkillRepoScalarWhereWithAggregatesInput[]
+    OR?: SkillRepoScalarWhereWithAggregatesInput[]
+    NOT?: SkillRepoScalarWhereWithAggregatesInput | SkillRepoScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SkillRepo"> | string
+    owner?: StringWithAggregatesFilter<"SkillRepo"> | string
+    name?: StringWithAggregatesFilter<"SkillRepo"> | string
+    branch?: StringWithAggregatesFilter<"SkillRepo"> | string
+    isEnabled?: BoolWithAggregatesFilter<"SkillRepo"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SkillRepo"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -5017,6 +8879,314 @@ export namespace Prisma {
     config?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type McpServerCreateInput = {
+    id?: string
+    name: string
+    identifier: string
+    description?: string | null
+    icon?: string | null
+    transport: string
+    command?: string | null
+    args?: McpServerCreateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: number
+    isActive?: boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type McpServerUncheckedCreateInput = {
+    id?: string
+    name: string
+    identifier: string
+    description?: string | null
+    icon?: string | null
+    transport: string
+    command?: string | null
+    args?: McpServerCreateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: number
+    isActive?: boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type McpServerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    identifier?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    transport?: StringFieldUpdateOperationsInput | string
+    command?: NullableStringFieldUpdateOperationsInput | string | null
+    args?: McpServerUpdateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type McpServerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    identifier?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    transport?: StringFieldUpdateOperationsInput | string
+    command?: NullableStringFieldUpdateOperationsInput | string | null
+    args?: McpServerUpdateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type McpServerCreateManyInput = {
+    id?: string
+    name: string
+    identifier: string
+    description?: string | null
+    icon?: string | null
+    transport: string
+    command?: string | null
+    args?: McpServerCreateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: number
+    isActive?: boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type McpServerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    identifier?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    transport?: StringFieldUpdateOperationsInput | string
+    command?: NullableStringFieldUpdateOperationsInput | string | null
+    args?: McpServerUpdateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type McpServerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    identifier?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    transport?: StringFieldUpdateOperationsInput | string
+    command?: NullableStringFieldUpdateOperationsInput | string | null
+    args?: McpServerUpdateargsInput | string[]
+    env?: JsonNullValueInput | InputJsonValue
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    headers?: JsonNullValueInput | InputJsonValue
+    timeout?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    cachedTools?: JsonNullValueInput | InputJsonValue
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    source?: string
+    repoOwner?: string | null
+    repoName?: string | null
+    repoBranch?: string | null
+    readmeUrl?: string | null
+    isActive?: boolean
+    contentHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SkillUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    source?: string
+    repoOwner?: string | null
+    repoName?: string | null
+    repoBranch?: string | null
+    readmeUrl?: string | null
+    isActive?: boolean
+    contentHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SkillUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: StringFieldUpdateOperationsInput | string
+    repoOwner?: NullableStringFieldUpdateOperationsInput | string | null
+    repoName?: NullableStringFieldUpdateOperationsInput | string | null
+    repoBranch?: NullableStringFieldUpdateOperationsInput | string | null
+    readmeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    contentHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: StringFieldUpdateOperationsInput | string
+    repoOwner?: NullableStringFieldUpdateOperationsInput | string | null
+    repoName?: NullableStringFieldUpdateOperationsInput | string | null
+    repoBranch?: NullableStringFieldUpdateOperationsInput | string | null
+    readmeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    contentHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    source?: string
+    repoOwner?: string | null
+    repoName?: string | null
+    repoBranch?: string | null
+    readmeUrl?: string | null
+    isActive?: boolean
+    contentHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SkillUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: StringFieldUpdateOperationsInput | string
+    repoOwner?: NullableStringFieldUpdateOperationsInput | string | null
+    repoName?: NullableStringFieldUpdateOperationsInput | string | null
+    repoBranch?: NullableStringFieldUpdateOperationsInput | string | null
+    readmeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    contentHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: StringFieldUpdateOperationsInput | string
+    repoOwner?: NullableStringFieldUpdateOperationsInput | string | null
+    repoName?: NullableStringFieldUpdateOperationsInput | string | null
+    repoBranch?: NullableStringFieldUpdateOperationsInput | string | null
+    readmeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    contentHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillRepoCreateInput = {
+    id?: string
+    owner: string
+    name: string
+    branch?: string
+    isEnabled?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillRepoUncheckedCreateInput = {
+    id?: string
+    owner: string
+    name: string
+    branch?: string
+    isEnabled?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillRepoUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    owner?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    branch?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillRepoUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    owner?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    branch?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillRepoCreateManyInput = {
+    id?: string
+    owner: string
+    name: string
+    branch?: string
+    isEnabled?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillRepoUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    owner?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    branch?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillRepoUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    owner?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    branch?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -5321,6 +9491,203 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type McpServerCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    identifier?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    transport?: SortOrder
+    command?: SortOrder
+    args?: SortOrder
+    env?: SortOrder
+    url?: SortOrder
+    headers?: SortOrder
+    timeout?: SortOrder
+    isActive?: SortOrder
+    cachedTools?: SortOrder
+    lastSyncAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type McpServerAvgOrderByAggregateInput = {
+    timeout?: SortOrder
+  }
+
+  export type McpServerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    identifier?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    transport?: SortOrder
+    command?: SortOrder
+    url?: SortOrder
+    timeout?: SortOrder
+    isActive?: SortOrder
+    lastSyncAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type McpServerMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    identifier?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    transport?: SortOrder
+    command?: SortOrder
+    url?: SortOrder
+    timeout?: SortOrder
+    isActive?: SortOrder
+    lastSyncAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type McpServerSumOrderByAggregateInput = {
+    timeout?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type SkillCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    source?: SortOrder
+    repoOwner?: SortOrder
+    repoName?: SortOrder
+    repoBranch?: SortOrder
+    readmeUrl?: SortOrder
+    isActive?: SortOrder
+    contentHash?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SkillMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    source?: SortOrder
+    repoOwner?: SortOrder
+    repoName?: SortOrder
+    repoBranch?: SortOrder
+    readmeUrl?: SortOrder
+    isActive?: SortOrder
+    contentHash?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SkillMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    source?: SortOrder
+    repoOwner?: SortOrder
+    repoName?: SortOrder
+    repoBranch?: SortOrder
+    readmeUrl?: SortOrder
+    isActive?: SortOrder
+    contentHash?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SkillRepoOwnerNameCompoundUniqueInput = {
+    owner: string
+    name: string
+  }
+
+  export type SkillRepoCountOrderByAggregateInput = {
+    id?: SortOrder
+    owner?: SortOrder
+    name?: SortOrder
+    branch?: SortOrder
+    isEnabled?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SkillRepoMaxOrderByAggregateInput = {
+    id?: SortOrder
+    owner?: SortOrder
+    name?: SortOrder
+    branch?: SortOrder
+    isEnabled?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SkillRepoMinOrderByAggregateInput = {
+    id?: SortOrder
+    owner?: SortOrder
+    name?: SortOrder
+    branch?: SortOrder
+    isEnabled?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type UserCreaterolesInput = {
     set: $Enums.UserRole[]
   }
@@ -5404,6 +9771,27 @@ export namespace Prisma {
     upsert?: LlmProviderUpsertWithoutModelsInput
     connect?: LlmProviderWhereUniqueInput
     update?: XOR<XOR<LlmProviderUpdateToOneWithWhereWithoutModelsInput, LlmProviderUpdateWithoutModelsInput>, LlmProviderUncheckedUpdateWithoutModelsInput>
+  }
+
+  export type McpServerCreateargsInput = {
+    set: string[]
+  }
+
+  export type McpServerUpdateargsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -5566,6 +9954,58 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type LlmModelCreateWithoutProviderInput = {

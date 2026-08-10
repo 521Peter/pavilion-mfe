@@ -156,6 +156,50 @@ exports.Prisma.LlmModelScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.McpServerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  identifier: 'identifier',
+  description: 'description',
+  icon: 'icon',
+  transport: 'transport',
+  command: 'command',
+  args: 'args',
+  env: 'env',
+  url: 'url',
+  headers: 'headers',
+  timeout: 'timeout',
+  isActive: 'isActive',
+  cachedTools: 'cachedTools',
+  lastSyncAt: 'lastSyncAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SkillScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  source: 'source',
+  repoOwner: 'repoOwner',
+  repoName: 'repoName',
+  repoBranch: 'repoBranch',
+  readmeUrl: 'readmeUrl',
+  isActive: 'isActive',
+  contentHash: 'contentHash',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SkillRepoScalarFieldEnum = {
+  id: 'id',
+  owner: 'owner',
+  name: 'name',
+  branch: 'branch',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -193,7 +237,10 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.Prisma.ModelName = {
   User: 'User',
   LlmProvider: 'LlmProvider',
-  LlmModel: 'LlmModel'
+  LlmModel: 'LlmModel',
+  McpServer: 'McpServer',
+  Skill: 'Skill',
+  SkillRepo: 'SkillRepo'
 };
 
 /**

@@ -4,6 +4,8 @@ import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { PrismaModule } from '@/database/prisma.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { LlmModule } from '@/modules/llm/llm.module'
+import { McpModule } from '@/modules/mcp/mcp.module'
+import { SkillModule } from '@/modules/skill/skill.module'
 import { appConfig } from '@/config'
 import { TransformInterceptor } from '@/common/interceptors/transform.interceptor'
 import { AllExceptionFilter } from '@/common/filters/all-exception.filter'
@@ -20,6 +22,8 @@ import { RolesGuard } from '@/common/guards/roles.guard'
     PrismaModule,
     AuthModule,
     LlmModule,
+    McpModule,
+    SkillModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },

@@ -9,6 +9,8 @@ import NotFound from '../pages/NotFound'
 import ServerError from '../pages/ServerError'
 import MFPage from './MFPage'
 import LlmProviders from '../pages/LlmProviders'
+import McpServers from '../pages/McpServers'
+import Skills from '../pages/Skills'
 import { deployBasePath } from '../utils/path'
 import { getToken } from '../api/http'
 
@@ -16,6 +18,8 @@ import { getToken } from '../api/http'
 export const routeMeta: Record<string, string> = {
   '/': '首页',
   '/llm-providers': 'Provider 管理',
+  '/mcp-servers': 'MCP 管理',
+  '/skills': 'Skill 管理',
   '/test': '测试页',
   '/env': '环境信息',
   '/403': '403',
@@ -49,6 +53,8 @@ export const router = createBrowserRouter(
       children: [
         { path: '/', element: <Home /> },
         { path: '/llm-providers', element: <LlmProviders /> },
+        { path: '/mcp-servers', element: <McpServers /> },
+        { path: '/skills', element: <Skills /> },
         { path: '/test', element: <Test /> },
         { path: '/env', element: <Env /> },
         { path: '/403', element: <Forbidden /> },
