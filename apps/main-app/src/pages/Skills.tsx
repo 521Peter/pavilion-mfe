@@ -170,7 +170,7 @@ function SkillDetailPanel({ skill, onClose }: { skill: SkillDetail; onClose: () 
 }
 
 // ─── 远程安装面板 ───
-function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
+function RemoteInstallPanel({ onClose, onInstalled }: { onClose: () => void; onInstalled?: () => void }) {
   const [url, setUrl] = useState('')
   const [owner, setOwner] = useState('')
   const [repo, setRepo] = useState('')
@@ -198,7 +198,10 @@ function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
     // 将 /blob/ 替换为 /tree/ 以统一处理
     const normalized = input.trim().replace('/blob/', '/tree/')
 
-    const m = normalized.match(/github\.com\/([^/\s]+)\/([^/\s]+?)(?:\.git)?(?:\/tree\/([^/\s]+)(\/.*?)(?=[?\s]|$))?/)
+    // owner 贪婪到 `/`；repo 贪婪到 `/`、`?`、`#` 或结尾（不能用懒匹配 +?，
+    // 否则 repo 只会匹配到第一个字符）。tree 之后的 path 可为空（仅指定分支的情况）。
+    // .git 后缀在下面统一剥离。
+    const m = normalized.match(/github\.com\/([^/\s]+)\/([^/\s?#]+)(?:\.git)?(?:\/tree\/([^/\s?#]+)((?:\/[^\s?#]*)*))?/)
     if (m) {
       setOwner(m[1])
       setRepo(m[2].replace(/\.git$/, ''))
@@ -237,6 +240,7 @@ function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
         setInstalling(directSkill)
         await skillApi.installRemote({ owner, repo, branch, skillName: directSkill, skillPath: directPath })
         alert(`Skill "${directSkill}" 安装成功`)
+        onInstalled?.()
         onClose()
         return
       }
@@ -261,6 +265,7 @@ function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
     try {
       await skillApi.installRemote({ owner, repo, branch, skillName: name, skillPath: skill.path })
       alert(`Skill "${name}" 安装成功`)
+      onInstalled?.()
       onClose()
     } catch (err) {
       alert(err instanceof Error ? err.message : '安装失败')
@@ -271,14 +276,14 @@ function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <div>
-      {/* URL 输入 */}
+      {/* URL 输入：粘贴后自动解析 owner/repo，无需手动填写 */}
       <div className="flex gap-2 mb-3">
         <Input
           variant="primary"
           value={url}
           onChange={e => { setUrl(e.target.value); parseUrl(e.target.value) }}
           onKeyDown={handleKeyDown}
-          placeholder="粘贴 GitHub 链接，如 https://github.com/owner/repo 或 .../tree/main/skills/my-skill"
+          placeholder="粘贴 GitHub 链接，如 https://github.com/owner/repo"
           fullWidth
           autoFocus
         />
@@ -287,21 +292,20 @@ function RemoteInstallPanel({ onClose }: { onClose: () => void }) {
         </Button>
       </div>
 
-      {/* 高级选项：手动展开 */}
-      <details className="mb-3">
-        <summary className="text-xs text-text-muted cursor-pointer select-none py-1">手动填写 owner / repo / branch</summary>
-        <div className="flex gap-2 mt-2">
-          <Input variant="primary" value={owner} onChange={e => setOwner(e.target.value)} placeholder="owner" className="flex-1" />
-          <Input variant="primary" value={repo} onChange={e => setRepo(e.target.value)} placeholder="repo" className="flex-1" />
-          <Input variant="primary" value={branch} onChange={e => setBranch(e.target.value)} placeholder="branch" className="w-24" />
-        </div>
-      </details>
-
-      {/* 当前解析结果 */}
+      {/* 当前解析结果 + 分支（默认 main，可改） */}
       {(owner || repo) && (
-        <div className="mb-3 flex items-center gap-2 text-xs text-text-muted">
+        <div className="mb-3 flex items-center gap-2 text-xs text-text-muted flex-wrap">
           <span className="font-medium text-text-regular">{owner}/{repo}</span>
-          <span>({branch})</span>
+          <span className="text-text-muted">·</span>
+          <label className="flex items-center gap-1">
+            分支
+            <input
+              type="text"
+              value={branch}
+              onChange={e => setBranch(e.target.value)}
+              className="w-20 px-1.5 py-0.5 rounded border border-border bg-background text-text-regular text-xs outline-none focus:border-primary"
+            />
+          </label>
           {directSkill && (
             <span className="text-primary font-medium flex items-center gap-1">
               <ChevronIcon size={10} open />
@@ -525,10 +529,10 @@ export default function Skills() {
       <Modal isOpen={remoteOpen} onOpenChange={setRemoteOpen}>
         <Modal.Backdrop>
           <Modal.Container>
-            <Modal.Dialog className="modal-wide">
+            <Modal.Dialog className="modal-medium">
               <Modal.Header><h3 className="text-base font-bold text-text-primary m-0">从 GitHub 安装 Skill</h3></Modal.Header>
               <Modal.Body>
-                <RemoteInstallPanel onClose={() => setRemoteOpen(false)} />
+                <RemoteInstallPanel onClose={() => setRemoteOpen(false)} onInstalled={refresh} />
               </Modal.Body>
             </Modal.Dialog>
           </Modal.Container>

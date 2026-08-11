@@ -117,12 +117,13 @@ export class SkillService {
       const entries = await this.fetchGithubContents(owner, repo, branch, searchPath)
       if (!entries) continue
 
-      // 检查是否有 SKILL.md（单 skill 仓库）
+      // 检查 searchPath 本身是否直接是一个 skill（含 SKILL.md）
       const hasSkillMd = entries.some((e: any) => e.type === 'file' && e.name === 'SKILL.md')
-      if (hasSkillMd && !path) {
-        // 仓库根或指定 path 直接就是一个 skill
+      if (hasSkillMd) {
+        // 仓库根、skills/ 目录、或用户指定的子目录本身就是单个 skill
         const skillName = searchPath ? searchPath.split('/').pop()! : repo
-        const description = await this.fetchSkillDescription(owner, repo, branch, `${searchPath ? searchPath + '/' : ''}SKILL.md`)
+        const mdPath = searchPath ? `${searchPath}/SKILL.md` : 'SKILL.md'
+        const description = await this.fetchSkillDescription(owner, repo, branch, mdPath)
         return [{
           name: skillName,
           description,
@@ -158,15 +159,23 @@ export class SkillService {
    * skillPath 指定 skill 在仓库中的路径（如 "skills/my-skill" 或 "" 表示仓库根）
    */
   async installRemote(owner: string, repo: string, branch: string, skillName: string, skillPath?: string) {
-    const sourcePath = skillPath || `skills/${skillName}`
-    this.logger.log(`安装远程 skill: ${owner}/${repo}/${branch}/${sourcePath} → ${skillName}`)
+    // skillPath 为 undefined（未提供）时回退到默认 skills/ 目录；
+    // 显式传入空字符串表示 skill 位于仓库根目录，不能用 || 兜底，否则会被误判为 falsy。
+    const sourcePath = skillPath !== undefined ? skillPath : `skills/${skillName}`
+    this.logger.log(`安装远程 skill: ${owner}/${repo}/${branch}/${sourcePath || '(root)'} → ${skillName}`)
 
     // 递归获取目录树
     const files = await this.fetchGithubTree(owner, repo, branch, sourcePath)
 
+    // 远端可用后再清理本地旧文件，避免误删（如远端 404 时保留现有 skill）。
+    // 重新安装 = 全量覆盖，否则远端删除的文件会在本地残留。
+    await this.loader.removeSkill(skillName)
+
     // 下载每个文件到本地
+    const prefix = sourcePath ? `${sourcePath}/` : ''
     for (const file of files) {
-      const relPath = file.path.replace(`${sourcePath}/`, '')
+      // 仅剥离 sourcePath 前缀；根目录 skill（prefix 为空）则保留完整路径
+      const relPath = prefix && file.path.startsWith(prefix) ? file.path.slice(prefix.length) : file.path
       const content = await this.downloadGithubFile(file.downloadUrl)
       await this.loader.writeFile(skillName, relPath, content)
     }
@@ -176,6 +185,8 @@ export class SkillService {
     const description = skill?.description ?? ''
 
     // 写入 DB
+    const skillMdPath = sourcePath ? `${sourcePath}/SKILL.md` : 'SKILL.md'
+    const readmeUrl = `https://github.com/${owner}/${repo}/blob/${branch}/${skillMdPath}`
     await this.prisma.skill.upsert({
       where: { name: skillName },
       create: {
@@ -185,7 +196,7 @@ export class SkillService {
         repoOwner: owner,
         repoName: repo,
         repoBranch: branch,
-        readmeUrl: `https://github.com/${owner}/${repo}/blob/${branch}/${sourcePath}/SKILL.md`,
+        readmeUrl,
       },
       update: {
         description,
@@ -193,7 +204,7 @@ export class SkillService {
         repoOwner: owner,
         repoName: repo,
         repoBranch: branch,
-        readmeUrl: `https://github.com/${owner}/${repo}/blob/${branch}/${sourcePath}/SKILL.md`,
+        readmeUrl,
       },
     })
 

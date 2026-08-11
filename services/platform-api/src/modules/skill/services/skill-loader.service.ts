@@ -66,7 +66,9 @@ export class SkillLoaderService {
       const fileTree = await this.buildFileTree(dir, '')
       const meta = this.parseFrontmatter(skillMd)
       return {
-        name: meta.name ?? name,
+        // 目录名是 skill 的唯一标识（与 cc-switch / Codex 一致）；
+        // frontmatter 的 name 字段仅为元数据，不参与寻址，避免与目录名不一致导致 404。
+        name,
         description: meta.description ?? '',
         directory: dir,
         skillMd,
@@ -106,18 +108,58 @@ export class SkillLoaderService {
     await writeFile(join(dir, 'SKILL.md'), skillMdContent, 'utf-8')
   }
 
-  /** 解析 SKILL.md frontmatter */
+  /** 解析 SKILL.md frontmatter（支持简单值、引号、以及 `|` / `>` 块标量） */
   parseFrontmatter(raw: string): { name?: string; description?: string; body: string } {
-    const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+    const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
     if (!match) return { body: raw }
     const metaBlock = match[1]
     const body = match[2]
-    const result: Record<string, string> = {}
-    for (const line of metaBlock.split('\n')) {
-      const m = line.match(/^(\w+):\s*(.*)$/)
-      if (m) result[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '')
-    }
+    const result = this.parseYamlLite(metaBlock)
     return { name: result.name, description: result.description, body }
+  }
+
+  /**
+   * 极简 YAML frontmatter 解析器，覆盖真实 SKILL.md 中常见的写法：
+   *   - `key: value`
+   *   - `key: "quoted value"` / `key: 'quoted'`
+   *   - `key: |` 或 `key: |-`（字面块，保留换行）
+   *   - `key: >` 或 `key: >-`（折叠块，换行合并为空格）
+   * 不依赖完整 YAML 库，避免引入额外依赖。
+   */
+  private parseYamlLite(block: string): Record<string, string> {
+    const lines = block.split(/\r?\n/)
+    const result: Record<string, string> = {}
+    let i = 0
+    while (i < lines.length) {
+      const line = lines[i]
+      const m = line.match(/^([A-Za-z][\w-]*)\s*:\s*(.*)$/)
+      if (!m) { i++; continue }
+      const key = m[1]
+      const rest = m[2]
+
+      const blockScalar = rest.match(/^([|>])([-+]?)\s*$/)
+      if (blockScalar) {
+        const folded = blockScalar[1] === '>'
+        const collected: string[] = []
+        i++
+        while (i < lines.length) {
+          const bl = lines[i]
+          if (bl === '') { collected.push(''); i++; continue }   // 空行保留
+          if (!/^\s/.test(bl)) break                              // 非缩进 → 块结束
+          collected.push(bl.replace(/^ {1,}/, ''))               // 去掉一级缩进
+          i++
+        }
+        const text = folded
+          ? collected.join('\n').replace(/\n+/g, ' ').trim()
+          : collected.join('\n').replace(/\n+$/, '')
+        result[key] = text
+        continue
+      }
+
+      result[key] = rest.trim().replace(/^["']|["']$/g, '')
+      i++
+    }
+    return result
   }
 
   /** 递归构建文件树 */
