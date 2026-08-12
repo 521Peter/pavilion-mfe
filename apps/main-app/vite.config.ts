@@ -48,9 +48,8 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         remotes: isServe ? remotes : undefined,
         runtimePlugins: isBuild ? ["./src/preloadPlugin"] : undefined,
         // 显式空 shared，覆盖 rspack 自动共享 package.json 依赖的默认行为。
-        // 否则主应用会把 react@19 共享给子应用，导致 React 18 子应用（react-app）
-        // 的 react-dom 解析到错误版本而崩溃（ReactCurrentDispatcher undefined）。
-        // 各子应用自带框架（Vue 子应用自带 vue，React 子应用自带 react）。
+        // 各子应用自带框架（Vue 子应用自带 vue，React 子应用自带 react），
+        // 主应用不向子应用共享自身的依赖，避免版本错配。
         shared: [],
         dts: false,
       }),

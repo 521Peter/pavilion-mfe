@@ -1,33 +1,12 @@
 {
   "apps": [
     {
-      "appCode": "demo-app",
-      "name": "Demo (Vue)",
-      "cdn": "",
-      "routes": ["/demo", "/vue-sub"],
-      "devPort": 6020,
-      "keepAlive": true
-    },
-    {
-      "appCode": "react-app",
-      "name": "Demo (React)",
-      "cdn": "",
-      "routes": ["/react"],
-      "devPort": 6030
-    },
-    {
-      "appCode": "vue2-app",
-      "name": "Demo (Vue 2)",
-      "cdn": "",
-      "routes": ["/vue2"],
-      "devPort": 6040
-    },
-    {
       "appCode": "git-report-generator",
       "name": "git 报告",
       "cdn": "",
       "routes": ["/git"],
-      "devPort": 6050
+      "devPort": 6050,
+      "keepAlive": false
     }
   ]
 }

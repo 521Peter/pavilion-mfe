@@ -48,31 +48,25 @@ jobs:
 
       - name: Build sub-apps
         run: |
-          pnpm --filter @pavilion-mfe/demo-segment build
-          pnpm --filter @pavilion-mfe/demo-segment-react build
-          pnpm --filter @pavilion-mfe/demo-segment-vue2 build
+          pnpm --filter git-report-generator build
         env:
           VITE_PAVILION_MFE_CDN: ${{ vars.PAVILION_MFE_CDN || '/pavilion-mfe' }}
 
       - name: Build main app
-        run: pnpm --filter @pavilion-mfe/segment-main build
+        run: pnpm --filter main-app build
         env:
           VITE_PAVILION_MFE_CDN: ${{ vars.PAVILION_MFE_CDN || '/pavilion-mfe' }}
           VITE_DEPLOY_BASE: ${{ vars.VITE_DEPLOY_BASE || '/pavilion-mfe/' }}
 
       - name: Collect dist artifacts
         run: |
-          mkdir -p dist-ghpages/mfe/demo-app
-          mkdir -p dist-ghpages/mfe/react-app
-          mkdir -p dist-ghpages/mfe/vue2-app
+          mkdir -p dist-ghpages/mfe/git-report-generator
 
           # Main app → root
-          cp -r apps/segment-main/dist/* dist-ghpages/
+          cp -r apps/main-app/dist/* dist-ghpages/
 
           # Sub-apps → /mfe/<appCode>/
-          cp -r apps/segment-demo/dist/* dist-ghpages/mfe/demo-app/
-          cp -r apps/segment-react/dist/* dist-ghpages/mfe/react-app/
-          cp -r apps/segment-vue2/dist/* dist-ghpages/mfe/vue2-app/
+          cp -r apps/git-report-generator/dist/* dist-ghpages/mfe/git-report-generator/
 
           # SPA fallback: save full path → redirect to base URL
           cat > dist-ghpages/404.html << 'HTMLEOF'

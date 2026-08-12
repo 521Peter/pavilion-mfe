@@ -16,9 +16,6 @@ const monorepoRoot = resolve(appDir, '../..')
 // appCode -> monorepo app directory name
 const segments = [
   { dir: 'main-app', isMain: true },
-  { dir: 'segment-demo', code: 'demo-app' },
-  { dir: 'segment-react', code: 'react-app' },
-  { dir: 'segment-vue2', code: 'vue2-app' },
   { dir: 'git-report-generator', code: 'git-report-generator' },
 ]
 

@@ -200,7 +200,7 @@ The sandbox does **not** `deactivate()` when cached — the popstate proxy is re
 // vite.config.ts (main app)
 PavilionMfe({
   role: 'main-app',
-  name: 'segment-main',
+  name: appCode,  // injected from env var VITE_PAVILION_MFE_APP_CODE
   runtimePlugins: ['./src/preloadPlugin'],  // replaces static pavilionMfeRemotes
 })
 ```
@@ -226,16 +226,15 @@ configureLog({
 Sample log output:
 
 ```
-[PavilionMfe] router    router-start       subApps=2
-[PavilionMfe] router    sub-app-register   appCode=demo-app
-[PavilionMfe] router    before-routing     trigger=pushState  url=/demo/list
-[PavilionMfe] sandbox   sandbox-activate   appCode=demo-app
-[PavilionMfe] router    sub-app-load       appCode=demo-app  ms=320
-[PavilionMfe] router    sub-app-mount      appCode=demo-app  ms=45
-[PavilionMfe] sandbox   popstate-blocked   appCode=demo-app  path=/react/dashboard
-[PavilionMfe] router    sub-app-switch     demo-app → react-app
-[PavilionMfe] sandbox   sandbox-deactivate appCode=demo-app  timers=3  intervals=1  listeners=2
-[PavilionMfe] preload   register           remotes=2  apps=demo-app, react-app
+[PavilionMfe] router    router-start       subApps=1
+[PavilionMfe] router    sub-app-register   appCode=git-report-generator
+[PavilionMfe] router    before-routing     trigger=pushState  url=/git
+[PavilionMfe] sandbox   sandbox-activate   appCode=git-report-generator
+[PavilionMfe] router    sub-app-load       appCode=git-report-generator  ms=320
+[PavilionMfe] router    sub-app-mount      appCode=git-report-generator  ms=45
+[PavilionMfe] router    sub-app-switch     main-app → git-report-generator
+[PavilionMfe] sandbox   sandbox-deactivate appCode=git-report-generator  timers=3  intervals=1  listeners=2
+[PavilionMfe] preload   register           remotes=1  apps=git-report-generator
 [PavilionMfe] bridge    event-emit         name=user-login  listeners=3
 ```
 
@@ -257,7 +256,7 @@ import { useTabs } from '@pavilion-mfe/tabs/vue'
 
 const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs()
 
-openTab({ path: '/demo/list', title: 'List' })
+openTab({ path: '/git', title: 'Git Report' })
 closeOthers(tabId)
 closeAll()
 ```
@@ -292,19 +291,11 @@ The main app declares all sub-apps via `mfe.json`:
 {
   "apps": [
     {
-      "appCode": "demo-app",
-      "name": "Demo (Vue)",
+      "appCode": "git-report-generator",
+      "name": "Git Report",
       "cdn": "",
-      "routes": ["/demo", "/vue-sub"],
-      "devPort": 6020,
-      "keepAlive": true
-    },
-    {
-      "appCode": "react-app",
-      "name": "Demo (React)",
-      "cdn": "",
-      "routes": ["/react"],
-      "devPort": 6030
+      "routes": ["/git"],
+      "devPort": 6050
     }
   ]
 }
@@ -379,16 +370,7 @@ npm create pavilion-mfe
 
 ```bash
 # Start main app only (sub-apps need separate startup)
-cd apps/segment-main && pnpm dev
-
-# Start Vue 3 sub-app (standalone or alongside main app)
-cd apps/segment-demo && pnpm dev
-
-# Start Vue 2 sub-app
-cd apps/segment-vue2 && pnpm dev
-
-# Start React sub-app
-cd apps/segment-react && pnpm dev
+cd apps/main-app && pnpm dev
 
 # Rebuild core packages after changes (in dependency order)
 pnpm --filter @pavilion-mfe/sandbox build
@@ -429,14 +411,12 @@ Configure in repo **Settings** → **Secrets and variables** → **Variables**:
 VITE_PAVILION_MFE_CDN=/my-repo pnpm --filter "./apps/segment-*" build
 
 # 2. Build main app
-VITE_DEPLOY_BASE=/my-repo/ pnpm --filter @pavilion-mfe/segment-main build
+VITE_DEPLOY_BASE=/my-repo/ pnpm --filter main-app build
 
 # 3. Collect artifacts
 mkdir -p dist-ghpages/mfe
-cp -r apps/segment-main/dist/* dist-ghpages/
-cp -r apps/segment-demo/dist/* dist-ghpages/mfe/demo-app/
-cp -r apps/segment-react/dist/* dist-ghpages/mfe/react-app/
-cp -r apps/segment-vue2/dist/* dist-ghpages/mfe/vue2-app/
+cp -r apps/main-app/dist/* dist-ghpages/
+cp -r apps/git-report-generator/dist/* dist-ghpages/mfe/git-report-generator/
 cp dist-ghpages/index.html dist-ghpages/404.html  # SPA fallback
 
 # 4. Deploy
@@ -452,13 +432,7 @@ dist-ghpages/
 ├── mf-manifest-main.json
 ├── static/js/...                 # Main app chunks
 ├── mfe/
-│   ├── demo-app/
-│   │   ├── mf-manifest-main.json
-│   │   └── static/js/...
-│   ├── react-app/
-│   │   ├── mf-manifest-main.json
-│   │   └── static/js/...
-│   └── vue2-app/
+│   └── git-report-generator/
 │       ├── mf-manifest-main.json
 │       └── static/js/...
 ```

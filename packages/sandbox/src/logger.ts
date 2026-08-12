@@ -11,9 +11,9 @@
  * Default: all modules enabled.
  *
  * Output format (colorized in browser DevTools):
- *   [PavilionMfe] router    before-routing   trigger=pushState  url=/demo/list
- *   [PavilionMfe] sandbox   activate         appCode=demo-app
- *   [PavilionMfe] router    sub-app-switch   demo-app → react-app
+ *   [PavilionMfe] router    before-routing   trigger=pushState  url=/git
+ *   [PavilionMfe] sandbox   activate         appCode=git-report-generator
+ *   [PavilionMfe] router    sub-app-switch   main-app → git-report-generator
  */
 
 export type LogModule = 'router' | 'sandbox' | 'preload' | 'bridge'

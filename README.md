@@ -209,7 +209,7 @@ const pavilionMfeRouter = createPavilionMfeRouter({
 // vite.config.ts (主应用)
 PavilionMfe({
   role: 'main-app',
-  name: 'segment-main',
+  name: appCode,  // 由环境变量 VITE_PAVILION_MFE_APP_CODE 注入
   runtimePlugins: ['./src/preloadPlugin'],  // 替代静态 pavilionMfeRemotes
 })
 ```
@@ -235,16 +235,15 @@ configureLog({
 日志输出示例：
 
 ```
-[PavilionMfe] router    router-start       subApps=2
-[PavilionMfe] router    sub-app-register   appCode=demo-app
-[PavilionMfe] router    before-routing     trigger=pushState  url=/demo/list
-[PavilionMfe] sandbox   sandbox-activate   appCode=demo-app
-[PavilionMfe] router    sub-app-load       appCode=demo-app  ms=320
-[PavilionMfe] router    sub-app-mount      appCode=demo-app  ms=45
-[PavilionMfe] sandbox   popstate-blocked   appCode=demo-app  path=/react/dashboard
-[PavilionMfe] router    sub-app-switch     demo-app → react-app
-[PavilionMfe] sandbox   sandbox-deactivate  appCode=demo-app  timers=3  intervals=1  listeners=2
-[PavilionMfe] preload   register           remotes=2  apps=demo-app, react-app
+[PavilionMfe] router    router-start       subApps=1
+[PavilionMfe] router    sub-app-register   appCode=git-report-generator
+[PavilionMfe] router    before-routing     trigger=pushState  url=/git
+[PavilionMfe] sandbox   sandbox-activate   appCode=git-report-generator
+[PavilionMfe] router    sub-app-load       appCode=git-report-generator  ms=320
+[PavilionMfe] router    sub-app-mount      appCode=git-report-generator  ms=45
+[PavilionMfe] router    sub-app-switch     main-app → git-report-generator
+[PavilionMfe] sandbox   sandbox-deactivate  appCode=git-report-generator  timers=3  intervals=1  listeners=2
+[PavilionMfe] preload   register           remotes=1  apps=git-report-generator
 [PavilionMfe] bridge    event-emit         name=user-login  listeners=3
 ```
 
@@ -272,7 +271,7 @@ import { useTabs } from '@pavilion-mfe/tabs/vue'
 
 const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs()
 
-openTab({ path: '/demo/list', title: '列表页' })  // 打开/切换到标签
+openTab({ path: '/git', title: 'git 报告' })  // 打开/切换到标签
 closeOthers(tabId)  // 关闭其他标签
 closeAll()          // 关闭全部
 ```
@@ -307,19 +306,11 @@ const { tabs, openTab, closeAll } = useTabs()
 {
   "apps": [
     {
-      "appCode": "demo-app",
-      "name": "Demo (Vue)",
+      "appCode": "git-report-generator",
+      "name": "git 报告",
       "cdn": "",
-      "routes": ["/demo", "/vue-sub"],
-      "devPort": 6020,
-      "keepAlive": true
-    },
-    {
-      "appCode": "react-app",
-      "name": "Demo (React)",
-      "cdn": "",
-      "routes": ["/react"],
-      "devPort": 6030
+      "routes": ["/git"],
+      "devPort": 6050
     }
   ]
 }
@@ -394,16 +385,7 @@ npm create pavilion-mfe
 
 ```bash
 # 仅启动主应用（需要子应用单独启动）
-cd apps/segment-main && pnpm dev
-
-# 启动 Vue 子应用（独立开发或配合主应用）
-cd apps/segment-demo && pnpm dev
-
-# 启动 Vue 2 子应用
-cd apps/segment-vue2 && pnpm dev
-
-# 启动 React 子应用
-cd apps/segment-react && pnpm dev
+cd apps/main-app && pnpm dev
 
 # 修改核心包后重新构建（按依赖顺序）
 pnpm --filter @pavilion-mfe/sandbox build   # 先构建 sandbox（含 logger）
@@ -444,14 +426,12 @@ CI 会依次构建核心包 → 子应用 → 主应用，最后把所有产物�
 VITE_PAVILION_MFE_CDN=/my-repo pnpm --filter "./apps/segment-*" build
 
 # 2. 构建主应用
-VITE_DEPLOY_BASE=/my-repo/ pnpm --filter @pavilion-mfe/segment-main build
+VITE_DEPLOY_BASE=/my-repo/ pnpm --filter main-app build
 
 # 3. 收集产物
 mkdir -p dist-ghpages/mfe
-cp -r apps/segment-main/dist/* dist-ghpages/
-cp -r apps/segment-demo/dist/* dist-ghpages/mfe/demo-app/
-cp -r apps/segment-react/dist/* dist-ghpages/mfe/react-app/
-cp -r apps/segment-vue2/dist/* dist-ghpages/mfe/vue2-app/
+cp -r apps/main-app/dist/* dist-ghpages/
+cp -r apps/git-report-generator/dist/* dist-ghpages/mfe/git-report-generator/
 cp dist-ghpages/index.html dist-ghpages/404.html  # SPA fallback
 
 # 4. 部署到 GitHub Pages（任选一种方式）
@@ -469,13 +449,7 @@ dist-ghpages/
 ├── mf-manifest-main.json
 ├── static/js/...                 # 主应用 chunk
 ├── mfe/
-│   ├── demo-app/
-│   │   ├── mf-manifest-main.json
-│   │   └── static/js/...
-│   ├── react-app/
-│   │   ├── mf-manifest-main.json
-│   │   └── static/js/...
-│   └── vue2-app/
+│   └── git-report-generator/
 │       ├── mf-manifest-main.json
 │       └── static/js/...
 ```
