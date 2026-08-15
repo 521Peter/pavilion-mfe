@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "vite build --mode develop",
     "lint": "oxlint",
     "preview": "vite preview"
   },
@@ -24,6 +25,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@pavilion-mfe/vite": "workspace:*",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",

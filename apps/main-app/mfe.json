@@ -7,6 +7,14 @@
       "routes": ["/git"],
       "devPort": 6010,
       "keepAlive": false
+    },
+    {
+      "appCode": "ai-chat",
+      "name": "AI 对话",
+      "cdn": "",
+      "routes": ["/chat"],
+      "devPort": 6020,
+      "keepAlive": false
     }
   ]
 }

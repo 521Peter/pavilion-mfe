@@ -8,7 +8,7 @@
 apps/
   main-app/               # 主应用：React + Module Federation 主入口
   git-report-generator/   # 已接入的子应用，作为新增子应用的参考实现
-  ai-chat/                # 独立 AI 聊天应用，尚未接入主应用
+  ai-chat/                # 已接入的 AI 聊天子应用（含独立开发自动登录鉴权层）
 packages/
   bridge/                 # 主应用-子应用事件通信（EventBus + StorageSync）
   sandbox/                # JS 沙箱、副作用追踪、路由隔离、日志

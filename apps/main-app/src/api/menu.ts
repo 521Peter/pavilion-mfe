@@ -1,46 +1,46 @@
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from "react";
 
 /** 后端菜单接口返回的数据结构 */
 export interface MenuItem {
-  menuCode: string
-  menuName: string
-  menuEnglishName?: string
-  menuTp: string
-  parentCode: string
-  orderNo: number
-  status: string
-  menuUrl: string
-  menuIcon?: string
-  childrenMenuInfoList?: MenuItem[]
+  menuCode: string;
+  menuName: string;
+  menuEnglishName?: string;
+  menuTp: string;
+  parentCode: string;
+  orderNo: number;
+  status: string;
+  menuUrl: string;
+  menuIcon?: string;
+  childrenMenuInfoList?: MenuItem[];
 }
 
 // ─── 极简响应式 store（React 版，替代 Vue 的 ref） ───
 
-let menusData: MenuItem[] = []
-const listeners = new Set<() => void>()
+let menusData: MenuItem[] = [];
+const listeners = new Set<() => void>();
 
 function getMenus(): MenuItem[] {
-  return menusData
+  return menusData;
 }
 
 function subscribeMenus(listener: () => void): () => void {
-  listeners.add(listener)
+  listeners.add(listener);
   return () => {
-    listeners.delete(listener)
-  }
+    listeners.delete(listener);
+  };
 }
 
 function emitChange(): void {
-  listeners.forEach((listener) => listener())
+  listeners.forEach((listener) => listener());
 }
 
 /** React Hook：订阅菜单数据（配合 useSyncExternalStore，菜单加载完成后自动重渲染） */
 export function useMenus(): MenuItem[] {
-  return useSyncExternalStore(subscribeMenus, getMenus)
+  return useSyncExternalStore(subscribeMenus, getMenus);
 }
 
 /** 缓存的 Promise，避免重复请求 */
-let fetchPromise: Promise<MenuItem[]> | null = null
+let fetchPromise: Promise<MenuItem[]> | null = null;
 
 /**
  * 从后端接口获取菜单数据（模拟）
@@ -48,45 +48,72 @@ let fetchPromise: Promise<MenuItem[]> | null = null
  */
 export function fetchMenus(): Promise<MenuItem[]> {
   if (!fetchPromise) {
-    fetchPromise = doFetchMenus()
+    fetchPromise = doFetchMenus();
   }
-  return fetchPromise
+  return fetchPromise;
 }
 
 async function doFetchMenus(): Promise<MenuItem[]> {
-  const ST_PX = 'color:#42b883;font-weight:bold'
-  const ST_DIM = 'color:#999'
-  console.log('%c[PavilionMfe]%c 正在从后端获取菜单数据...', ST_PX, ST_DIM)
+  const ST_PX = "color:#42b883;font-weight:bold";
+  const ST_DIM = "color:#999";
+  console.log("%c[PavilionMfe]%c 正在从后端获取菜单数据...", ST_PX, ST_DIM);
 
   // 模拟网络延迟
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300));
 
   const data: MenuItem[] = [
     // ─── 主应用菜单 ───
     {
-      menuCode: 'home',
-      menuName: '首页',
-      menuTp: '0',
-      parentCode: '',
+      menuCode: "home",
+      menuName: "首页",
+      menuTp: "0",
+      parentCode: "",
       orderNo: 0,
-      status: '1',
-      menuUrl: '/',
-      menuIcon: 'HomeFilled',
+      status: "1",
+      menuUrl: "/",
+      menuIcon: "HomeFilled",
     },
     {
-      menuCode: 'ai-center',
-      menuName: 'AI 能力中心',
-      menuTp: '0',
-      parentCode: '',
+      menuCode: "ai-center",
+      menuName: "AI 能力中心",
+      menuTp: "0",
+      parentCode: "",
       orderNo: 1,
-      status: '1',
-      menuUrl: '',
-      menuIcon: 'Setting',
-     childrenMenuInfoList: [
-       { menuCode: 'ai-center/llm-providers', menuName: 'Provider 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 1, status: '1', menuUrl: '/llm-providers', menuIcon: 'Link' },
-       { menuCode: 'ai-center/mcp-servers', menuName: 'MCP 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 2, status: '1', menuUrl: '/mcp-servers', menuIcon: 'Connection' },
-       { menuCode: 'ai-center/skills', menuName: 'Skill 管理', menuTp: '1', parentCode: 'ai-center', orderNo: 3, status: '1', menuUrl: '/skills', menuIcon: 'Reading' },
-     ],
+      status: "1",
+      menuUrl: "",
+      menuIcon: "Setting",
+      childrenMenuInfoList: [
+        {
+          menuCode: "ai-center/llm-providers",
+          menuName: "Provider 管理",
+          menuTp: "1",
+          parentCode: "ai-center",
+          orderNo: 1,
+          status: "1",
+          menuUrl: "/llm-providers",
+          menuIcon: "Link",
+        },
+        {
+          menuCode: "ai-center/mcp-servers",
+          menuName: "MCP 管理",
+          menuTp: "1",
+          parentCode: "ai-center",
+          orderNo: 2,
+          status: "1",
+          menuUrl: "/mcp-servers",
+          menuIcon: "Connection",
+        },
+        {
+          menuCode: "ai-center/skills",
+          menuName: "Skill 管理",
+          menuTp: "1",
+          parentCode: "ai-center",
+          orderNo: 3,
+          status: "1",
+          menuUrl: "/skills",
+          menuIcon: "Reading",
+        },
+      ],
     },
     // ─── 系统工具 ───
     // {
@@ -105,18 +132,45 @@ async function doFetchMenus(): Promise<MenuItem[]> {
     // },
     // ─── 错误页面 ───
     {
-      menuCode: 'error-pages',
-      menuName: '错误页面',
-      menuTp: '0',
-      parentCode: '',
+      menuCode: "error-pages",
+      menuName: "错误页面",
+      menuTp: "0",
+      parentCode: "",
       orderNo: 100,
-      status: '1',
-      menuUrl: '',
-      menuIcon: 'Compass',
+      status: "1",
+      menuUrl: "",
+      menuIcon: "Compass",
       childrenMenuInfoList: [
-        { menuCode: 'error-pages/403', menuName: '403 权限不足', menuTp: '1', parentCode: 'error-pages', orderNo: 1, status: '1', menuUrl: '/403', menuIcon: 'Lock' },
-        { menuCode: 'error-pages/404', menuName: '404 页面不存在', menuTp: '1', parentCode: 'error-pages', orderNo: 2, status: '1', menuUrl: '/404', menuIcon: 'Guide' },
-        { menuCode: 'error-pages/500', menuName: '500 服务器错误', menuTp: '1', parentCode: 'error-pages', orderNo: 3, status: '1', menuUrl: '/500', menuIcon: 'Drizzling' },
+        {
+          menuCode: "error-pages/403",
+          menuName: "403 权限不足",
+          menuTp: "1",
+          parentCode: "error-pages",
+          orderNo: 1,
+          status: "1",
+          menuUrl: "/403",
+          menuIcon: "Lock",
+        },
+        {
+          menuCode: "error-pages/404",
+          menuName: "404 页面不存在",
+          menuTp: "1",
+          parentCode: "error-pages",
+          orderNo: 2,
+          status: "1",
+          menuUrl: "/404",
+          menuIcon: "Guide",
+        },
+        {
+          menuCode: "error-pages/500",
+          menuName: "500 服务器错误",
+          menuTp: "1",
+          parentCode: "error-pages",
+          orderNo: 3,
+          status: "1",
+          menuUrl: "/500",
+          menuIcon: "Drizzling",
+        },
       ],
     },
     {
@@ -131,10 +185,27 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       menuIcon: "Menu",
       childrenMenuInfoList: [],
     },
-  ]
+    {
+      menuCode: "ai-chat",
+      menuName: "AI 对话",
+      menuEnglishName: "",
+      menuTp: "0",
+      parentCode: "",
+      orderNo: 6,
+      status: "1",
+      menuUrl: "/chat",
+      menuIcon: "Menu",
+      childrenMenuInfoList: [],
+    },
+  ];
 
-  menusData = data
-  emitChange()
-  console.log('%c[PavilionMfe]%c 菜单数据获取成功，共 %d 个一级菜单', ST_PX, ST_DIM, data.length)
-  return data
+  menusData = data;
+  emitChange();
+  console.log(
+    "%c[PavilionMfe]%c 菜单数据获取成功，共 %d 个一级菜单",
+    ST_PX,
+    ST_DIM,
+    data.length,
+  );
+  return data;
 }
