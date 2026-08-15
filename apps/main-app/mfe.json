@@ -5,7 +5,7 @@
       "name": "git 报告",
       "cdn": "",
       "routes": ["/git"],
-      "devPort": 6050,
+      "devPort": 6010,
       "keepAlive": false
     }
   ]

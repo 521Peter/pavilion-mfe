@@ -1,7 +1,7 @@
 // Compiles the Electron main/preload TS with esbuild, waits for the Vite dev
 // server (the main-app on :6019) to be reachable, then launches Electron with
 // DEV_SERVER_URL pointing at it. The MF sub-apps are served by their own Vite
-// dev servers (6020/6030/6040) and resolved at runtime.
+// dev servers (6010/6020/6030/6040) and resolved at runtime.
 import { build } from 'esbuild'
 import { spawn } from 'node:child_process'
 import waitOn from 'wait-on'

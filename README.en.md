@@ -295,13 +295,28 @@ The main app declares all sub-apps via `mfe.json`:
       "name": "Git Report",
       "cdn": "",
       "routes": ["/git"],
-      "devPort": 6050
+      "devPort": 6010,
+      "keepAlive": false
     }
   ]
 }
 ```
 
 Single source of truth for route registration and build configuration. Menu data is provided by a backend API, decoupled from sub-app configuration.
+
+## Adding and Integrating a Sub-App
+
+See the root [`AGENTS.md`](./AGENTS.md) for the full checklist. The main flow:
+
+1. Create the sub-app under `apps/<appCode>/`, using `apps/git-report-generator` as a reference; keep `package.json`'s `name` in sync with `appCode`.
+2. Add `.env` / `.env.develop` with `VITE_PAVILION_MFE_APP_CODE`.
+3. Configure `vite.config.ts` with `PavilionMfe({ role: 'sub-app', name: appCode, exposes: { './main': './src/main.tsx' }, port, openDevServe: true, shared: [], dts: false })`.
+4. Export `mount` / `unmount` from `src/main.tsx` and keep a standalone branch guarded by `window.__PAVILION_MFE_ENV__`.
+5. Register `appCode` / `name` / `routes` / `devPort` / `keepAlive` in `apps/main-app/mfe.json`.
+6. Add the menu item in `apps/main-app/src/api/menu.ts`; update `apps/main-app/src/remote-declarations.d.ts` when static types are needed.
+7. When publishing to GitHub Pages, update the build and artifact collection steps in `.github/workflows/deploy.yml`.
+
+Once registered, `preloadPlugin` dynamically registers the remote at MF runtime, and `createPavilionMfeRouter` loads it through `loadRemote('<appCode>/main')` and activates it by route prefix. No hand-written React Router sub-route is needed in the main app.
 
 ## Build Optimizations
 
@@ -351,7 +366,7 @@ pnpm -r build
 pnpm dev
 ```
 
-Main app runs at `http://localhost:6010`, Vue sub-app at `6020`, React sub-app at `6030`.
+Main app runs at `http://localhost:6019`, `git-report-generator` at `http://localhost:6010`, and `ai-chat` at `http://localhost:6020`. New sub-apps should use the next `+10` port starting from `6030` and register it as `devPort` in `mfe.json`.
 
 ### Using the CLI
 

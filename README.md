@@ -310,13 +310,28 @@ const { tabs, openTab, closeAll } = useTabs()
       "name": "git 报告",
       "cdn": "",
       "routes": ["/git"],
-      "devPort": 6050
+      "devPort": 6010,
+      "keepAlive": false
     }
   ]
 }
 ```
 
 路由注册 + 构建配置的单一事实来源。菜单数据由后端接口提供，与子应用配置解耦。
+
+## 新增并接入子应用
+
+完整步骤见根目录 [`AGENTS.md`](./AGENTS.md)，核心流程如下：
+
+1. 在 `apps/<appCode>/` 新建子应用，参考 `apps/git-report-generator`；`package.json` 的 `name` 与 `appCode` 保持一致。
+2. 配置 `.env` / `.env.develop`，设置 `VITE_PAVILION_MFE_APP_CODE`。
+3. `vite.config.ts` 使用 `PavilionMfe({ role: 'sub-app', name: appCode, exposes: { './main': './src/main.tsx' }, port, openDevServe: true, shared: [], dts: false })`。
+4. `src/main.tsx` 导出 `mount` / `unmount` 生命周期，并通过 `window.__PAVILION_MFE_ENV__` 保留独立运行分支。
+5. 在 `apps/main-app/mfe.json` 注册 `appCode` / `name` / `routes` / `devPort` / `keepAlive`。
+6. 菜单项加入 `apps/main-app/src/api/menu.ts`；需要静态类型时同步补充 `apps/main-app/src/remote-declarations.d.ts`。
+7. 发布到 GitHub Pages 时同步更新 `.github/workflows/deploy.yml` 的构建和产物收集步骤。
+
+子应用接入主应用后，由 `preloadPlugin` 在 MF 运行时动态注册，`createPavilionMfeRouter` 通过 `loadRemote('<appCode>/main')` 加载并按路由前缀激活，无需手写主应用 React Router 子路由。
 
 ## 构建优化
 
@@ -366,7 +381,7 @@ pnpm -r build
 pnpm dev
 ```
 
-主应用运行在 `http://localhost:6010`，Vue 子应用在 `6020`，React 子应用在 `6030`。
+主应用运行在 `http://localhost:6019`，`git-report-generator` 运行在 `http://localhost:6010`，`ai-chat` 运行在 `http://localhost:6020`。后续新增子应用从 `6030` 开始按 `+10` 递增使用独立端口，并在 `mfe.json` 中登记 `devPort`。
 
 ### 使用 CLI
 

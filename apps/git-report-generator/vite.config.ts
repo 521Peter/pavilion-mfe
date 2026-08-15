@@ -31,12 +31,12 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
           "./main": "./src/main.tsx",
         },
         openDevServe: true,
-        port: 6050,
+        port: 6010,
         shared: [],
         dts: false,
       }),
     ],
-    server: { port: 6050 },
+    server: { port: 6010 },
     build: {
       rollupOptions: {
         onwarn(warning, defaultHandler) {
