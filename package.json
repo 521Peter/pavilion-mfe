@@ -11,13 +11,20 @@
     "package:desktop": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package",
     "package:desktop:dir": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package:dir",
     "typecheck": "pnpm -r typecheck",
-    "lint:prettier": "prettier --write \"**/*.{js,ts,mjs,cjs,json,tsx,css,less,scss,vue,html,md}\""
+    "lint:prettier": "prettier --write \"**/*.{js,ts,mjs,cjs,json,tsx,css,less,scss,vue,html,md}\"",
+    "lint:spellcheck": "cspell lint \"(packages|apps)/**/*.{js,ts,mjs,cjs,json,css,less,scss,vue,html,md}\"",
+    "prepare": "husky",
+    "pre-commit": "lint-staged"
   },
   "engines": {
     "node": ">=18",
     "pnpm": ">=8"
   },
   "devDependencies": {
+    "@cspell/dict-lorem-ipsum": "^4.0.5",
+    "cspell": "^10.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
     "typescript": "^5.5.0"
   },
