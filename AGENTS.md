@@ -126,18 +126,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       PavilionMfe({
         role: "sub-app",
         name: appCode,
-        cdn:
-          process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "",
+        cdn: process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "",
         exposes: {
-          "./main": "./src/main.tsx",
+          "./main": "./src/main.tsx"
         },
         openDevServe: true,
         port: 6030,
         shared: [],
-        dts: false,
-      }),
+        dts: false
+      })
     ],
-    server: { port: 6030 },
+    server: { port: 6030 }
   };
 });
 ```
@@ -170,7 +169,7 @@ if (!window.__PAVILION_MFE_ENV__) {
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </StrictMode>,
+      </StrictMode>
     );
   }
 }
@@ -183,13 +182,13 @@ export default {
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </StrictMode>,
+      </StrictMode>
     );
     return () => root.unmount();
   },
   unmount: async (_ctx, el: HTMLElement) => {
     el.innerHTML = "";
-  },
+  }
 };
 ```
 

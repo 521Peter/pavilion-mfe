@@ -48,16 +48,16 @@ bridge (zero deps)    sandbox (zero deps, +logger)    tabs (zero deps)
 
 ## Packages
 
-| Package | Description | Dependencies |
-|---------|-------------|-------------|
-| `@pavilion-mfe/bridge` | Main-sub app event communication (EventBus + StorageSync) | Zero deps |
-| `@pavilion-mfe/sandbox` | JS sandbox isolation (stack-based side-effect tracking + route isolation + logger) | Zero deps |
-| `@pavilion-mfe/tabs` | Multi-tab state management (Vue/React plugins + sessionStorage persistence) | Zero deps |
-| `@pavilion-mfe/router` | Micro-frontend lifecycle router (routing events + popstate isolation) | `@pavilion-mfe/sandbox` `@pavilion-mfe/tabs` |
-| `@pavilion-mfe/runtime` | Shared runtime kernel, exported as MF Remote to ensure singleton instances | `@pavilion-mfe/router` `@pavilion-mfe/bridge` `@pavilion-mfe/sandbox` |
-| `@pavilion-mfe/vite` | Vite plugin wrapping Module Federation + CSS scoping | `@module-federation/vite` |
-| `@pavilion-mfe/cli` | CLI tool (`pavilion-mfe dev` / `pavilion-mfe build`) | |
-| `create-pavilion-mfe` | Project scaffolding (`npm create pavilion-mfe`) | |
+| Package                 | Description                                                                        | Dependencies                                                          |
+| ----------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `@pavilion-mfe/bridge`  | Main-sub app event communication (EventBus + StorageSync)                          | Zero deps                                                             |
+| `@pavilion-mfe/sandbox` | JS sandbox isolation (stack-based side-effect tracking + route isolation + logger) | Zero deps                                                             |
+| `@pavilion-mfe/tabs`    | Multi-tab state management (Vue/React plugins + sessionStorage persistence)        | Zero deps                                                             |
+| `@pavilion-mfe/router`  | Micro-frontend lifecycle router (routing events + popstate isolation)              | `@pavilion-mfe/sandbox` `@pavilion-mfe/tabs`                          |
+| `@pavilion-mfe/runtime` | Shared runtime kernel, exported as MF Remote to ensure singleton instances         | `@pavilion-mfe/router` `@pavilion-mfe/bridge` `@pavilion-mfe/sandbox` |
+| `@pavilion-mfe/vite`    | Vite plugin wrapping Module Federation + CSS scoping                               | `@module-federation/vite`                                             |
+| `@pavilion-mfe/cli`     | CLI tool (`pavilion-mfe dev` / `pavilion-mfe build`)                               |                                                                       |
+| `create-pavilion-mfe`   | Project scaffolding (`npm create pavilion-mfe`)                                    |                                                                       |
 
 ## Core Concepts
 
@@ -83,12 +83,12 @@ State machine: `NOT_LOADED → LOADING → NOT_MOUNTED → MOUNTING → MOUNTED 
 `Sandbox` uses a module-level `activeStack` to support concurrent instances. `patchGlobals()` runs once, intercepting `setTimeout` / `setInterval` / `addEventListener` — each side effect is attributed to the sandbox at the top of the stack. On unmount, all timers / listeners / globals are automatically cleaned up.
 
 ```typescript
-import { Sandbox } from '@pavilion-mfe/sandbox'
+import { Sandbox } from "@pavilion-mfe/sandbox";
 
-const sandbox = new Sandbox('my-sub-app')
-sandbox.activate()    // start tracking side effects
+const sandbox = new Sandbox("my-sub-app");
+sandbox.activate(); // start tracking side effects
 // ... all setTimeout/addEventListener calls are tracked
-sandbox.deactivate()  // auto-cleanup all side effects
+sandbox.deactivate(); // auto-cleanup all side effects
 ```
 
 #### CSS Scoping (`:where()` Zero Specificity)
@@ -97,10 +97,14 @@ A PostCSS plugin automatically wraps sub-app selectors with a `:where(.pavilion-
 
 ```css
 /* Input */
-.card { color: red; }
+.card {
+  color: red;
+}
 
 /* Output (prefix = pavilion-mfe-dashboard) */
-:where(.pavilion-mfe-dashboard) .card { color: red; }
+:where(.pavilion-mfe-dashboard) .card {
+  color: red;
+}
 ```
 
 `@keyframes` names are also auto-prefixed to prevent animation conflicts.
@@ -111,11 +115,11 @@ Sub-app-level `popstate` event isolation: the sandbox's `addEventListener` patch
 
 ```typescript
 // Set matcher during router startup
-import { setRouteMatcher } from '@pavilion-mfe/sandbox'
+import { setRouteMatcher } from "@pavilion-mfe/sandbox";
 
 setRouteMatcher((appCode, path) => {
-  return apps.some(app => app.name === appCode && app.activeWhen(path))
-})
+  return apps.some(app => app.name === appCode && app.activeWhen(path));
+});
 ```
 
 ### Environment Detection
@@ -128,7 +132,7 @@ The main app router injects `window.__PAVILION_MFE_ENV__ = true` on `start()`. S
 /** Self-start in standalone mode */
 if (!window.__PAVILION_MFE_ENV__) {
   // standalone mode: mount to local #root element
-  const el = document.getElementById('root')
+  const el = document.getElementById("root");
   // ...
 }
 ```
@@ -137,11 +141,11 @@ Type declarations via `src/globals.d.ts` (module-scoped `export {}` + `declare g
 
 ```typescript
 // src/globals.d.ts
-export {}
+export {};
 
 declare global {
   interface Window {
-    __PAVILION_MFE_ENV__?: boolean
+    __PAVILION_MFE_ENV__?: boolean;
   }
 }
 ```
@@ -152,20 +156,20 @@ Sub-apps have **zero runtime dependencies** — no `@pavilion-mfe/*` package imp
 
 The router dispatches `CustomEvent` at each navigation phase for analytics, loading states, etc.:
 
-| Event | Timing | detail |
-|-------|--------|--------|
-| `pavilion-mfe:before-routing` | Before route change | `{ url, trigger, path, appCode }` |
-| `pavilion-mfe:after-routing` | After route change | `{ url, trigger, path, appCode }` |
-| `pavilion-mfe:sub-app-switch` | Active sub-app changes | `{ from: string[], to: string[] }` |
-| `pavilion-mfe:before-cache` | Before sub-app enters keep-alive cache | `{ appCode }` |
-| `pavilion-mfe:after-restore` | Sub-app restored from cache | `{ appCode }` |
-| `pavilion-mfe:sub-app-error` | Sub-app load/mount failure | `{ appCode, phase, error }` |
+| Event                         | Timing                                 | detail                             |
+| ----------------------------- | -------------------------------------- | ---------------------------------- |
+| `pavilion-mfe:before-routing` | Before route change                    | `{ url, trigger, path, appCode }`  |
+| `pavilion-mfe:after-routing`  | After route change                     | `{ url, trigger, path, appCode }`  |
+| `pavilion-mfe:sub-app-switch` | Active sub-app changes                 | `{ from: string[], to: string[] }` |
+| `pavilion-mfe:before-cache`   | Before sub-app enters keep-alive cache | `{ appCode }`                      |
+| `pavilion-mfe:after-restore`  | Sub-app restored from cache            | `{ appCode }`                      |
+| `pavilion-mfe:sub-app-error`  | Sub-app load/mount failure             | `{ appCode, phase, error }`        |
 
 ```typescript
-window.addEventListener('pavilion-mfe:sub-app-switch', (e) => {
-  const { from, to } = (e as CustomEvent).detail
-  console.log('Sub-app switch:', from, '→', to)
-})
+window.addEventListener("pavilion-mfe:sub-app-switch", e => {
+  const { from, to } = (e as CustomEvent).detail;
+  console.log("Sub-app switch:", from, "→", to);
+});
 ```
 
 `trigger` values: `init` / `pushState` / `replaceState` / `popstate`
@@ -176,13 +180,15 @@ Register a sub-app with `keepAlive: true` to preserve its framework instance whe
 
 ```typescript
 const pavilionMfeRouter = createPavilionMfeRouter({
-  apps: mfeApps.map((seg) => ({
+  apps: mfeApps.map(seg => ({
     name: seg.appCode,
-    load: async () => { /* ... */ },
-    activeWhen: (path) => seg.routes.some(/* ... */),
-    keepAlive: true,  // ← enable cache
-  })),
-})
+    load: async () => {
+      /* ... */
+    },
+    activeWhen: path => seg.routes.some(/* ... */),
+    keepAlive: true // ← enable cache
+  }))
+});
 ```
 
 State machine with `CACHED`: `MOUNTED → (unmount) → CACHED → (restore) → MOUNTED`
@@ -199,10 +205,10 @@ The sandbox does **not** `deactivate()` when cached — the popstate proxy is re
 ```typescript
 // vite.config.ts (main app)
 PavilionMfe({
-  role: 'main-app',
-  name: appCode,  // injected from env var VITE_PAVILION_MFE_APP_CODE
-  runtimePlugins: ['./src/preloadPlugin'],  // replaces static pavilionMfeRemotes
-})
+  role: "main-app",
+  name: appCode, // injected from env var VITE_PAVILION_MFE_APP_CODE
+  runtimePlugins: ["./src/preloadPlugin"] // replaces static pavilionMfeRemotes
+});
 ```
 
 ### Logging System
@@ -210,17 +216,17 @@ PavilionMfe({
 Per-module configurable console logging to help debug micro-frontend runtime behavior. All log output is CSS-styled.
 
 ```typescript
-import { configureLog } from '@pavilion-mfe/router'
+import { configureLog } from "@pavilion-mfe/router";
 
 configureLog({
   enabled: true,
   modules: {
-    router:  true,   // routing events + sub-app lifecycle
-    sandbox: true,   // sandbox activate/deactivate + popstate interception
-    preload: true,   // MF remote registration + preload status
-    bridge:  true,   // EventBus emit/subscribe + StorageSync
-  },
-})
+    router: true, // routing events + sub-app lifecycle
+    sandbox: true, // sandbox activate/deactivate + popstate interception
+    preload: true, // MF remote registration + preload status
+    bridge: true // EventBus emit/subscribe + StorageSync
+  }
+});
 ```
 
 Sample log output:
@@ -248,33 +254,33 @@ Colors: `[PavilionMfe]` green / module name cyan / event name orange / key-value
 
 ```typescript
 // main.ts
-import { tabsPlugin } from '@pavilion-mfe/tabs/vue'
-app.use(tabsPlugin)
+import { tabsPlugin } from "@pavilion-mfe/tabs/vue";
+app.use(tabsPlugin);
 
 // any component
-import { useTabs } from '@pavilion-mfe/tabs/vue'
+import { useTabs } from "@pavilion-mfe/tabs/vue";
 
-const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs()
+const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs();
 
-openTab({ path: '/git', title: 'Git Report' })
-closeOthers(tabId)
-closeAll()
+openTab({ path: "/git", title: "Git Report" });
+closeOthers(tabId);
+closeAll();
 ```
 
 **React**
 
 ```tsx
 // App.tsx
-import { TabsProvider } from '@pavilion-mfe/tabs/react'
+import { TabsProvider } from "@pavilion-mfe/tabs/react";
 
 <TabsProvider>
   <App />
-</TabsProvider>
+</TabsProvider>;
 
 // any component
-import { useTabs } from '@pavilion-mfe/tabs/react'
+import { useTabs } from "@pavilion-mfe/tabs/react";
 
-const { tabs, openTab, closeAll } = useTabs()
+const { tabs, openTab, closeAll } = useTabs();
 ```
 
 Tab state is persisted via `sessionStorage` and automatically restored on page refresh. Vue and React plugins share the same storage key.
@@ -322,14 +328,14 @@ Once registered, `preloadPlugin` dynamically registers the remote at MF runtime,
 
 `@pavilion-mfe/vite` automatically applies these optimizations in build mode:
 
-| Optimization | Description |
-|-------------|-------------|
-| `esbuild.drop: ['debugger']` | Remove debugger statements in production |
-| `sourcemap: false` | Disable sourcemaps for smaller bundles |
-| `cssCodeSplit: true` | Split CSS by route |
-| chunk naming | `static/js/[name]-[hash].js` / `static/[ext]/[name]-[hash].[ext]` |
-| `publicDir: false` (main app) | No static assets directory for the main app |
-| Top-Level Await | Auto-injected `vite-plugin-top-level-await` (required for MF shared) |
+| Optimization                  | Description                                                          |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `esbuild.drop: ['debugger']`  | Remove debugger statements in production                             |
+| `sourcemap: false`            | Disable sourcemaps for smaller bundles                               |
+| `cssCodeSplit: true`          | Split CSS by route                                                   |
+| chunk naming                  | `static/js/[name]-[hash].js` / `static/[ext]/[name]-[hash].[ext]`    |
+| `publicDir: false` (main app) | No static assets directory for the main app                          |
+| Top-Level Await               | Auto-injected `vite-plugin-top-level-await` (required for MF shared) |
 
 ### Dev Server Proxy
 
@@ -337,19 +343,19 @@ Configure dev-mode proxy rules via `PavilionMfePluginOptions.proxy`:
 
 ```typescript
 PavilionMfe({
-  role: 'main-app',
-  proxy: { '/api': 'http://localhost:3000' },
-})
+  role: "main-app",
+  proxy: { "/api": "http://localhost:3000" }
+});
 ```
 
 ## Multi-Repository Architecture
 
 In production, the main app and each sub-app reside in separate Git repositories and are released independently:
 
-| Role | `@pavilion-mfe/*` Dependencies | Notes |
-|------|-------------------------------|-------|
-| Main App | `@pavilion-mfe/router` `@pavilion-mfe/sandbox` (runtime) + `@pavilion-mfe/vite` (devDep) | Runtime needs router and sandbox |
-| Sub-App | `@pavilion-mfe/vite` (devDep only) | Build-time only, no `@pavilion-mfe/*` code at runtime |
+| Role     | `@pavilion-mfe/*` Dependencies                                                           | Notes                                                 |
+| -------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Main App | `@pavilion-mfe/router` `@pavilion-mfe/sandbox` (runtime) + `@pavilion-mfe/vite` (devDep) | Runtime needs router and sandbox                      |
+| Sub-App  | `@pavilion-mfe/vite` (devDep only)                                                       | Build-time only, no `@pavilion-mfe/*` code at runtime |
 
 Sub-apps can independently release after updating `@pavilion-mfe/vite` — **no impact on main app runtime**, no main app rebuild required.
 
@@ -411,10 +417,10 @@ The CI pipeline builds core packages → sub-apps → main app in order, then de
 
 Configure in repo **Settings** → **Secrets and variables** → **Variables**:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
+| Variable                | Description                      | Example                                        |
+| ----------------------- | -------------------------------- | ---------------------------------------------- |
 | `VITE_PAVILION_MFE_CDN` | CDN base path for sub-app assets | `/my-repo` (project site) or empty (user site) |
-| `VITE_DEPLOY_BASE` | Vite/Vue Router base path | `/my-repo/` (project site) or `/` (user site) |
+| `VITE_DEPLOY_BASE`      | Vite/Vue Router base path        | `/my-repo/` (project site) or `/` (user site)  |
 
 - **User site** (`username.github.io`): leave both empty
 - **Project site** (`username.github.io/my-repo`): set `CDN` to `/my-repo`, `BASE` to `/my-repo/`

@@ -1,7 +1,4 @@
-import {
-  ThreadListItemPrimitive,
-  ThreadListPrimitive,
-} from "@assistant-ui/react";
+import { ThreadListItemPrimitive, ThreadListPrimitive } from "@assistant-ui/react";
 import { MessageSquare, Plus, Trash2 } from "lucide-react";
 import { type FC } from "react";
 
@@ -33,9 +30,7 @@ export const ThreadListSidebar: FC = () => {
 
 const ThreadListItem: FC = () => {
   return (
-    <ThreadListItemPrimitive.Root
-      className="group/thread-item relative flex items-center gap-2 rounded-lg text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-gray-200 data-[active=true]:bg-white/10 data-[active=true]:text-white"
-    >
+    <ThreadListItemPrimitive.Root className="group/thread-item relative flex items-center gap-2 rounded-lg text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-gray-200 data-[active=true]:bg-white/10 data-[active=true]:text-white">
       <ThreadListItemPrimitive.Trigger className="flex flex-1 items-center gap-2 px-3 py-2 text-left">
         <MessageSquare className="size-4 shrink-0 opacity-60" />
         <span className="flex-1 truncate">

@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@/../generated/prisma/client'
-import { PrismaService } from '@/database/prisma.service'
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Prisma } from "@/../generated/prisma/client";
+import { PrismaService } from "@/database/prisma.service";
 
 /**
  * MCP Server CRUD Service
@@ -13,29 +13,29 @@ export class McpServerService {
 
   async list() {
     return this.prisma.mcpServer.findMany({
-      orderBy: { createdAt: 'asc' },
-    })
+      orderBy: { createdAt: "asc" }
+    });
   }
 
   async getById(id: string) {
-    const server = await this.prisma.mcpServer.findUnique({ where: { id } })
-    if (!server) throw new NotFoundException('MCP Server 不存在')
-    return server
+    const server = await this.prisma.mcpServer.findUnique({ where: { id } });
+    if (!server) throw new NotFoundException("MCP Server 不存在");
+    return server;
   }
 
   async create(data: {
-    name: string
-    identifier: string
-    description?: string
-    icon?: string
-    transport: string
-    command?: string
-    args?: string[]
-    env?: Record<string, string>
-    url?: string
-    headers?: Record<string, string>
-    timeout?: number
-    isActive?: boolean
+    name: string;
+    identifier: string;
+    description?: string;
+    icon?: string;
+    transport: string;
+    command?: string;
+    args?: string[];
+    env?: Record<string, string>;
+    url?: string;
+    headers?: Record<string, string>;
+    timeout?: number;
+    isActive?: boolean;
   }) {
     return this.prisma.mcpServer.create({
       data: {
@@ -50,27 +50,27 @@ export class McpServerService {
         url: data.url,
         headers: (data.headers ?? {}) as Prisma.InputJsonValue,
         timeout: data.timeout ?? 60000,
-        isActive: data.isActive ?? true,
-      },
-    })
+        isActive: data.isActive ?? true
+      }
+    });
   }
 
   async update(id: string, data: Record<string, unknown>) {
-    const updateData: Record<string, unknown> = { ...data }
+    const updateData: Record<string, unknown> = { ...data };
     if (data.env !== undefined) {
-      updateData.env = data.env as Prisma.InputJsonValue
+      updateData.env = data.env as Prisma.InputJsonValue;
     }
     if (data.headers !== undefined) {
-      updateData.headers = data.headers as Prisma.InputJsonValue
+      updateData.headers = data.headers as Prisma.InputJsonValue;
     }
     return this.prisma.mcpServer.update({
       where: { id },
-      data: updateData as Prisma.McpServerUpdateInput,
-    })
+      data: updateData as Prisma.McpServerUpdateInput
+    });
   }
 
   async delete(id: string) {
-    await this.prisma.mcpServer.delete({ where: { id } })
+    await this.prisma.mcpServer.delete({ where: { id } });
   }
 
   /** 同步工具列表快照到 cachedTools */
@@ -79,8 +79,8 @@ export class McpServerService {
       where: { id },
       data: {
         cachedTools: tools as Prisma.InputJsonValue,
-        lastSyncAt: new Date(),
-      },
-    })
+        lastSyncAt: new Date()
+      }
+    });
   }
 }

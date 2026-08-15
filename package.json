@@ -10,13 +10,15 @@
     "build:desktop": "pnpm build:dev && pnpm --filter @pavilion-mfe/desktop build",
     "package:desktop": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package",
     "package:desktop:dir": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package:dir",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "lint:prettier": "prettier --write \"**/*.{js,ts,mjs,cjs,json,tsx,css,less,scss,vue,html,md}\""
   },
   "engines": {
     "node": ">=18",
     "pnpm": ">=8"
   },
   "devDependencies": {
+    "prettier": "^3.9.6",
     "typescript": "^5.5.0"
   },
   "dependencies": {

@@ -1,55 +1,55 @@
-import { IsString, IsOptional, IsBoolean, IsObject, MaxLength } from 'class-validator'
+import { IsString, IsOptional, IsBoolean, IsObject, MaxLength } from "class-validator";
 
 export class CreateProviderDto {
   @IsString()
   @MaxLength(100)
-  name!: string
+  name!: string;
 
   @IsString()
   @MaxLength(50)
-  type!: string // openai | ollama | ...
+  type!: string; // openai | ollama | ...
 
   @IsOptional()
   @IsString()
-  baseUrl?: string
+  baseUrl?: string;
 
   @IsOptional()
   @IsString()
-  apiKey?: string
+  apiKey?: string;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean
+  isActive?: boolean;
 
   @IsOptional()
   @IsObject()
-  config?: Record<string, unknown>
+  config?: Record<string, unknown>;
 }
 
 export class UpdateProviderDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string
+  name?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(50)
-  type?: string
+  type?: string;
 
   @IsOptional()
   @IsString()
-  baseUrl?: string
+  baseUrl?: string;
 
   @IsOptional()
   @IsString()
-  apiKey?: string
+  apiKey?: string;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean
+  isActive?: boolean;
 
   @IsOptional()
   @IsObject()
-  config?: Record<string, unknown>
+  config?: Record<string, unknown>;
 }

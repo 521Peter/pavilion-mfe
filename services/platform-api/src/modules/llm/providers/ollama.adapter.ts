@@ -1,5 +1,5 @@
-import { ChatOllama } from '@langchain/ollama'
-import type { ProviderAdapterBuilder, ProviderConfig, ModelConfig } from '../interfaces/provider-adapter.interface'
+import { ChatOllama } from "@langchain/ollama";
+import type { ProviderAdapterBuilder, ProviderConfig, ModelConfig } from "../interfaces/provider-adapter.interface";
 
 /**
  * Ollama Adapter Builder
@@ -8,14 +8,14 @@ import type { ProviderAdapterBuilder, ProviderConfig, ModelConfig } from '../int
  * 连接本地 Ollama 服务（默认 http://localhost:11434）。
  */
 export class OllamaAdapterBuilder implements ProviderAdapterBuilder {
-  readonly type = 'ollama'
+  readonly type = "ollama";
 
   build(_provider: ProviderConfig, model: ModelConfig) {
- return new ChatOllama({
+    return new ChatOllama({
       model: model.modelName,
-      baseUrl: _provider.baseUrl ?? 'http://localhost:11434',
+      baseUrl: _provider.baseUrl ?? "http://localhost:11434",
       temperature: model.temperature,
-      numPredict: typeof model.maxTokens === 'number' ? model.maxTokens : undefined,
-    })
+      numPredict: typeof model.maxTokens === "number" ? model.maxTokens : undefined
+    });
   }
 }

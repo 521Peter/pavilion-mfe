@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -11,10 +11,10 @@
     <script>
       // GitHub Pages SPA fallback: 404.html → sessionStorage → 恢复路径
       (function () {
-        var redirect = sessionStorage.getItem('pavilion-redirect');
+        var redirect = sessionStorage.getItem("pavilion-redirect");
         if (redirect) {
-          sessionStorage.removeItem('pavilion-redirect');
-          history.replaceState(null, '', redirect);
+          sessionStorage.removeItem("pavilion-redirect");
+          history.replaceState(null, "", redirect);
         }
       })();
     </script>

@@ -1,106 +1,106 @@
-import { IsString, IsOptional, IsBoolean, IsObject, IsArray, IsInt, MaxLength, IsIn } from 'class-validator'
+import { IsString, IsOptional, IsBoolean, IsObject, IsArray, IsInt, MaxLength, IsIn } from "class-validator";
 
-const TRANSPORTS = ['stdio', 'http', 'sse'] as const
+const TRANSPORTS = ["stdio", "http", "sse"] as const;
 
 export class CreateMcpServerDto {
   @IsString()
   @MaxLength(100)
-  name!: string
+  name!: string;
 
   @IsString()
   @MaxLength(64)
-  identifier!: string
+  identifier!: string;
 
   @IsOptional()
   @IsString()
-  description?: string
+  description?: string;
 
   @IsOptional()
   @IsString()
-  icon?: string
+  icon?: string;
 
   @IsIn(TRANSPORTS)
-  transport!: string
+  transport!: string;
 
   @IsOptional()
   @IsString()
-  command?: string
+  command?: string;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  args?: string[]
+  args?: string[];
 
   @IsOptional()
   @IsObject()
-  env?: Record<string, string>
+  env?: Record<string, string>;
 
   @IsOptional()
   @IsString()
-  url?: string
+  url?: string;
 
   @IsOptional()
   @IsObject()
-  headers?: Record<string, string>
+  headers?: Record<string, string>;
 
   @IsOptional()
   @IsInt()
-  timeout?: number
+  timeout?: number;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean
+  isActive?: boolean;
 }
 
 export class UpdateMcpServerDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name?: string
+  name?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(64)
-  identifier?: string
+  identifier?: string;
 
   @IsOptional()
   @IsString()
-  description?: string
+  description?: string;
 
   @IsOptional()
   @IsString()
-  icon?: string
+  icon?: string;
 
   @IsOptional()
   @IsIn(TRANSPORTS)
-  transport?: string
+  transport?: string;
 
   @IsOptional()
   @IsString()
-  command?: string
+  command?: string;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  args?: string[]
+  args?: string[];
 
   @IsOptional()
   @IsObject()
-  env?: Record<string, string>
+  env?: Record<string, string>;
 
   @IsOptional()
   @IsString()
-  url?: string
+  url?: string;
 
   @IsOptional()
   @IsObject()
-  headers?: Record<string, string>
+  headers?: Record<string, string>;
 
   @IsOptional()
   @IsInt()
-  timeout?: number
+  timeout?: number;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean
+  isActive?: boolean;
 }

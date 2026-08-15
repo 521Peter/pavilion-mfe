@@ -9,15 +9,14 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   const appCode = env.VITE_PAVILION_MFE_APP_CODE;
   const pavilionMfeEnv = env.VITE_PAVILION_MFE_ENV || "develop";
   // 优先从 process.env 读取（CI），fallback 到 .env 文件
-  const cdn =
-    process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
+  const cdn = process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
   const apiBase = process.env.VITE_BASE_API_URL || env.VITE_BASE_API_URL || "";
 
   console.log(
     `${chalk.green.bold("[PavilionMfe 微前端]")} ${chalk.bold(appCode)}\n` +
       `  ${chalk.gray("env")} ${chalk.cyan(pavilionMfeEnv)}  ` +
       `${chalk.gray("api")} ${chalk.cyan(apiBase || "-")}  ` +
-      `${chalk.gray("cdn")} ${chalk.cyan(cdn || "(relative)")}`,
+      `${chalk.gray("cdn")} ${chalk.cyan(cdn || "(relative)")}`
   );
 
   return {
@@ -28,13 +27,13 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         name: appCode,
         cdn,
         exposes: {
-          "./main": "./src/main.tsx",
+          "./main": "./src/main.tsx"
         },
         openDevServe: true,
         port: 6010,
         shared: [],
-        dts: false,
-      }),
+        dts: false
+      })
     ],
     server: { port: 6010 },
     build: {
@@ -42,8 +41,8 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         onwarn(warning, defaultHandler) {
           if (warning.code === "INVALID_ANNOTATION") return;
           defaultHandler(warning);
-        },
-      },
-    },
+        }
+      }
+    }
   };
 });

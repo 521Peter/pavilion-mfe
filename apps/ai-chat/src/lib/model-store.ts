@@ -11,7 +11,7 @@ export type ModelOption = {
 export const MODELS: ModelOption[] = [
   { id: "gpt-5", name: "GPT-5", description: "智能、快速，适合日常任务" },
   { id: "gpt-5-mini", name: "GPT-5 mini", description: "更轻量，响应更快" },
-  { id: "claude-opus", name: "Claude Opus", description: "最强推理能力" },
+  { id: "claude-opus", name: "Claude Opus", description: "最强推理能力" }
 ];
 
 /**
@@ -22,8 +22,7 @@ let modelState: ModelId = "gpt-5";
 
 /** Non-hook accessor for the adapter (runs outside React render). */
 export const getCurrentModel = (): ModelId => modelState;
-export const getModelOption = (id: ModelId) =>
-  MODELS.find((m) => m.id === id) ?? MODELS[0];
+export const getModelOption = (id: ModelId) => MODELS.find(m => m.id === id) ?? MODELS[0];
 
 function setModelState(id: ModelId) {
   modelState = id;

@@ -7,7 +7,10 @@
   "bin": {
     "pavilion-mfe": "./bin/pavilion-mfe.js"
   },
-  "files": ["dist", "bin"],
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",

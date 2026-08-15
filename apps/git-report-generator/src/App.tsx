@@ -1,6 +1,6 @@
-import { Routes, Route, Link } from 'react-router-dom'
-import Git from './pages/Git'
-import "./App.css"
+import { Routes, Route, Link } from "react-router-dom";
+import Git from "./pages/Git";
+import "./App.css";
 
 function App() {
   return (
@@ -9,6 +9,6 @@ function App() {
         <Route path="/git" element={<Git />} />
       </Routes>
     </div>
-  )
+  );
 }
-export default App
+export default App;

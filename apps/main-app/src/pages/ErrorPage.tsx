@@ -1,23 +1,15 @@
-import { useNavigate } from 'react-router-dom'
-import { useTabs } from '@pavilion-mfe/tabs/react'
-import { Button } from '@heroui/react'
-import { Icon } from '../components/Icon'
+import { useNavigate } from "react-router-dom";
+import { useTabs } from "@pavilion-mfe/tabs/react";
+import { Button } from "@heroui/react";
+import { Icon } from "../components/Icon";
 
-export default function ErrorPage({
-  img,
-  title,
-  desc,
-}: {
-  img: string
-  title: string
-  desc: string
-}) {
-  const navigate = useNavigate()
-  const { activeTabId, closeTab } = useTabs()
+export default function ErrorPage({ img, title, desc }: { img: string; title: string; desc: string }) {
+  const navigate = useNavigate();
+  const { activeTabId, closeTab } = useTabs();
 
   function goHome() {
-    if (activeTabId) closeTab(activeTabId)
-    navigate('/')
+    if (activeTabId) closeTab(activeTabId);
+    navigate("/");
   }
 
   return (
@@ -30,5 +22,5 @@ export default function ErrorPage({
         返回首页
       </Button>
     </div>
-  )
+  );
 }

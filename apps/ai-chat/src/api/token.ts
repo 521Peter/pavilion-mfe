@@ -8,21 +8,21 @@
  * 它的 get 会 JSON.parse 裸 JWT 而拿到 null。
  */
 
-export const TOKEN_KEY = 'pavilion_token'
+export const TOKEN_KEY = "pavilion_token";
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token)
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 /** 是否运行在主应用页面内（token 由主应用登录态提供） */
 export function isEmbedded(): boolean {
-  return !!window.__PAVILION_MFE_ENV__
+  return !!window.__PAVILION_MFE_ENV__;
 }

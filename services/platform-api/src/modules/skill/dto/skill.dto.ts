@@ -1,64 +1,64 @@
-import { IsString, IsOptional, MaxLength } from 'class-validator'
+import { IsString, IsOptional, MaxLength } from "class-validator";
 
 export class CreateSkillDto {
   @IsString()
   @MaxLength(64)
-  name!: string
+  name!: string;
 
   @IsString()
   @IsOptional()
-  description?: string
+  description?: string;
 }
 
 export class WriteFileDto {
   @IsString()
-  path!: string
+  path!: string;
 
   @IsString()
-  content!: string
+  content!: string;
 }
 
 export class BrowseRemoteDto {
   @IsString()
-  owner!: string
+  owner!: string;
 
   @IsString()
-  repo!: string
+  repo!: string;
 
   @IsString()
-  branch!: string
+  branch!: string;
 
   @IsString()
   @IsOptional()
-  path?: string
+  path?: string;
 }
 
 export class InstallRemoteDto {
   @IsString()
-  owner!: string
+  owner!: string;
 
   @IsString()
-  repo!: string
+  repo!: string;
 
   @IsString()
-  branch!: string
+  branch!: string;
 
   @IsString()
-  skillName!: string
+  skillName!: string;
 
   @IsString()
   @IsOptional()
-  skillPath?: string
+  skillPath?: string;
 }
 
 export class AddSkillRepoDto {
   @IsString()
-  owner!: string
+  owner!: string;
 
   @IsString()
-  name!: string
+  name!: string;
 
   @IsString()
   @IsOptional()
-  branch?: string
+  branch?: string;
 }

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
-import { resolve } from 'path'
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { resolve } from "path";
 
 const TEMPLATES: Record<string, Record<string, string>> = {
-  'sub-app-main.ts': {
-    path: 'src/sub-app-main.ts',
+  "sub-app-main.ts": {
+    path: "src/sub-app-main.ts",
     content: `/**
  * PavilionMfe sub-app lifecycle entry.
  * Export mount/unmount to be loaded by the main app.
@@ -19,10 +19,10 @@ export default {
     // Cleanup
   },
 }
-`,
+`
   },
-  'vite.config.ts': {
-    path: 'vite.config.ts',
+  "vite.config.ts": {
+    path: "vite.config.ts",
     content: `import { defineConfig } from 'vite'
 import { PavilionMfe } from '@pavilion-mfe/vite'
 
@@ -36,65 +36,65 @@ export default defineConfig({
     }),
   ],
 })
-`,
+`
   },
-  'VERSION': {
-    path: 'VERSION',
-    content: '0.1.0\n',
+  VERSION: {
+    path: "VERSION",
+    content: "0.1.0\n"
   },
-  'package.json': {
-    path: 'package.json',
+  "package.json": {
+    path: "package.json",
     content: JSON.stringify(
       {
-        name: 'my-pavilion-mfe-sub-app',
-        version: '0.1.0',
+        name: "my-pavilion-mfe-sub-app",
+        version: "0.1.0",
         private: true,
-        type: 'module',
+        type: "module",
         scripts: {
-          dev: 'vite',
-          build: 'vite build',
-          'build:mfe': 'vite build --mode mfe',
-        },
+          dev: "vite",
+          build: "vite build",
+          "build:mfe": "vite build --mode mfe"
+        }
       },
       null,
       2
-    ),
+    )
   },
-  'index.html': {
-    path: 'index.html',
+  "index.html": {
+    path: "index.html",
     content: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8" /><title>My PavilionMfe Sub-App</title></head>
 <body><div id="app"></div><script type="module" src="/src/main.ts"></script></body>
 </html>
-`,
-  },
-}
+`
+  }
+};
 
 async function main(): Promise<void> {
-  const projectName = process.argv[2] ?? 'my-pavilion-mfe-app'
-  const projectDir = resolve(process.cwd(), projectName)
+  const projectName = process.argv[2] ?? "my-pavilion-mfe-app";
+  const projectDir = resolve(process.cwd(), projectName);
 
   if (existsSync(projectDir)) {
-    console.error(`Directory ${projectName} already exists.`)
-    process.exit(1)
+    console.error(`Directory ${projectName} already exists.`);
+    process.exit(1);
   }
 
-  mkdirSync(projectDir, { recursive: true })
-  mkdirSync(resolve(projectDir, 'src'))
+  mkdirSync(projectDir, { recursive: true });
+  mkdirSync(resolve(projectDir, "src"));
 
   for (const [, template] of Object.entries(TEMPLATES)) {
-    const filePath = resolve(projectDir, template.path)
-    const dir = filePath.substring(0, filePath.lastIndexOf('/'))
-    mkdirSync(dir, { recursive: true })
-    writeFileSync(filePath, template.content, 'utf-8')
+    const filePath = resolve(projectDir, template.path);
+    const dir = filePath.substring(0, filePath.lastIndexOf("/"));
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(filePath, template.content, "utf-8");
   }
 
-  console.log(`✅ Created PavilionMfe app at ${projectDir}`)
-  console.log()
-  console.log('  cd', projectName)
-  console.log('  npm install')
-  console.log('  npm run dev')
+  console.log(`✅ Created PavilionMfe app at ${projectDir}`);
+  console.log();
+  console.log("  cd", projectName);
+  console.log("  npm install");
+  console.log("  npm run dev");
 }
 
-main().catch(console.error)
+main().catch(console.error);

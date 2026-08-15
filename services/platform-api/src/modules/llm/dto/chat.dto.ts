@@ -1,31 +1,31 @@
-import { IsString, IsOptional, IsNumber, IsArray, ValidateNested } from 'class-validator'
-import { Type } from 'class-transformer'
+import { IsString, IsOptional, IsNumber, IsArray, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
 
 export class ChatMessageDto {
   @IsString()
-  role!: 'system' | 'user' | 'assistant'
+  role!: "system" | "user" | "assistant";
 
   @IsString()
-  content!: string
+  content!: string;
 }
 
 export class ChatDto {
   @IsString()
-  providerId!: string
+  providerId!: string;
 
   @IsString()
-  modelId!: string
+  modelId!: string;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ChatMessageDto)
-  messages!: ChatMessageDto[]
+  messages!: ChatMessageDto[];
 
   @IsOptional()
   @IsNumber()
-  temperature?: number
+  temperature?: number;
 
   @IsOptional()
   @IsNumber()
-  maxTokens?: number
+  maxTokens?: number;
 }

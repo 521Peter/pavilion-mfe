@@ -1,135 +1,126 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  type ReactNode,
-} from 'react'
-import { TabsStateManager, type TabInfo } from './state-manager.js'
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
+import { TabsStateManager, type TabInfo } from "./state-manager.js";
 
 // ─── Public API ───
 
 /** openTab 入参：path + title 必填，其余可选 */
-export type OpenTabInput = Pick<TabInfo, 'path' | 'title'> & Partial<Omit<TabInfo, 'id'>> & { id?: string }
+export type OpenTabInput = Pick<TabInfo, "path" | "title"> & Partial<Omit<TabInfo, "id">> & { id?: string };
 
 export interface TabsAPI {
-  tabs: TabInfo[]
-  activeTabId: string | null
-  activeTab: TabInfo | null
+  tabs: TabInfo[];
+  activeTabId: string | null;
+  activeTab: TabInfo | null;
   /** 打开 Tab（已存在则切换）；id / fullPath 默认取 path */
-  openTab(tab: OpenTabInput): void
-  closeTab(tabId: string): void
-  closeOthers(tabId: string): void
-  closeAll(): void
+  openTab(tab: OpenTabInput): void;
+  closeTab(tabId: string): void;
+  closeOthers(tabId: string): void;
+  closeAll(): void;
 }
 
 // ─── sessionStorage 持久化 ───
 
-const STORAGE_KEY = 'pavilion-mfe:tabs-state'
+const STORAGE_KEY = "pavilion-mfe:tabs-state";
 
 function saveState(state: { tabs: TabInfo[]; activeTabId: string | null }) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch { /* ignore quota errors */ }
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    /* ignore quota errors */
+  }
 }
 
 function loadState(): { tabs: TabInfo[]; activeTabId: string | null } | null {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    return JSON.parse(raw)
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
   } catch {
-    return null
+    return null;
   }
 }
 
 // ─── Context ───
 
-const TabsContext = createContext<TabsAPI | null>(null)
+const TabsContext = createContext<TabsAPI | null>(null);
 
 // ─── Provider ───
 
 export function TabsProvider({ children }: { children: ReactNode }) {
-  const { current: manager } = React.useRef(new TabsStateManager())
+  const { current: manager } = React.useRef(new TabsStateManager());
 
-  const [tabs, setTabs] = useState<TabInfo[]>([])
-  const [activeTabId, setActiveTabId] = useState<string | null>(null)
+  const [tabs, setTabs] = useState<TabInfo[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
-  const activeTab = useMemo(
-    () => tabs.find((t: TabInfo) => t.id === activeTabId) ?? null,
-    [tabs, activeTabId],
-  )
+  const activeTab = useMemo(() => tabs.find((t: TabInfo) => t.id === activeTabId) ?? null, [tabs, activeTabId]);
 
   // 从 sessionStorage 恢复
   useEffect(() => {
-    const saved = loadState()
+    const saved = loadState();
     if (saved?.tabs.length) {
       for (const tab of saved.tabs) {
-        manager.addTab(tab)
+        manager.addTab(tab);
       }
-      const state = manager.getState()
-      setTabs(state.tabs)
-      setActiveTabId(state.activeTabId)
+      const state = manager.getState();
+      setTabs(state.tabs);
+      setActiveTabId(state.activeTabId);
     }
-  }, [manager])
+  }, [manager]);
 
   const sync = useCallback(() => {
-    const state = manager.getState()
-    setTabs(state.tabs)
-    setActiveTabId(state.activeTabId)
-    saveState(state)
-  }, [manager])
+    const state = manager.getState();
+    setTabs(state.tabs);
+    setActiveTabId(state.activeTabId);
+    saveState(state);
+  }, [manager]);
 
   const openTab = useCallback(
     (tab: OpenTabInput) => {
-      const id = tab.id ?? tab.path
-      const fullPath = tab.fullPath ?? tab.path
-      manager.addTab({ fullPath, ...tab, id } as TabInfo)
-      sync()
+      const id = tab.id ?? tab.path;
+      const fullPath = tab.fullPath ?? tab.path;
+      manager.addTab({ fullPath, ...tab, id } as TabInfo);
+      sync();
     },
-    [manager, sync],
-  )
+    [manager, sync]
+  );
 
   const closeTab = useCallback(
     (tabId: string) => {
-      manager.removeTab(tabId)
-      sync()
+      manager.removeTab(tabId);
+      sync();
     },
-    [manager, sync],
-  )
+    [manager, sync]
+  );
 
   const closeOthers = useCallback(
     (tabId: string) => {
-      const state = manager.getState()
+      const state = manager.getState();
       for (const t of state.tabs) {
-        if (t.id !== tabId) manager.removeTab(t.id)
+        if (t.id !== tabId) manager.removeTab(t.id);
       }
-      sync()
+      sync();
     },
-    [manager, sync],
-  )
+    [manager, sync]
+  );
 
   const closeAll = useCallback(() => {
-    manager.clearState()
-    sync()
-  }, [manager, sync])
+    manager.clearState();
+    sync();
+  }, [manager, sync]);
 
   const api = useMemo<TabsAPI>(
     () => ({ tabs, activeTabId, activeTab, openTab, closeTab, closeOthers, closeAll }),
-    [tabs, activeTabId, activeTab, openTab, closeTab, closeOthers, closeAll],
-  )
+    [tabs, activeTabId, activeTab, openTab, closeTab, closeOthers, closeAll]
+  );
 
-  return <TabsContext.Provider value={api}>{children}</TabsContext.Provider>
+  return <TabsContext.Provider value={api}>{children}</TabsContext.Provider>;
 }
 
 // ─── Hook ───
 
 export function useTabs(): TabsAPI {
-  const api = useContext(TabsContext)
+  const api = useContext(TabsContext);
   if (!api) {
-    throw new Error('[pavilion-mfe/tabs] useTabs() must be called within <TabsProvider>')
+    throw new Error("[pavilion-mfe/tabs] useTabs() must be called within <TabsProvider>");
   }
-  return api
+  return api;
 }

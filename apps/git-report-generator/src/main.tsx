@@ -10,13 +10,13 @@ const appCode = import.meta.env.VITE_PAVILION_MFE_APP_CODE;
 if (!window.__PAVILION_MFE_ENV__) {
   const root = document.getElementById("root");
   if (root) {
-    root.classList.add(`pavilion-mfe-${appCode}`)
+    root.classList.add(`pavilion-mfe-${appCode}`);
     createRoot(root).render(
       <StrictMode>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </StrictMode>,
+      </StrictMode>
     );
   }
 }
@@ -31,12 +31,12 @@ export default {
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </StrictMode>,
+      </StrictMode>
     );
     return () => root.unmount();
   },
   unmount: async (_ctx: any, el: HTMLElement) => {
     console.log("[PavilionMfe 微前端] unmount", appCode);
     el.innerHTML = "";
-  },
+  }
 };

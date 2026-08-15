@@ -48,16 +48,16 @@ bridge (零依赖)    sandbox (零依赖, 含 logger)    tabs (零依赖)
 
 ## 包
 
-| 包名 | 说明 | 依赖 |
-|------|------|------|
-| `@pavilion-mfe/bridge` | 主应用-子应用事件通信桥（EventBus + StorageSync） | 零依赖 |
-| `@pavilion-mfe/sandbox` | JS 沙箱隔离（栈式副作用追踪 + 路由隔离 + 日志模块） | 零依赖 |
-| `@pavilion-mfe/tabs` | 多标签页状态管理（Vue 插件 + sessionStorage 持久化） | 零依赖 |
-| `@pavilion-mfe/router` | 微前端生命周期路由调度器（路由事件 + popstate 隔离） | `@pavilion-mfe/sandbox` `@pavilion-mfe/tabs` |
-| `@pavilion-mfe/runtime` | 共享运行时内核，作为 MF Remote 确保单例 | `@pavilion-mfe/router` `@pavilion-mfe/bridge` `@pavilion-mfe/sandbox` |
-| `@pavilion-mfe/vite` | Vite 插件，封装 Module Federation + CSS 作用域 | `@module-federation/vite` |
-| `@pavilion-mfe/cli` | 命令行工具（`pavilion-mfe dev` / `pavilion-mfe build`） | |
-| `create-pavilion-mfe` | 项目脚手架（`npm create pavilion-mfe`） | |
+| 包名                    | 说明                                                    | 依赖                                                                  |
+| ----------------------- | ------------------------------------------------------- | --------------------------------------------------------------------- |
+| `@pavilion-mfe/bridge`  | 主应用-子应用事件通信桥（EventBus + StorageSync）       | 零依赖                                                                |
+| `@pavilion-mfe/sandbox` | JS 沙箱隔离（栈式副作用追踪 + 路由隔离 + 日志模块）     | 零依赖                                                                |
+| `@pavilion-mfe/tabs`    | 多标签页状态管理（Vue 插件 + sessionStorage 持久化）    | 零依赖                                                                |
+| `@pavilion-mfe/router`  | 微前端生命周期路由调度器（路由事件 + popstate 隔离）    | `@pavilion-mfe/sandbox` `@pavilion-mfe/tabs`                          |
+| `@pavilion-mfe/runtime` | 共享运行时内核，作为 MF Remote 确保单例                 | `@pavilion-mfe/router` `@pavilion-mfe/bridge` `@pavilion-mfe/sandbox` |
+| `@pavilion-mfe/vite`    | Vite 插件，封装 Module Federation + CSS 作用域          | `@module-federation/vite`                                             |
+| `@pavilion-mfe/cli`     | 命令行工具（`pavilion-mfe dev` / `pavilion-mfe build`） |                                                                       |
+| `create-pavilion-mfe`   | 项目脚手架（`npm create pavilion-mfe`）                 |                                                                       |
 
 ## 核心概念
 
@@ -83,12 +83,12 @@ export default {
 `Sandbox` 使用模块级 `activeStack` 支持多实例并发。`patchGlobals()` 仅执行一次，拦截 `setTimeout` / `setInterval` / `addEventListener`，每个副作用归属于栈顶沙箱。unmount 时自动清理所有 timers / listeners / globals。
 
 ```typescript
-import { Sandbox } from '@pavilion-mfe/sandbox'
+import { Sandbox } from "@pavilion-mfe/sandbox";
 
-const sandbox = new Sandbox('my-sub-app')
-sandbox.activate()    // 开始追踪副作用
+const sandbox = new Sandbox("my-sub-app");
+sandbox.activate(); // 开始追踪副作用
 // ... 子应用运行期间的所有 setTimeout/addEventListener 被追踪
-sandbox.deactivate()  // 自动清理所有副作用
+sandbox.deactivate(); // 自动清理所有副作用
 ```
 
 #### CSS 作用域（`:where()` 零特异性）
@@ -97,10 +97,14 @@ PostCSS 插件自动为子应用的选择器包裹 `:where(.pavilion-{name})` �
 
 ```css
 /* 输入 */
-.card { color: red; }
+.card {
+  color: red;
+}
 
 /* 输出 (prefix = pavilion-mfe-dashboard) */
-:where(.pavilion-mfe-dashboard) .card { color: red; }
+:where(.pavilion-mfe-dashboard) .card {
+  color: red;
+}
 ```
 
 同时自动前缀化 `@keyframes` 名称，防止动画冲突。
@@ -111,11 +115,11 @@ PostCSS 插件自动为子应用的选择器包裹 `:where(.pavilion-{name})` �
 
 ```typescript
 // 路由启动时设置匹配器
-import { setRouteMatcher } from '@pavilion-mfe/sandbox'
+import { setRouteMatcher } from "@pavilion-mfe/sandbox";
 
 setRouteMatcher((appCode, path) => {
-  return apps.some(app => app.name === appCode && app.activeWhen(path))
-})
+  return apps.some(app => app.name === appCode && app.activeWhen(path));
+});
 ```
 
 ### 环境检测
@@ -128,7 +132,7 @@ setRouteMatcher((appCode, path) => {
 /** 独立运行时自启动 */
 if (!window.__PAVILION_MFE_ENV__) {
   // standalone 模式：挂载到本地 #root 元素
-  const el = document.getElementById('root')
+  const el = document.getElementById("root");
   // ...
 }
 ```
@@ -137,11 +141,11 @@ if (!window.__PAVILION_MFE_ENV__) {
 
 ```typescript
 // src/globals.d.ts
-export {}
+export {};
 
 declare global {
   interface Window {
-    __PAVILION_MFE_ENV__?: boolean
+    __PAVILION_MFE_ENV__?: boolean;
   }
 }
 ```
@@ -152,20 +156,20 @@ declare global {
 
 路由器在导航各阶段分发 `CustomEvent`，开发者可监听用于埋点、加载状态等：
 
-| 事件 | 触发时机 | detail |
-|------|---------|--------|
-| `pavilion-mfe:before-routing` | 路由开始切换前 | `{ url, trigger, path, appCode }` |
-| `pavilion-mfe:after-routing` | 路由切换完成 | `{ url, trigger, path, appCode }` |
-| `pavilion-mfe:sub-app-switch` | 活跃子应用发生变化 | `{ from: string[], to: string[] }` |
-| `pavilion-mfe:before-cache` | 子应用进入 Keep-Alive 缓存前 | `{ appCode }` |
-| `pavilion-mfe:after-restore` | 子应用从缓存恢复显示 | `{ appCode }` |
-| `pavilion-mfe:sub-app-error` | 子应用加载/挂载失败 | `{ appCode, phase, error }` |
+| 事件                          | 触发时机                     | detail                             |
+| ----------------------------- | ---------------------------- | ---------------------------------- |
+| `pavilion-mfe:before-routing` | 路由开始切换前               | `{ url, trigger, path, appCode }`  |
+| `pavilion-mfe:after-routing`  | 路由切换完成                 | `{ url, trigger, path, appCode }`  |
+| `pavilion-mfe:sub-app-switch` | 活跃子应用发生变化           | `{ from: string[], to: string[] }` |
+| `pavilion-mfe:before-cache`   | 子应用进入 Keep-Alive 缓存前 | `{ appCode }`                      |
+| `pavilion-mfe:after-restore`  | 子应用从缓存恢复显示         | `{ appCode }`                      |
+| `pavilion-mfe:sub-app-error`  | 子应用加载/挂载失败          | `{ appCode, phase, error }`        |
 
 ```typescript
-window.addEventListener('pavilion-mfe:sub-app-switch', (e) => {
-  const { from, to } = (e as CustomEvent).detail
-  console.log('子应用切换:', from, '→', to)
-})
+window.addEventListener("pavilion-mfe:sub-app-switch", e => {
+  const { from, to } = (e as CustomEvent).detail;
+  console.log("子应用切换:", from, "→", to);
+});
 ```
 
 `trigger` 値：`init` / `pushState` / `replaceState` / `popstate`
@@ -173,10 +177,10 @@ window.addEventListener('pavilion-mfe:sub-app-switch', (e) => {
 事件 `detail` 包含 `{ url, trigger, path, appCode }`，其中 `path` 为解析后的路径名，`appCode` 为当前活跃子应用编码，可用于路由守卫：
 
 ```typescript
-window.addEventListener('pavilion-mfe:before-routing', (e) => {
-  const { path, appCode } = (e as CustomEvent).detail
+window.addEventListener("pavilion-mfe:before-routing", e => {
+  const { path, appCode } = (e as CustomEvent).detail;
   // 权限检查、埋点、加载状态等
-})
+});
 ```
 
 ### 子应用 Keep-Alive 缓存
@@ -185,13 +189,15 @@ window.addEventListener('pavilion-mfe:before-routing', (e) => {
 
 ```typescript
 const pavilionMfeRouter = createPavilionMfeRouter({
-  apps: mfeApps.map((seg) => ({
+  apps: mfeApps.map(seg => ({
     name: seg.appCode,
-    load: async () => { /* ... */ },
-    activeWhen: (path) => seg.routes.some(/* ... */),
-    keepAlive: true,  // ← 启用缓存
-  })),
-})
+    load: async () => {
+      /* ... */
+    },
+    activeWhen: path => seg.routes.some(/* ... */),
+    keepAlive: true // ← 启用缓存
+  }))
+});
 ```
 
 状态机增加 `CACHED` 状态：`MOUNTED → (unmount) → CACHED → (restore) → MOUNTED`
@@ -208,10 +214,10 @@ const pavilionMfeRouter = createPavilionMfeRouter({
 ```typescript
 // vite.config.ts (主应用)
 PavilionMfe({
-  role: 'main-app',
-  name: appCode,  // 由环境变量 VITE_PAVILION_MFE_APP_CODE 注入
-  runtimePlugins: ['./src/preloadPlugin'],  // 替代静态 pavilionMfeRemotes
-})
+  role: "main-app",
+  name: appCode, // 由环境变量 VITE_PAVILION_MFE_APP_CODE 注入
+  runtimePlugins: ["./src/preloadPlugin"] // 替代静态 pavilionMfeRemotes
+});
 ```
 
 ### 日志系统
@@ -219,17 +225,17 @@ PavilionMfe({
 分模块可配置的控制台日志，帮助开发者调试微前端运行时行为。所有日志使用 CSS 样式美化输出。
 
 ```typescript
-import { configureLog } from '@pavilion-mfe/router'
+import { configureLog } from "@pavilion-mfe/router";
 
 configureLog({
   enabled: true,
   modules: {
-    router:  true,   // 路由事件 + 子应用生命周期
-    sandbox: true,   // 沙箱激活/停用 + popstate 拦截
-    preload: true,   // MF 远程注册 + 预加载状态
-    bridge:  true,   // EventBus emit/subscribe + StorageSync
-  },
-})
+    router: true, // 路由事件 + 子应用生命周期
+    sandbox: true, // 沙箱激活/停用 + popstate 拦截
+    preload: true, // MF 远程注册 + 预加载状态
+    bridge: true // EventBus emit/subscribe + StorageSync
+  }
+});
 ```
 
 日志输出示例：
@@ -252,7 +258,9 @@ configureLog({
 也可以通过全局变量配置（在脚本加载前设置）：
 
 ```html
-<script>window.__PAVILION_MFE_LOG__ = { modules: { sandbox: false } }</script>
+<script>
+  window.__PAVILION_MFE_LOG__ = { modules: { sandbox: false } };
+</script>
 ```
 
 ### 多标签页管理
@@ -263,33 +271,33 @@ configureLog({
 
 ```typescript
 // main.ts
-import { tabsPlugin } from '@pavilion-mfe/tabs/vue'
-app.use(tabsPlugin)
+import { tabsPlugin } from "@pavilion-mfe/tabs/vue";
+app.use(tabsPlugin);
 
 // 任意组件
-import { useTabs } from '@pavilion-mfe/tabs/vue'
+import { useTabs } from "@pavilion-mfe/tabs/vue";
 
-const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs()
+const { tabs, activeTabId, openTab, closeTab, closeOthers, closeAll } = useTabs();
 
-openTab({ path: '/git', title: 'git 报告' })  // 打开/切换到标签
-closeOthers(tabId)  // 关闭其他标签
-closeAll()          // 关闭全部
+openTab({ path: "/git", title: "git 报告" }); // 打开/切换到标签
+closeOthers(tabId); // 关闭其他标签
+closeAll(); // 关闭全部
 ```
 
 **React**
 
 ```tsx
 // App.tsx
-import { TabsProvider } from '@pavilion-mfe/tabs/react'
+import { TabsProvider } from "@pavilion-mfe/tabs/react";
 
 <TabsProvider>
   <App />
-</TabsProvider>
+</TabsProvider>;
 
 // 任意组件
-import { useTabs } from '@pavilion-mfe/tabs/react'
+import { useTabs } from "@pavilion-mfe/tabs/react";
 
-const { tabs, openTab, closeAll } = useTabs()
+const { tabs, openTab, closeAll } = useTabs();
 ```
 
 标签状态通过 `sessionStorage` 持久化，刷新页面后自动恢复。Vue 与 React 插件共享同一存储 key。
@@ -337,14 +345,14 @@ const { tabs, openTab, closeAll } = useTabs()
 
 `@pavilion-mfe/vite` 在 build 模式自动应用以下优化：
 
-| 优化项 | 说明 |
-|--------|------|
-| `esbuild.drop: ['debugger']` | 生产环境移除 debugger 语句 |
-| `sourcemap: false` | 禁用 sourcemap 减小体积 |
-| `cssCodeSplit: true` | CSS 按路由拆分 |
-| chunk 命名规则 | `static/js/[name]-[hash].js` / `static/[ext]/[name]-[hash].[ext]` |
-| `publicDir: false`（主应用） | 主应用无静态资源目录 |
-| Top-Level Await | 自动注入 `vite-plugin-top-level-await`（MF shared 必需） |
+| 优化项                       | 说明                                                              |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `esbuild.drop: ['debugger']` | 生产环境移除 debugger 语句                                        |
+| `sourcemap: false`           | 禁用 sourcemap 减小体积                                           |
+| `cssCodeSplit: true`         | CSS 按路由拆分                                                    |
+| chunk 命名规则               | `static/js/[name]-[hash].js` / `static/[ext]/[name]-[hash].[ext]` |
+| `publicDir: false`（主应用） | 主应用无静态资源目录                                              |
+| Top-Level Await              | 自动注入 `vite-plugin-top-level-await`（MF shared 必需）          |
 
 ### Dev Server 代理
 
@@ -352,19 +360,19 @@ const { tabs, openTab, closeAll } = useTabs()
 
 ```typescript
 PavilionMfe({
-  role: 'main-app',
-  proxy: { '/api': 'http://localhost:3000' },
-})
+  role: "main-app",
+  proxy: { "/api": "http://localhost:3000" }
+});
 ```
 
 ## 多仓库架构
 
 实际项目中，主应用和各子应用分属不同 Git 仓库独立发布：
 
-| 角色 | `@pavilion-mfe/*` 依赖 | 说明 |
-|------|-------------------|------|
-| 主应用 | `@pavilion-mfe/router` `@pavilion-mfe/sandbox` (runtime dep) + `@pavilion-mfe/vite` (devDep) | 运行时需要路由和沙箱 |
-| 子应用 | `@pavilion-mfe/vite` (devDep only) | 仅构建时需要，运行时不含 `@pavilion-mfe/*` 代码 |
+| 角色   | `@pavilion-mfe/*` 依赖                                                                       | 说明                                            |
+| ------ | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| 主应用 | `@pavilion-mfe/router` `@pavilion-mfe/sandbox` (runtime dep) + `@pavilion-mfe/vite` (devDep) | 运行时需要路由和沙箱                            |
+| 子应用 | `@pavilion-mfe/vite` (devDep only)                                                           | 仅构建时需要，运行时不含 `@pavilion-mfe/*` 代码 |
 
 子应用更新 `@pavilion-mfe/vite` 版本后独立发布即可，**不影响主应用运行时**，无需主应用重新构建。
 
@@ -426,10 +434,10 @@ CI 会依次构建核心包 → 子应用 → 主应用，最后把所有产物�
 
 部署时可在仓库 **Settings** → **Secrets and variables** → **Variables** 中配置：
 
-| 变量 | 说明 | 示例 |
-|------|------|------|
-| `VITE_PAVILION_MFE_CDN` | CDN 基础路径 | `/my-repo`（项目页面）或留空（用户页面） |
-| `VITE_DEPLOY_BASE` | Vite/Vue Router 基础路径 | `/my-repo/`（项目页面）或 `/`（用户页面） |
+| 变量                    | 说明                     | 示例                                      |
+| ----------------------- | ------------------------ | ----------------------------------------- |
+| `VITE_PAVILION_MFE_CDN` | CDN 基础路径             | `/my-repo`（项目页面）或留空（用户页面）  |
+| `VITE_DEPLOY_BASE`      | Vite/Vue Router 基础路径 | `/my-repo/`（项目页面）或 `/`（用户页面） |
 
 - **用户页面**（`username.github.io`）：两个变量都留空或不设置
 - **项目页面**（`username.github.io/my-repo`）：`CDN` 设为 `/my-repo`，`BASE` 设为 `/my-repo/`

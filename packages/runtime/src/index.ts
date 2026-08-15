@@ -8,29 +8,12 @@
  * and adds orchestrator-level utilities.
  */
 
-export {
-  createRouter,
-  matchAppByPath,
-  navigateTo,
-} from '@pavilion-mfe/router'
+export { createRouter, matchAppByPath, navigateTo } from "@pavilion-mfe/router";
 
-export type {
-  SubApp,
-  SubAppLifecycle,
-  AppContext,
-  SubAppRouteConfig,
-} from '@pavilion-mfe/router'
+export type { SubApp, SubAppLifecycle, AppContext, SubAppRouteConfig } from "@pavilion-mfe/router";
 
-export {
-  EventBus,
-  StorageSync,
-  MFEEvent,
-} from '@pavilion-mfe/bridge'
+export { EventBus, StorageSync, MFEEvent } from "@pavilion-mfe/bridge";
 
-export type {
-  RouteChangeDetail,
-  SwitchAppDetail,
-  EventCallback,
-} from '@pavilion-mfe/bridge'
+export type { RouteChangeDetail, SwitchAppDetail, EventCallback } from "@pavilion-mfe/bridge";
 
-export { Sandbox } from '@pavilion-mfe/sandbox'
+export { Sandbox } from "@pavilion-mfe/sandbox";

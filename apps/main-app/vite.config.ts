@@ -13,25 +13,22 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   const appCode = env.VITE_PAVILION_MFE_APP_CODE;
   const pavilionMfeEnv = env.VITE_PAVILION_MFE_ENV || "develop";
   // 优先从 process.env 读取（CI 环境变量），fallback 到 .env 文件
-  const cdn =
-    process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
+  const cdn = process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
   const apiBase = process.env.VITE_BASE_API_URL || env.VITE_BASE_API_URL || "";
-  const deployBase =
-    process.env.VITE_DEPLOY_BASE || env.VITE_DEPLOY_BASE || "/";
+  const deployBase = process.env.VITE_DEPLOY_BASE || env.VITE_DEPLOY_BASE || "/";
 
   console.log(
     `${chalk.green.bold("[PavilionMfe 微前端]")} ${chalk.bold(appCode)}\n` +
       `  ${chalk.gray("env")} ${chalk.cyan(pavilionMfeEnv)}  ` +
       `${chalk.gray("api")} ${chalk.cyan(apiBase || "-")}  ` +
-      `${chalk.gray("cdn")} ${chalk.cyan(cdn || "(relative)")}`,
+      `${chalk.gray("cdn")} ${chalk.cyan(cdn || "(relative)")}`
   );
 
   const remotes: Record<string, string> = {};
 
-  mfeConfig.apps.forEach((app) => {
+  mfeConfig.apps.forEach(app => {
     if (isServe && app.devPort) {
-      remotes[app.appCode] =
-        `${app.appCode}@http://localhost:${app.devPort}/mf-manifest-main.json`;
+      remotes[app.appCode] = `${app.appCode}@http://localhost:${app.devPort}/mf-manifest-main.json`;
     }
     // build mode: preloadPlugin registers remotes at runtime
   });
@@ -51,8 +48,8 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         // 各子应用自带框架（Vue 子应用自带 vue，React 子应用自带 react），
         // 主应用不向子应用共享自身的依赖，避免版本错配。
         shared: [],
-        dts: false,
-      }),
+        dts: false
+      })
     ],
     // GitHub Pages 部署时通过 VITE_DEPLOY_BASE 设置基础路径
     // 用户页面 (username.github.io):     "/" 或不设置
@@ -60,25 +57,25 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     base: deployBase,
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url)),
-      },
+        "@": fileURLToPath(new URL("./src", import.meta.url))
+      }
     },
     server: {
       port: 6019,
       proxy: {
         "/api": {
           target: "http://localhost:3000",
-          changeOrigin: true,
-        },
-      },
+          changeOrigin: true
+        }
+      }
     },
     build: {
       rollupOptions: {
         onwarn(warning, defaultHandler) {
           if (warning.code === "INVALID_ANNOTATION") return;
           defaultHandler(warning);
-        },
-      },
-    },
+        }
+      }
+    }
   };
 });

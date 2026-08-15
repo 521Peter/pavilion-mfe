@@ -31,7 +31,7 @@ function subscribeMenus(listener: () => void): () => void {
 }
 
 function emitChange(): void {
-  listeners.forEach((listener) => listener());
+  listeners.forEach(listener => listener());
 }
 
 /** React Hook：订阅菜单数据（配合 useSyncExternalStore，菜单加载完成后自动重渲染） */
@@ -59,7 +59,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
   console.log("%c[PavilionMfe]%c 正在从后端获取菜单数据...", ST_PX, ST_DIM);
 
   // 模拟网络延迟
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  await new Promise(resolve => setTimeout(resolve, 300));
 
   const data: MenuItem[] = [
     // ─── 主应用菜单 ───
@@ -71,7 +71,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 0,
       status: "1",
       menuUrl: "/",
-      menuIcon: "HomeFilled",
+      menuIcon: "HomeFilled"
     },
     {
       menuCode: "ai-center",
@@ -91,7 +91,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 1,
           status: "1",
           menuUrl: "/llm-providers",
-          menuIcon: "Link",
+          menuIcon: "Link"
         },
         {
           menuCode: "ai-center/mcp-servers",
@@ -101,7 +101,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 2,
           status: "1",
           menuUrl: "/mcp-servers",
-          menuIcon: "Connection",
+          menuIcon: "Connection"
         },
         {
           menuCode: "ai-center/skills",
@@ -111,9 +111,9 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 3,
           status: "1",
           menuUrl: "/skills",
-          menuIcon: "Reading",
-        },
-      ],
+          menuIcon: "Reading"
+        }
+      ]
     },
     // ─── 系统工具 ───
     // {
@@ -149,7 +149,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 1,
           status: "1",
           menuUrl: "/403",
-          menuIcon: "Lock",
+          menuIcon: "Lock"
         },
         {
           menuCode: "error-pages/404",
@@ -159,7 +159,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 2,
           status: "1",
           menuUrl: "/404",
-          menuIcon: "Guide",
+          menuIcon: "Guide"
         },
         {
           menuCode: "error-pages/500",
@@ -169,9 +169,9 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 3,
           status: "1",
           menuUrl: "/500",
-          menuIcon: "Drizzling",
-        },
-      ],
+          menuIcon: "Drizzling"
+        }
+      ]
     },
     {
       menuCode: "git-report-generator",
@@ -183,7 +183,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       status: "1",
       menuUrl: "/git",
       menuIcon: "Menu",
-      childrenMenuInfoList: [],
+      childrenMenuInfoList: []
     },
     {
       menuCode: "ai-chat",
@@ -195,17 +195,12 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       status: "1",
       menuUrl: "/chat",
       menuIcon: "Menu",
-      childrenMenuInfoList: [],
-    },
+      childrenMenuInfoList: []
+    }
   ];
 
   menusData = data;
   emitChange();
-  console.log(
-    "%c[PavilionMfe]%c 菜单数据获取成功，共 %d 个一级菜单",
-    ST_PX,
-    ST_DIM,
-    data.length,
-  );
+  console.log("%c[PavilionMfe]%c 菜单数据获取成功，共 %d 个一级菜单", ST_PX, ST_DIM, data.length);
   return data;
 }

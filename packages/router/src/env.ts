@@ -18,7 +18,7 @@
 
 declare global {
   interface Window {
-    __PAVILION_MFE_ENV__?: boolean
+    __PAVILION_MFE_ENV__?: boolean;
   }
 }
 
@@ -29,5 +29,5 @@ declare global {
  * PavilionMfe router during `start()`, before sub-apps are loaded.
  */
 export function isPavilionMfeMainApp(): boolean {
-  return typeof window !== 'undefined' && !!window.__PAVILION_MFE_ENV__
+  return typeof window !== "undefined" && !!window.__PAVILION_MFE_ENV__;
 }

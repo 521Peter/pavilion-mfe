@@ -13,11 +13,11 @@ type StoredThread = {
 const store = new Map<string, StoredThread>();
 
 function deriveTitle(messages: readonly ThreadMessage[]): string {
-  const firstUser = messages.find((m) => m.role === "user");
+  const firstUser = messages.find(m => m.role === "user");
   const text =
     firstUser?.content
       ?.filter((c): c is { type: "text"; text: string } => c.type === "text")
-      .map((c) => c.text)
+      .map(c => c.text)
       .join(" ")
       .trim() ?? "新对话";
   return text.length > 30 ? text.slice(0, 30) + "…" : text;
@@ -28,11 +28,11 @@ export function createInMemoryThreadListAdapter(): RemoteThreadListAdapter {
     async list() {
       const threads = [...store.values()]
         .sort((a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime())
-        .map((t) => ({
+        .map(t => ({
           status: t.status,
           remoteId: t.remoteId,
           title: t.title,
-          lastMessageAt: t.lastMessageAt,
+          lastMessageAt: t.lastMessageAt
         }));
       return { threads };
     },
@@ -43,7 +43,7 @@ export function createInMemoryThreadListAdapter(): RemoteThreadListAdapter {
           remoteId: threadId,
           title: "新对话",
           status: "regular",
-          lastMessageAt: new Date(),
+          lastMessageAt: new Date()
         });
       }
       return { remoteId: threadId };
@@ -69,7 +69,7 @@ export function createInMemoryThreadListAdapter(): RemoteThreadListAdapter {
         status: t.status,
         remoteId: t.remoteId,
         title: t.title,
-        lastMessageAt: t.lastMessageAt,
+        lastMessageAt: t.lastMessageAt
       };
     },
 
@@ -90,6 +90,6 @@ export function createInMemoryThreadListAdapter(): RemoteThreadListAdapter {
 
     async delete(remoteId: string) {
       store.delete(remoteId);
-    },
+    }
   };
 }
