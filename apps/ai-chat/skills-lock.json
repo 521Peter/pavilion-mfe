@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "assistant-ui": {
+      "source": "assistant-ui/skills",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/assistant-ui/SKILL.md",
+      "computedHash": "299b40bb1c3c7805746e7955239bd8e52390642b6bcbabd0d3bec6e8ba859720"
+    },
+    "primitives": {
+      "source": "assistant-ui/skills",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/primitives/SKILL.md",
+      "computedHash": "6e37bc3af23377192dd83da0fdee762091a315ea438ce7871079840bc9623c21"
+    },
+    "react-mcp": {
+      "source": "assistant-ui/skills",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/react-mcp/SKILL.md",
+      "computedHash": "53b6d7c8fbe0259345f0ad4526c26efb88bf3e279574a1ecd2ad0acb263202d7"
+    },
+    "streaming": {
+      "source": "assistant-ui/skills",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/streaming/SKILL.md",
+      "computedHash": "acae2aa7a94eaacf6883aafd2c84f6c4664e7d461792fe70e80658d10f7bd104"
+    }
+  }
+}
