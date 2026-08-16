@@ -339,3 +339,4 @@ dist/
 - 新增路由前先检查 `apps/main-app/mfe.json` 和 `apps/main-app/src/router/index.tsx` 的 `routeMeta`，避免与主应用自有路由冲突。
 - 子应用样式会被自动加上 `:where(.pavilion-mfe-<appCode>)` 作用域；需要排除的文件可用 `cssExclude` 配置。
 - `BrowserRouter` 必须设置与主应用一致的部署前缀；本地开发通常不需要，GitHub Pages 场景使用 `VITE_DEPLOY_BASE`。
+- **子应用高度规则**：子应用除了 `html`、`body` 元素外，其余元素一律不要使用 `h-screen` / `100vh`（如 `h-screen`、`w-screen`、`min-h-screen`）。子应用被挂载到主应用的 `#pavilion-mfe-container`（`height: 100%`）中，容器本身高度由主应用布局撑开。若子应用内部再用 `100vh`，会以视口高度而非容器高度计算，导致在主应用中出现溢出的滚动条。正确做法是各层容器统一使用 `h-full` / `width: 100%` / `height: 100%`，沿 `100%` 链式继承主应用容器高度，自动占满剩余空间；只有 `html`、`body`、`#root` 这一层（页面视口根）允许使用 `100vh` 以建立初始高度参照。
