@@ -34,18 +34,18 @@ import {
 
 export const Thread: FC = () => {
   return (
-    <ThreadPrimitive.Root className="flex h-full flex-col bg-white dark:bg-[#16171d]">
+    <ThreadPrimitive.Root className="flex h-full flex-col bg-white">
       <AuiIf condition={s => s.thread.isEmpty}>
         <EmptyState />
       </AuiIf>
 
       <AuiIf condition={s => !s.thread.isEmpty}>
-        <ThreadPrimitive.Viewport className="aui-scroll flex grow flex-col overflow-y-auto">
+        <ThreadPrimitive.Viewport className="aui-scroll flex grow flex-col overflow-y-auto pt-4">
           <ThreadPrimitive.Messages>{() => <ChatMessage />}</ThreadPrimitive.Messages>
 
-          <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto w-full max-w-3xl bg-gradient-to-b from-transparent via-white/85 to-white px-4 pt-4 pb-2 dark:via-[#16171d]/85 dark:to-[#16171d]">
+          <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto w-full max-w-3xl bg-gradient-to-b from-transparent via-white/90 to-white px-3 pt-5 pb-2 sm:px-4">
             <Composer />
-            <p className="pt-2 text-center text-xs text-gray-400 dark:text-gray-500">AI 可能会犯错，请核对重要信息。</p>
+            <p className="pt-2 text-center text-xs text-gray-400">AI 可能会犯错，请核对重要信息。</p>
           </ThreadPrimitive.ViewportFooter>
         </ThreadPrimitive.Viewport>
       </AuiIf>
@@ -57,8 +57,8 @@ const EmptyState: FC = () => {
   return (
     <div className="flex grow flex-col items-center justify-center px-4 py-10">
       <div className="mx-auto flex w-full max-w-2xl flex-col items-stretch gap-6">
-        <h1 className="flex items-center justify-center gap-3 text-3xl font-semibold text-gray-900 sm:text-4xl dark:text-gray-50">
-          <Sparkles className="size-7 fill-indigo-500 text-indigo-500" />
+        <h1 className="flex items-center justify-center gap-2.5 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+          <Sparkles className="size-6 fill-indigo-500 text-indigo-500" />
           <span>有什么可以帮你的？</span>
         </h1>
         <Composer />
@@ -70,11 +70,11 @@ const EmptyState: FC = () => {
 
 const Composer: FC = () => {
   return (
-    <ComposerPrimitive.Root className="flex w-full flex-col gap-2 rounded-2xl border border-gray-200 bg-white px-3.5 pt-3 pb-2.5 shadow-sm dark:border-gray-700 dark:bg-[#1f2028]">
+    <ComposerPrimitive.Root className="flex w-full flex-col gap-2 rounded-[1.5rem] border border-gray-200 bg-white px-3.5 pt-3 pb-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-shadow focus-within:border-gray-300 focus-within:shadow-[0_4px_18px_rgba(0,0,0,0.09)]">
       <ComposerPrimitive.Input
         placeholder="输入你的问题..."
         rows={1}
-        className="block max-h-72 min-h-6 w-full resize-none bg-transparent text-gray-900 outline-none placeholder:text-gray-400 dark:text-gray-100 dark:placeholder:text-gray-500"
+        className="block max-h-72 min-h-6 w-full resize-none bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
       />
 
       <div className="flex w-full items-center gap-2">

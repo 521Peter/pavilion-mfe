@@ -1,45 +1,62 @@
 import { ThreadListItemPrimitive, ThreadListPrimitive } from "@assistant-ui/react";
-import { MessageSquare, Plus, Trash2 } from "lucide-react";
+import { MessageSquare, PanelLeftClose, Sparkles, SquarePen, Trash2 } from "lucide-react";
 import { type FC } from "react";
 
-export const ThreadListSidebar: FC = () => {
+export const ThreadListSidebar: FC<{ onClose: () => void; onNavigate: () => void }> = ({
+  onClose,
+  onNavigate
+}) => {
   return (
-    <ThreadListPrimitive.Root className="flex h-full w-full flex-col bg-[#1a1a18] text-gray-100">
-      <div className="flex items-center justify-between gap-2 px-4 py-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 text-white">
-            <MessageSquare className="size-4" />
-          </div>
-          <span className="text-sm font-semibold tracking-tight">AI Chat</span>
+    <ThreadListPrimitive.Root className="flex h-full w-full flex-col bg-[#f7f7f8] text-gray-900">
+      <div className="flex h-14 items-center justify-between px-3">
+        <div className="flex size-10 items-center justify-center text-indigo-500" aria-hidden="true">
+          <Sparkles className="size-5 fill-indigo-500" />
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="折叠会话侧边栏"
+          title="折叠侧边栏"
+          className="flex size-10 items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-200/70 hover:text-gray-950 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none"
+        >
+          <PanelLeftClose className="size-5" />
+        </button>
       </div>
 
-      <div className="px-3 pb-2">
-        <ThreadListPrimitive.New className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-gray-100 transition-colors hover:bg-white/10">
-          <Plus className="size-4" />
+      <div className="px-2 pb-3">
+        <ThreadListPrimitive.New
+          onClick={onNavigate}
+          className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200/70 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none"
+        >
+          <SquarePen className="size-4.5 text-gray-600" />
           新建对话
         </ThreadListPrimitive.New>
       </div>
 
-      <div className="aui-scroll flex-1 space-y-1 overflow-y-auto px-3 pb-4">
-        <ThreadListPrimitive.Items>{() => <ThreadListItem />}</ThreadListPrimitive.Items>
+      <div className="px-4 pb-2 text-xs font-medium text-gray-500">对话记录</div>
+      <div className="aui-scroll flex-1 space-y-0.5 overflow-y-auto px-2 pb-4">
+        <ThreadListPrimitive.Items>{() => <ThreadListItem onNavigate={onNavigate} />}</ThreadListPrimitive.Items>
       </div>
     </ThreadListPrimitive.Root>
   );
 };
 
-const ThreadListItem: FC = () => {
+const ThreadListItem: FC<{ onNavigate: () => void }> = ({ onNavigate }) => {
   return (
-    <ThreadListItemPrimitive.Root className="group/thread-item relative flex items-center gap-2 rounded-lg text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-gray-200 data-[active=true]:bg-white/10 data-[active=true]:text-white">
-      <ThreadListItemPrimitive.Trigger className="flex flex-1 items-center gap-2 px-3 py-2 text-left">
-        <MessageSquare className="size-4 shrink-0 opacity-60" />
+    <ThreadListItemPrimitive.Root className="group/thread-item relative flex min-h-11 items-center gap-1 rounded-xl text-sm text-gray-700 transition-colors hover:bg-gray-200/70 data-[active=true]:bg-gray-200 data-[active=true]:text-gray-950">
+      <ThreadListItemPrimitive.Trigger
+        onClick={onNavigate}
+        className="flex min-w-0 flex-1 items-center gap-2.5 self-stretch px-3 text-left focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 focus-visible:outline-none"
+      >
+        <MessageSquare className="size-4 shrink-0 text-gray-500" />
         <span className="flex-1 truncate">
           <ThreadListItemPrimitive.Title />
         </span>
       </ThreadListItemPrimitive.Trigger>
       <ThreadListItemPrimitive.Delete
-        className="mr-1.5 flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity hover:bg-white/10 group-hover/thread-item:opacity-100"
+        className="mr-1 flex size-8 shrink-0 items-center justify-center rounded-lg text-gray-500 opacity-0 transition hover:bg-gray-300/80 hover:text-red-600 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none group-hover/thread-item:opacity-100"
         aria-label="删除对话"
+        title="删除对话"
       >
         <Trash2 className="size-3.5" />
       </ThreadListItemPrimitive.Delete>
