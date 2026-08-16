@@ -69,7 +69,7 @@ const RuntimeProvider: FC<{ children: ReactNode }> = ({ children }) => {
 function App() {
   return (
     <RuntimeProvider>
-      <div className="flex h-screen w-screen overflow-hidden">
+      <div className="flex h-full overflow-hidden">
         {/* 左侧：会话列表侧边栏 */}
         <aside className="w-64 shrink-0 border-r border-white/10">
           <ThreadListSidebar />

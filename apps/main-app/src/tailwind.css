@@ -144,9 +144,9 @@ body {
 }
 
 /* ─── 微前端子应用容器 ─── */
+/* 容器撑满父级高度，子应用通过 height:100% 链式占满剩余空间 */
 #pavilion-mfe-container {
   height: 100%;
-  min-height: 400px;
 }
 
 /* ─── 动画 keyframes ─── */

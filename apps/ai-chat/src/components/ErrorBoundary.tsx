@@ -17,7 +17,7 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex h-screen w-screen items-center justify-center bg-white p-8 dark:bg-[#16171d]">
+        <div className="flex h-full w-full items-center justify-center bg-white p-8 dark:bg-[#16171d]">
           <div className="max-w-md text-center">
             <h1 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">页面出错了</h1>
             <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">

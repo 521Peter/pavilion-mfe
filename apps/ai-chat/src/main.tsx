@@ -25,6 +25,8 @@ if (!window.__PAVILION_MFE_ENV__) {
   const root = document.getElementById("root");
   if (root) {
     root.classList.add(`pavilion-mfe-${appCode}`);
+    root.style.height = "100%";
+    root.style.width = "100%";
     ensureDevToken().finally(() => renderApp(root));
   }
 }

@@ -77,6 +77,10 @@ export function createRouter(config?: RouterConfig) {
     const div = document.createElement("div");
     div.id = name;
     div.classList.add(`pavilion-mfe-${name}`);
+    // 宿主容器必须具备确定高度，子应用才能用 height:100% 链式撑满。
+    // 否则子应用顶层 h-full 相对 auto 父级会塌缩成内容高度，导致布局错乱。
+    div.style.height = "100%";
+    div.style.width = "100%";
     document.getElementById("pavilion-mfe-container")?.appendChild(div);
     return div;
   }

@@ -1,1 +1,6 @@
+atrule
+chagee
+chagee's
+heroui
 lintstagedrc
+shadcn

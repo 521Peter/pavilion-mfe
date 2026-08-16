@@ -54,6 +54,11 @@ function scopeSelector(selector: string, prefix: string): string {
   const trimmed = selector.trim();
   const scope = `:where(.${prefix})`;
 
+  // 子应用中的body,html不添加前缀，添加了会导致样式失效
+  if (trimmed === "body" || trimmed === "html") {
+    return trimmed;
+  }
+
   // :root → scope directly
   if (trimmed === ":root" || trimmed === ":root(") {
     return scope;

@@ -12,17 +12,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* 全局重置 */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-}
-
-#root {
-  min-height: 100vh;
+  height: 100vh;
 }
 
 /* Thin scrollbar for chat areas */
