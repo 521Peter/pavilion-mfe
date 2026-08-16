@@ -5,23 +5,27 @@ import { cn } from "@/lib/utils";
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+const appCode = import.meta.env.VITE_PAVILION_MFE_APP_CODE;
 
 const DropdownMenuContent = React.forwardRef<
   React.ComponentRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <DropdownMenuPrimitive.Portal>
-    <DropdownMenuPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-lg border border-gray-200 bg-white p-1 text-gray-800 shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200",
-        className
-      )}
-      {...props}
-    />
-  </DropdownMenuPrimitive.Portal>
-));
+>(({ className, sideOffset = 4, ...props }, ref) => {
+  const subAppContainer = document.querySelector(`.pavilion-mfe-${appCode}`);
+  return (
+    <DropdownMenuPrimitive.Portal container={subAppContainer}>
+      <DropdownMenuPrimitive.Content
+        ref={ref}
+        sideOffset={sideOffset}
+        className={cn(
+          "z-50 min-w-[8rem] overflow-hidden rounded-lg border border-gray-200 bg-white p-1 text-gray-800 shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200",
+          className
+        )}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
+  );
+});
 DropdownMenuContent.displayName = "DropdownMenuContent";
 
 const DropdownMenuItem = React.forwardRef<
