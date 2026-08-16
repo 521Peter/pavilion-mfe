@@ -26,7 +26,6 @@
         "**/tmp/**",
         "**/*.d.ts",
         "**/package.json",
-        // "**/*.md",
         "**/stats.html",
         "eslint.config.mjs",
         ".gitignore",
