@@ -17,17 +17,50 @@ datasource db {
 
 // ─── 用户 ───
 model User {
-  id        String     @id @default(uuid())
-  username  String     @unique
-  password  String // bcrypt hash
-  nickname  String?
-  avatar    String?
-  status    UserStatus @default(ACTIVE)
-  roles     UserRole[]
+  id          String       @id @default(uuid())
+  username    String       @unique
+  password    String // bcrypt hash
+  nickname    String?
+  avatar      String?
+  status      UserStatus   @default(ACTIVE)
+  roles       UserRole[]
+  chatThreads ChatThread[]
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ─── AI Chat 会话 ───
+model ChatThread {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String        @default("新对话")
+  status        String        @default("regular")
+  headId        String?
+  messages      ChatMessage[]
+  lastMessageAt DateTime      @default(now()) @map("last_message_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  @@index([userId, status, lastMessageAt])
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id        String
+  threadId  String
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  parentId  String?
+  payload   Json
+  runConfig Json?
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
 
-  @@map("users")
+  @@id([threadId, id])
+  @@index([threadId, createdAt])
+  @@map("chat_messages")
 }
 
 enum UserStatus {
@@ -43,10 +76,10 @@ enum UserRole {
 // ─── LLM Provider 供应商 ───
 model LlmProvider {
   id        String     @id @default(uuid())
-  name      String     // 显示名，如 "OpenAI 官方"
-  type      String     // 供应商类型: openai | ollama（可扩展，String 而非 enum）
-  baseUrl   String?    // API 地址，如 https://api.openai.com/v1 / http://localhost:11434
-  apiKey    String?    // API Key（加密存储）
+  name      String // 显示名，如 "OpenAI 官方"
+  type      String // 供应商类型: openai | ollama（可扩展，String 而非 enum）
+  baseUrl   String? // API 地址，如 https://api.openai.com/v1 / http://localhost:11434
+  apiKey    String? // API Key（加密存储）
   isActive  Boolean    @default(true) // 是否启用
   config    Json       @default("{}") // 扩展配置（headers、timeout 等）
   models    LlmModel[]
@@ -58,15 +91,15 @@ model LlmProvider {
 
 // ─── LLM 模型 ───
 model LlmModel {
-  id         String      @id @default(uuid())
-  providerId String
-  provider   LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  modelName  String      // 模型标识，如 gpt-4o / llama3.2
-  displayName String?    // 展示别名
-  isActive   Boolean     @default(true)
-  config     Json        @default("{}") // 模型级默认参数（temperature、maxTokens 等）
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt      @map("updated_at")
+  id          String      @id @default(uuid())
+  providerId  String
+  provider    LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  modelName   String // 模型标识，如 gpt-4o / llama3.2
+  displayName String? // 展示别名
+  isActive    Boolean     @default(true)
+  config      Json        @default("{}") // 模型级默认参数（temperature、maxTokens 等）
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
 
   @@unique([providerId, modelName])
   @@map("llm_models")
@@ -74,30 +107,30 @@ model LlmModel {
 
 // ─── MCP Server ───
 model McpServer {
-  id          String   @id @default(uuid())
-  name        String               // 显示名，如 "GitHub MCP"
-  identifier  String   @unique     // 唯一标识，如 "github"
+  id          String  @id @default(uuid())
+  name        String // 显示名，如 "GitHub MCP"
+  identifier  String  @unique // 唯一标识，如 "github"
   description String?
   icon        String?
 
   // 连接类型: stdio | http | sse
-  transport   String               // 用 String 而非 enum，方便扩展
-  command     String?              // stdio: 可执行文件路径
-  args        String[]  @default([]) // stdio: 命令参数
-  env         Json      @default("{}") // stdio: 环境变量
-  url         String?              // http/sse: 服务地址
-  headers     Json      @default("{}") // http/sse: 请求头
+  transport String // 用 String 而非 enum，方便扩展
+  command   String? // stdio: 可执行文件路径
+  args      String[] @default([]) // stdio: 命令参数
+  env       Json     @default("{}") // stdio: 环境变量
+  url       String? // http/sse: 服务地址
+  headers   Json     @default("{}") // http/sse: 请求头
 
   // 运行时配置
-  timeout     Int       @default(60000) // 超时(ms)
-  isActive    Boolean   @default(true)
+  timeout  Int     @default(60000) // 超时(ms)
+  isActive Boolean @default(true)
 
   // 缓存：该 MCP 服务器暴露的工具列表快照
   cachedTools Json      @default("[]")
   lastSyncAt  DateTime?
 
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt      @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("mcp_servers")
 }
@@ -106,33 +139,33 @@ model McpServer {
 // Skill 内容存储在文件系统（skills/<name>/ 目录）
 // 数据库只记录元数据和来源信息
 model Skill {
-  id          String   @id @default(uuid())
-  name        String   @unique // 目录名，如 "vitest"
-  description String?  // 从 SKILL.md frontmatter 解析
+  id          String  @id @default(uuid())
+  name        String  @unique // 目录名，如 "vitest"
+  description String? // 从 SKILL.md frontmatter 解析
 
   // 来源
-  source      String   @default("local") // local | remote
-  repoOwner   String?  // 远程：GitHub 仓库 owner
-  repoName    String?  // 远程：GitHub 仓库名
-  repoBranch  String?  // 远程：分支
-  readmeUrl   String?  // 远程：SKILL.md 的 GitHub 链接
+  source     String  @default("local") // local | remote
+  repoOwner  String? // 远程：GitHub 仓库 owner
+  repoName   String? // 远程：GitHub 仓库名
+  repoBranch String? // 远程：分支
+  readmeUrl  String? // 远程：SKILL.md 的 GitHub 链接
 
   // 状态
-  isActive    Boolean  @default(true)
-  contentHash String?  // 内容 hash，用于检测更新
+  isActive    Boolean @default(true)
+  contentHash String? // 内容 hash，用于检测更新
 
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("skills")
 }
 
 // ─── Skill 仓库源（可拉取 skill 的远程仓库列表）───
 model SkillRepo {
-  id     String  @id @default(uuid())
-  owner  String  // GitHub owner，如 "antfu"
-  name   String  // GitHub repo，如 "skills"
-  branch String  @default("main")
+  id        String  @id @default(uuid())
+  owner     String // GitHub owner，如 "antfu"
+  name      String // GitHub repo，如 "skills"
+  branch    String  @default("main")
   isEnabled Boolean @default(true)
 
   createdAt DateTime @default(now()) @map("created_at")

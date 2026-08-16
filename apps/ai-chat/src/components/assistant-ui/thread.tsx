@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { type FC } from "react";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
-import { MODELS, useModelStore } from "@/lib/model-store";
+import { useModelStore } from "@/lib/model-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -101,6 +101,7 @@ const Composer: FC = () => {
 };
 
 const ComposerPrimaryAction: FC = () => {
+  const hasModel = useModelStore(state => Boolean(state.currentId));
   return (
     <>
       <AuiIf condition={s => s.thread.isRunning}>
@@ -110,7 +111,11 @@ const ComposerPrimaryAction: FC = () => {
       </AuiIf>
 
       <AuiIf condition={s => !s.thread.isRunning && !s.composer.isEmpty}>
-        <ComposerPrimitive.Send className="flex size-8 items-center justify-center rounded-md bg-indigo-500 text-white transition-colors hover:bg-indigo-600 disabled:pointer-events-none disabled:opacity-50">
+        <ComposerPrimitive.Send
+          disabled={!hasModel}
+          title={hasModel ? "发送" : "请先配置可用模型"}
+          className="flex size-8 items-center justify-center rounded-md bg-indigo-500 text-white transition-colors hover:bg-indigo-600 disabled:pointer-events-none disabled:opacity-50"
+        >
           <ArrowUpIcon width={16} height={16} />
         </ComposerPrimitive.Send>
       </AuiIf>
@@ -128,22 +133,28 @@ const ComposerPrimaryAction: FC = () => {
 };
 
 const ModelPicker: FC = () => {
-  const { current, setCurrent } = useModelStore();
-  const currentOption = MODELS.find(m => m.id === current) ?? MODELS[0];
+  const { models, currentId, error, setCurrent } = useModelStore();
+  const currentOption = models.find(model => model.id === currentId);
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex h-8 items-center gap-1 rounded-md px-2.5 text-sm whitespace-nowrap text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-        <span>{currentOption.name}</span>
+      <DropdownMenuTrigger
+        title={error}
+        className="flex h-8 items-center gap-1 rounded-md px-2.5 text-sm whitespace-nowrap text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
+      >
+        <span>{currentOption?.displayName ?? "暂无模型"}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-64">
-        {MODELS.map(m => (
+        {models.length === 0 ? <DropdownMenuItem disabled>{error ?? "正在加载模型…"}</DropdownMenuItem> : null}
+        {models.map(m => (
           <DropdownMenuItem key={m.id} className="flex items-start gap-3" onClick={() => setCurrent(m.id)}>
             <span className="mt-0.5 flex size-4 items-center justify-center text-indigo-500">
-              {m.id === current ? <CheckIcon className="size-4" /> : null}
+              {m.id === currentId ? <CheckIcon className="size-4" /> : null}
             </span>
             <span className="flex flex-1 flex-col">
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{m.name}</span>
-              <span className="text-xs text-gray-400 dark:text-gray-500">{m.description}</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{m.displayName}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {m.providerName} · {m.modelName}
+              </span>
             </span>
           </DropdownMenuItem>
         ))}

@@ -15,6 +15,11 @@ export class LlmProviderController {
     return this.providerService.getSupportedTypes();
   }
 
+  @Get("models")
+  listAvailableModels() {
+    return this.providerService.listAvailableModels();
+  }
+
   // ── Provider CRUD ──
 
   @Get("providers")

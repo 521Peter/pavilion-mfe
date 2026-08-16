@@ -4,3 +4,4 @@ chagee's
 heroui
 lintstagedrc
 shadcn
+langchain

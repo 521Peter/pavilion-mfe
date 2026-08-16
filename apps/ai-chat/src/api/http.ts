@@ -15,7 +15,7 @@ export interface ApiResponse<T = unknown> {
   msg: string;
 }
 
-export async function http<T = unknown>(path: string, options: RequestInit = {}, retried = false): Promise<T> {
+export async function authorizedFetch(path: string, options: RequestInit = {}, retried = false): Promise<Response> {
   const token = getToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -30,19 +30,24 @@ export async function http<T = unknown>(path: string, options: RequestInit = {},
     headers
   });
 
+  if (res.status === 401) {
+    clearToken();
+    if (isEmbedded()) {
+      window.location.href = "/login";
+    } else if (!retried && (await ensureDevToken(true))) {
+      return authorizedFetch(path, options, true);
+    }
+  }
+
+  return res;
+}
+
+export async function http<T = unknown>(path: string, options: RequestInit = {}, retried = false): Promise<T> {
+  const res = await authorizedFetch(path, options, retried);
+
   const json: ApiResponse<T> = await res.json();
 
   if (json.code !== 0) {
-    if (res.status === 401) {
-      clearToken();
-      if (isEmbedded()) {
-        // 挂载模式：交给主应用登录页
-        window.location.href = "/login";
-      } else if (!retried && (await ensureDevToken(true))) {
-        // 独立 dev：自动重登后重试一次
-        return http<T>(path, options, true);
-      }
-    }
     throw new Error(json.msg || "请求失败");
   }
 
@@ -55,5 +60,7 @@ export const api = {
     http<T>(path, {
       method: "POST",
       body: body ? JSON.stringify(body) : undefined
-    })
+    }),
+  patch: <T = unknown>(path: string, body: unknown) => http<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
+  delete: <T = unknown>(path: string) => http<T>(path, { method: "DELETE" })
 };

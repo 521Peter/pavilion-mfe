@@ -5,68 +5,65 @@ import {
   type ChatModelAdapter,
   type ThreadMessage
 } from "@assistant-ui/react";
-import { type FC, type ReactNode, useRef } from "react";
-import { createInMemoryThreadListAdapter } from "@/lib/thread-list-adapter";
-import { getCurrentModel, getModelOption, type ModelId } from "@/lib/model-store";
+import { type FC, type ReactNode, useEffect, useRef } from "react";
+import { createApiThreadListAdapter } from "@/lib/thread-list-adapter";
+import { getCurrentModel, useModelStore } from "@/lib/model-store";
 import { ThreadListSidebar } from "@/components/assistant-ui/thread-list";
 import { Thread } from "@/components/assistant-ui/thread";
+import { chatApi, streamChat } from "@/api/chat";
 
-/** 模拟 AI 模型：逐字流式输出演示回复。接入真实后端时替换为 useChatRuntime + AssistantChatTransport。 */
-const demoModel: ChatModelAdapter = {
+function messageText(message: ThreadMessage): string {
+  return message.content
+    .filter((part): part is { type: "text"; text: string } => part.type === "text")
+    .map(part => part.text)
+    .join("\n");
+}
+
+const platformModel: ChatModelAdapter = {
   async *run({ messages, abortSignal }) {
-    const lastUser = [...messages].reverse().find(m => m.role === "user");
-    const userText =
-      (lastUser as ThreadMessage | undefined)?.content
-        ?.filter((c): c is { type: "text"; text: string } => c.type === "text")
-        .map(c => c.text)
-        .join(" ") ?? "";
-
     const model = getCurrentModel();
-    const reply = buildReply(userText, model);
-    // useLocalRuntime treats each yielded content as the full message content,
-    // so we accumulate and re-yield the complete text on each tick.
+    if (!model) throw new Error("暂无可用模型，请先在平台配置中启用模型");
+
     let accumulated = "";
-    for (const ch of reply) {
-      if (abortSignal.aborted) return;
-      await new Promise(r => setTimeout(r, 18));
-      accumulated += ch;
+    const requestMessages = messages
+      .filter(message => message.role === "system" || message.role === "user" || message.role === "assistant")
+      .map(message => ({ role: message.role, content: messageText(message) }));
+
+    for await (const chunk of streamChat(
+      { providerId: model.providerId, modelId: model.id, messages: requestMessages },
+      abortSignal
+    )) {
+      accumulated += chunk;
       yield { content: [{ type: "text", text: accumulated }] };
     }
   }
 };
 
-function buildReply(input: string, model: ModelId): string {
-  const trimmed = input.trim();
-  if (!trimmed) return "请输入你的问题，我会尽力帮你解答。";
-
-  const modelName = getModelOption(model).name;
-  const prefix = model === "claude-opus" ? "让我仔细分析一下。" : model === "gpt-5-mini" ? "快速回答：" : "";
-
-  return [
-    `${prefix}你刚才说：**${trimmed}**`,
-    "",
-    `当前使用 **${modelName}** 模型回复。这是一个演示应用，使用 @assistant-ui/react + Tailwind CSS 构建。`,
-    "",
-    "## 你可以",
-    "- 点击左侧 **新建对话** 开启新的聊天",
-    "- 悬停消息查看 **复制 / 重新生成 / 反馈** 按钮",
-    "- 切换右下角的 **模型** 选择器体验不同回复风格"
-  ].join("\n");
-}
-
 const RuntimeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const adapterRef = useRef<ReturnType<typeof createInMemoryThreadListAdapter> | null>(null);
+  const adapterRef = useRef<ReturnType<typeof createApiThreadListAdapter> | null>(null);
   if (!adapterRef.current) {
-    adapterRef.current = createInMemoryThreadListAdapter();
+    adapterRef.current = createApiThreadListAdapter();
   }
   const runtime = useRemoteThreadListRuntime({
-    runtimeHook: () => useLocalRuntime(demoModel),
+    runtimeHook: function RuntimeHook() {
+      return useLocalRuntime(platformModel);
+    },
     adapter: adapterRef.current
   });
   return <AssistantRuntimeProvider runtime={runtime}>{children}</AssistantRuntimeProvider>;
 };
 
 function App() {
+  const setModels = useModelStore(state => state.setModels);
+  const setModelError = useModelStore(state => state.setError);
+
+  useEffect(() => {
+    chatApi
+      .listModels()
+      .then(setModels)
+      .catch(error => setModelError(error instanceof Error ? error.message : "模型列表加载失败"));
+  }, [setModelError, setModels]);
+
   return (
     <RuntimeProvider>
       <div className="flex h-full overflow-hidden">

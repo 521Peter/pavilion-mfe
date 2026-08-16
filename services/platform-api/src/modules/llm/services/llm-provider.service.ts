@@ -216,6 +216,34 @@ export class LlmProviderService {
 
   // ── 平台元信息 ───────────────────────────────
 
+  /** 聊天端可用模型列表（不暴露 Provider 密钥与配置）。 */
+  async listAvailableModels() {
+    const providers = await this.prisma.llmProvider.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        models: {
+          where: { isActive: true },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, modelName: true, displayName: true }
+        }
+      }
+    });
+    return providers.flatMap(provider =>
+      provider.models.map(model => ({
+        id: model.id,
+        providerId: provider.id,
+        providerName: provider.name,
+        providerType: provider.type,
+        modelName: model.modelName,
+        displayName: model.displayName ?? model.modelName
+      }))
+    );
+  }
+
   /** 获取已注册的 Provider 类型列表 */
   getSupportedTypes(): string[] {
     return ProviderFactory.getSupportedTypes();
