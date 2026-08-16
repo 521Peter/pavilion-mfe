@@ -221,7 +221,7 @@ const ChatMessage: FC = () => {
 
       <AuiIf condition={s => s.message.role === "assistant"}>
         <div className="flex flex-col">
-          <div className="prose prose-sm max-w-none leading-relaxed text-gray-900 dark:text-gray-100 dark:prose-invert">
+          <div className="prose max-w-none leading-relaxed text-gray-900 dark:text-gray-100 dark:prose-invert">
             <MessagePrimitive.Parts>
               {({ part }) => {
                 if (part.type === "text") return <MarkdownText />;
