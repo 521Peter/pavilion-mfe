@@ -23,6 +23,7 @@ export interface McpServerConfig {
 interface PoolEntry {
   proc?: ChildProcessWithoutNullStreams;
   connected: boolean;
+  initializing?: Promise<void>;
 }
 
 /**
@@ -60,7 +61,35 @@ export class McpClientService implements OnModuleDestroy {
       this.pool.delete(server.id);
     });
 
-    this.pool.set(server.id, { proc, connected: true });
+    this.pool.set(server.id, { proc, connected: false });
+    return proc;
+  }
+
+  private async ensureInitialized(server: McpServerConfig): Promise<ChildProcessWithoutNullStreams> {
+    const proc = await this.getProcess(server);
+    const entry = this.pool.get(server.id)!;
+    if (entry.connected) return proc;
+
+    if (!entry.initializing) {
+      entry.initializing = (async () => {
+        await this.sendRequest(
+          proc,
+          server.id,
+          "initialize",
+          {
+            protocolVersion: "2024-11-05",
+            capabilities: {},
+            clientInfo: { name: "ai-platform", version: "1.0.0" }
+          },
+          server.timeout
+        );
+        this.sendNotification(proc, "notifications/initialized", {});
+        entry.connected = true;
+      })().finally(() => {
+        entry.initializing = undefined;
+      });
+    }
+    await entry.initializing;
     return proc;
   }
 
@@ -68,30 +97,24 @@ export class McpClientService implements OnModuleDestroy {
    * 列出工具：向 MCP Server 发 JSON-RPC initialize + tools/list
    */
   async listTools(server: McpServerConfig): Promise<McpTool[]> {
-    const proc = await this.getProcess(server);
-
-    // 发送 initialize
-    await this.sendRequest(proc, server.id, "initialize", {
-      protocolVersion: "2024-11-05",
-      capabilities: {},
-      clientInfo: { name: "ai-platform", version: "1.0.0" }
-    });
-
-    // 发送 initialized 通知
-    this.sendNotification(proc, "notifications/initialized", {});
-
-    // 发送 tools/list
-    const result = await this.sendRequest(proc, server.id, "tools/list", {});
+    const proc = await this.ensureInitialized(server);
+    const result = await this.sendRequest(proc, server.id, "tools/list", {}, server.timeout);
     return (result.tools ?? []) as McpTool[];
   }
 
   /** 调用工具 */
   async callTool(server: McpServerConfig, toolName: string, args: Record<string, unknown>) {
-    const proc = await this.getProcess(server);
-    const result = await this.sendRequest(proc, server.id, "tools/call", {
-      name: toolName,
-      arguments: args
-    });
+    const proc = await this.ensureInitialized(server);
+    const result = await this.sendRequest(
+      proc,
+      server.id,
+      "tools/call",
+      {
+        name: toolName,
+        arguments: args
+      },
+      server.timeout
+    );
     return result;
   }
 
@@ -128,7 +151,8 @@ export class McpClientService implements OnModuleDestroy {
     proc: ChildProcessWithoutNullStreams,
     serverId: string,
     method: string,
-    params: unknown
+    params: unknown,
+    timeout: number
   ): Promise<any> {
     const id = `mcp-${serverId}-${++this.msgId}`;
     const message = JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -137,7 +161,7 @@ export class McpClientService implements OnModuleDestroy {
       const timer = setTimeout(() => {
         this.requestMap.delete(id);
         reject(new Error(`MCP 请求超时: ${method} (${serverId})`));
-      }, 10000);
+      }, timeout);
 
       this.requestMap.set(id, { resolve, reject, timer });
 

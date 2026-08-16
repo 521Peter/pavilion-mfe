@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { HumanMessage, SystemMessage, AIMessage, type BaseMessage } from "@langchain/core/messages";
 import { LlmProviderService } from "./llm-provider.service";
+import { LlmAgentService } from "./llm-agent.service";
 
 /** 聊天消息 */
 export interface ChatMessage {
@@ -24,27 +24,6 @@ export interface ChatResult {
   providerType: string;
 }
 
-function toLangChainMessages(messages: ChatMessage[]): BaseMessage[] {
-  return messages.map(m => {
-    switch (m.role) {
-      case "system":
-        return new SystemMessage(m.content);
-      case "assistant":
-        return new AIMessage(m.content);
-      default:
-        return new HumanMessage(m.content);
-    }
-  });
-}
-
-/** 请求级可选参数 */
-function buildInvokeParams(params: ChatParams): Record<string, unknown> {
-  const invokeParams: Record<string, unknown> = {};
-  if (params.temperature !== undefined) invokeParams.temperature = params.temperature;
-  if (params.maxTokens !== undefined) invokeParams.maxTokens = params.maxTokens;
-  return invokeParams;
-}
-
 /**
  * LLM Chat Service
  *
@@ -56,17 +35,18 @@ function buildInvokeParams(params: ChatParams): Record<string, unknown> {
  */
 @Injectable()
 export class LlmChatService {
-  constructor(private readonly providerService: LlmProviderService) {}
+  constructor(
+    private readonly providerService: LlmProviderService,
+    private readonly agentService: LlmAgentService
+  ) {}
 
   /** 非流式聊天 */
   async chat(params: ChatParams): Promise<ChatResult> {
     const model = await this.providerService.getModel(params.providerId, params.modelId);
-
-    const messages = toLangChainMessages(params.messages);
-    const response = await model.invoke(messages, buildInvokeParams(params));
+    const content = await this.agentService.run(model, params);
 
     return {
-      content: typeof response.content === "string" ? response.content : JSON.stringify(response.content),
+      content,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       model: (model as any).model ?? "",
       providerType: model.lc_namespace?.join("/") ?? ""
@@ -80,13 +60,6 @@ export class LlmChatService {
    */
   async *stream(params: ChatParams): AsyncGenerator<string> {
     const model = await this.providerService.getModel(params.providerId, params.modelId);
-
-    const messages = toLangChainMessages(params.messages);
-    const stream = await model.stream(messages, buildInvokeParams(params));
-
-    for await (const chunk of stream) {
-      const text = typeof chunk.content === "string" ? chunk.content : "";
-      if (text) yield text;
-    }
+    yield* this.agentService.stream(model, params);
   }
 }
