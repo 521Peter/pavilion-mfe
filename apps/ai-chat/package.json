@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:dev": "vite build --mode develop",
+    "typecheck": "tsc -b --pretty false",
     "lint": "oxlint",
     "preview": "vite preview"
   },

@@ -3,6 +3,8 @@ import {
   AuiIf,
   AttachmentPrimitive,
   ComposerPrimitive,
+  ErrorPrimitive,
+  MessagePartPrimitive,
   MessagePrimitive,
   ThreadPrimitive
 } from "@assistant-ui/react";
@@ -190,6 +192,21 @@ const ModeTabs: FC = () => {
 const messageActionButtonClassName =
   "flex size-8 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-100";
 
+const AssistantLoading: FC = () => (
+  <div
+    role="status"
+    aria-live="polite"
+    className="inline-flex min-h-8 items-center gap-2 rounded-xl bg-gray-50 px-3 py-1.5 text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-300"
+  >
+    <span>AI 正在思考</span>
+    <span className="flex items-center gap-1" aria-hidden="true">
+      <span className="size-1.5 animate-pulse rounded-full bg-indigo-400 motion-reduce:animate-none" />
+      <span className="size-1.5 animate-pulse rounded-full bg-indigo-400 [animation-delay:150ms] motion-reduce:animate-none" />
+      <span className="size-1.5 animate-pulse rounded-full bg-indigo-400 [animation-delay:300ms] motion-reduce:animate-none" />
+    </span>
+  </div>
+);
+
 const ChatMessage: FC = () => {
   return (
     <MessagePrimitive.Root className="group/message relative mx-auto flex w-full max-w-3xl flex-col px-4 py-2">
@@ -224,11 +241,24 @@ const ChatMessage: FC = () => {
           <div className="prose max-w-none leading-relaxed text-gray-900 dark:text-gray-100 dark:prose-invert">
             <MessagePrimitive.Parts>
               {({ part }) => {
-                if (part.type === "text") return <MarkdownText />;
+                if (part.type === "text") {
+                  if (part.text) return <MarkdownText />;
+                  return (
+                    <MessagePartPrimitive.InProgress>
+                      <AssistantLoading />
+                    </MessagePartPrimitive.InProgress>
+                  );
+                }
                 return null;
               }}
             </MessagePrimitive.Parts>
           </div>
+          <MessagePrimitive.Error>
+            <ErrorPrimitive.Root className="mt-1 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <p className="font-medium">回复失败</p>
+              <ErrorPrimitive.Message className="mt-1 block break-words text-red-600" />
+            </ErrorPrimitive.Root>
+          </MessagePrimitive.Error>
           <ActionBarPrimitive.Root className="mt-2 flex items-center gap-0.5 opacity-0 transition-opacity group-focus-within/message:opacity-100 group-hover/message:opacity-100">
             <ActionBarPrimitive.Copy className={messageActionButtonClassName}>
               <AuiIf condition={s => s.message.isCopied}>

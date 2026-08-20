@@ -46,6 +46,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     },
     server: {
       port: 6020,
+      strictPort: true,
       // 独立开发时代理后端，避免 CORS（与主应用 /api 代理同构，一份请求代码两态复用）
       proxy: {
         "/api": {

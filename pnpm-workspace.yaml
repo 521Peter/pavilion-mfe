@@ -4,20 +4,14 @@ packages:
   - "services/*"
 
 allowBuilds:
+  "@nestjs/core": true
   "@prisma/client": true
   "@prisma/engines": true
+  "@scarf/scarf": false
   "@swc/core": true
   bcrypt: true
   electron: true
   esbuild: true
   prisma: true
+  protobufjs: true
   unrs-resolver: true
-
-onlyBuiltDependencies:
-  - electron
-  - esbuild
-  - "@prisma/engines"
-  - "@prisma/client"
-  - bcrypt
-  - prisma
-  - unrs-resolver

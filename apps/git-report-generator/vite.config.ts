@@ -35,7 +35,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         dts: false
       })
     ],
-    server: { port: 6010 },
+    server: { port: 6010, strictPort: true },
     build: {
       rollupOptions: {
         onwarn(warning, defaultHandler) {

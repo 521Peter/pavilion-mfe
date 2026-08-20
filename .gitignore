@@ -11,4 +11,4 @@ coverage/
 docs/*
 vite.config.ts.timestamp-*
 release
-services/platform-api/generated
+services/llm-gateway/generated

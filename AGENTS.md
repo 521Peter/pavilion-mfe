@@ -20,7 +20,7 @@ packages/
   create-pavilion/        # 子应用脚手架
   desktop/                # Electron 桌面壳
 services/
-  platform-api/           # NestJS 后端服务
+  llm-gateway/            # NestJS 统一后端与 LLM Gateway
 ```
 
 ## 常用命令

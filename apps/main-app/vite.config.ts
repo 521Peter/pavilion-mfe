@@ -62,6 +62,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     },
     server: {
       port: 6019,
+      strictPort: true,
       proxy: {
         "/api": {
           target: "http://localhost:3000",

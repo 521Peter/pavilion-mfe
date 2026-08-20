@@ -1,0 +1,513 @@
+// PavilionMfe AI 平台 — Prisma Schema
+// 数据库: PostgreSQL 16 + pgvector 扩展
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── pgvector 扩展 (RAG 向量存储) ───
+// 需在数据库中执行: CREATE EXTENSION IF NOT EXISTS vector;
+// Prisma 通过 Unsupported("vector") 标记 + 原生 SQL 查询使用
+
+// ─── 用户 ───
+model User {
+  id           String        @id @default(uuid())
+  username     String        @unique
+  password     String // bcrypt hash
+  nickname     String?
+  avatar       String?
+  status       UserStatus    @default(ACTIVE)
+  roles        UserRole[]
+  chatThreads  ChatThread[]
+  runs         Run[]
+  usageRecords UsageRecord[]
+  auditLogs    AuditLog[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ─── AI Chat 会话 ───
+model ChatThread {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String        @default("新对话")
+  status        String        @default("regular")
+  headId        String?
+  messages      ChatMessage[]
+  lastMessageAt DateTime      @default(now()) @map("last_message_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  @@index([userId, status, lastMessageAt])
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id        String
+  threadId  String
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  parentId  String?
+  payload   Json
+  runConfig Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@id([threadId, id])
+  @@index([threadId, createdAt])
+  @@map("chat_messages")
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// ─── LLM Provider 供应商 ───
+model LlmProvider {
+  id          String               @id @default(uuid())
+  name        String // 显示名，如 "OpenAI 官方"
+  type        String // 供应商类型: openai | ollama（可扩展，String 而非 enum）
+  baseUrl     String? // API 地址，如 https://api.openai.com/v1 / http://localhost:11434
+  isActive    Boolean              @default(true) // 是否启用
+  config      Json                 @default("{}") // 扩展配置（headers、timeout 等）
+  models      LlmModel[]
+  credentials ProviderCredential[]
+  deployments ModelDeployment[]
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+
+  @@map("llm_providers")
+}
+
+// ─── LLM 模型 ───
+model LlmModel {
+  id          String            @id @default(uuid())
+  providerId  String
+  provider    LlmProvider       @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  modelName   String // 模型标识，如 gpt-4o / llama3.2
+  displayName String? // 展示别名
+  isActive    Boolean           @default(true)
+  config      Json              @default("{}") // 模型级默认参数（temperature、maxTokens 等）
+  deployments ModelDeployment[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@unique([providerId, modelName])
+  @@map("llm_models")
+}
+
+// ─── MCP Server ───
+model McpServer {
+  id          String  @id @default(uuid())
+  name        String // 显示名，如 "GitHub MCP"
+  identifier  String  @unique // 唯一标识，如 "github"
+  description String?
+  icon        String?
+
+  // 连接类型: stdio | http | sse
+  transport String // 用 String 而非 enum，方便扩展
+  command   String? // stdio: 可执行文件路径
+  args      String[] @default([]) // stdio: 命令参数
+  env       Json     @default("{}") // stdio: 环境变量
+  url       String? // http/sse: 服务地址
+  headers   Json     @default("{}") // http/sse: 请求头
+
+  // 运行时配置
+  timeout  Int     @default(60000) // 超时(ms)
+  isActive Boolean @default(true)
+
+  // 缓存：该 MCP 服务器暴露的工具列表快照
+  cachedTools     Json             @default("[]")
+  lastSyncAt      DateTime?
+  toolDefinitions ToolDefinition[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("mcp_servers")
+}
+
+// ─── Skill 元数据 ───
+// Skill 内容存储在文件系统（skills/<name>/ 目录）
+// 数据库只记录元数据和来源信息
+model Skill {
+  id          String  @id @default(uuid())
+  name        String  @unique // 目录名，如 "vitest"
+  description String? // 从 SKILL.md frontmatter 解析
+
+  // 来源
+  source     String  @default("local") // local | remote
+  repoOwner  String? // 远程：GitHub 仓库 owner
+  repoName   String? // 远程：GitHub 仓库名
+  repoBranch String? // 远程：分支
+  readmeUrl  String? // 远程：SKILL.md 的 GitHub 链接
+
+  // 状态
+  isActive    Boolean        @default(true)
+  contentHash String? // 内容 hash，用于检测更新
+  versions    SkillVersion[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("skills")
+}
+
+// ─── Skill 仓库源（可拉取 skill 的远程仓库列表）───
+model SkillRepo {
+  id        String  @id @default(uuid())
+  owner     String // GitHub owner，如 "antfu"
+  name      String // GitHub repo，如 "skills"
+  branch    String  @default("main")
+  isEnabled Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([owner, name])
+  @@map("skill_repos")
+}
+
+// ─── Pavilion 应用注册 + Gateway 调用方密钥 ───
+model Application {
+  id            String           @id @default(uuid())
+  code          String           @unique @map("app_code")
+  name          String
+  description   String?
+  isActive      Boolean          @default(true) @map("is_enabled")
+  allowedModels String[]         @default([]) @map("allowed_models")
+  keys          ApplicationKey[]
+  runs          Run[]
+  usageRecords  UsageRecord[]
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@map("applications")
+}
+
+model ApplicationKey {
+  id            String      @id @default(uuid())
+  applicationId String      @map("application_id")
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  name          String
+  keyPrefix     String      @map("key_prefix")
+  keyHash       String      @unique @map("key_hash")
+  isActive      Boolean     @default(true)
+  expiresAt     DateTime?   @map("expires_at")
+  lastUsedAt    DateTime?   @map("last_used_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@index([applicationId, isActive])
+  @@map("application_keys")
+}
+
+// ─── Provider Secret、实际部署与虚拟模型路由 ───
+model ProviderCredential {
+  id               String      @id @default(uuid())
+  providerId       String      @map("provider_id")
+  provider         LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  name             String
+  kind             String      @default("api_key")
+  encryptedPayload String      @map("encrypted_payload")
+  maskedHint       String?     @map("masked_hint")
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  @@index([providerId, isActive])
+  @@map("provider_credentials")
+}
+
+model ModelDeployment {
+  id              String            @id @default(uuid())
+  name            String            @unique
+  providerId      String            @map("provider_id")
+  provider        LlmProvider       @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  modelId         String?           @map("model_id")
+  model           LlmModel?         @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  credentialId    String?           @map("credential_id")
+  upstreamModel   String            @map("upstream_model")
+  isActive        Boolean           @default(true)
+  config          Json              @default("{}")
+  inputPricePerM  Decimal           @default(0) @map("input_price_per_m") @db.Decimal(18, 8)
+  outputPricePerM Decimal           @default(0) @map("output_price_per_m") @db.Decimal(18, 8)
+  routeTargets    RouteTarget[]
+  attempts        ProviderAttempt[]
+  usageRecords    UsageRecord[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@index([providerId, isActive])
+  @@map("model_deployments")
+}
+
+model VirtualModel {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  displayName   String?        @map("display_name")
+  description   String?
+  isActive      Boolean        @default(true)
+  routingPolicy RoutingPolicy?
+  runs          Run[]
+  usageRecords  UsageRecord[]
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@map("virtual_models")
+}
+
+model RoutingPolicy {
+  id              String        @id @default(uuid())
+  virtualModelId  String        @unique @map("virtual_model_id")
+  virtualModel    VirtualModel  @relation(fields: [virtualModelId], references: [id], onDelete: Cascade)
+  strategy        String        @default("single")
+  requestTimeout  Int           @default(60000) @map("request_timeout")
+  maxRetries      Int           @default(0) @map("max_retries")
+  circuitFailures Int           @default(3) @map("circuit_failures")
+  circuitCooldown Int           @default(30000) @map("circuit_cooldown")
+  targets         RouteTarget[]
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@map("routing_policies")
+}
+
+model RouteTarget {
+  id           String          @id @default(uuid())
+  policyId     String          @map("policy_id")
+  policy       RoutingPolicy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  deploymentId String          @map("deployment_id")
+  deployment   ModelDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  priority     Int             @default(0)
+  weight       Int             @default(100)
+  isActive     Boolean         @default(true)
+
+  @@unique([policyId, deploymentId])
+  @@index([policyId, priority])
+  @@map("route_targets")
+}
+
+// ─── Agent、Tool 与不可变 Skill 版本 ───
+model AgentDefinition {
+  id               String         @id @default(uuid())
+  code             String         @unique
+  name             String
+  description      String?
+  currentVersionId String?        @map("current_version_id")
+  isActive         Boolean        @default(true) @map("is_active")
+  versions         AgentVersion[]
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("agent_definitions")
+}
+
+model AgentVersion {
+  id             String              @id @default(uuid())
+  agentId        String              @map("agent_id")
+  agent          AgentDefinition     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  version        Int
+  virtualModelId String              @map("virtual_model_id")
+  systemPrompt   String              @map("system_prompt")
+  runConfig      Json                @default("{}") @map("run_config")
+  publishedAt    DateTime            @default(now()) @map("published_at")
+  toolBindings   AgentToolBinding[]
+  skillBindings  AgentSkillBinding[]
+  runs           Run[]
+
+  @@unique([agentId, version])
+  @@map("agent_versions")
+}
+
+model ToolDefinition {
+  id          String             @id @default(uuid())
+  name        String             @unique
+  description String?
+  type        String
+  inputSchema Json               @default("{}") @map("input_schema")
+  config      Json               @default("{}")
+  mcpServerId String?            @map("mcp_server_id")
+  mcpServer   McpServer?         @relation(fields: [mcpServerId], references: [id], onDelete: SetNull)
+  isActive    Boolean            @default(true)
+  bindings    AgentToolBinding[]
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  @@map("tool_definitions")
+}
+
+model AgentToolBinding {
+  agentVersionId String         @map("agent_version_id")
+  agentVersion   AgentVersion   @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  toolId         String         @map("tool_id")
+  tool           ToolDefinition @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  approvalPolicy String         @default("never") @map("approval_policy")
+  config         Json           @default("{}")
+
+  @@id([agentVersionId, toolId])
+  @@map("agent_tool_bindings")
+}
+
+model SkillVersion {
+  id          String              @id @default(uuid())
+  skillId     String              @map("skill_id")
+  skill       Skill               @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  version     Int
+  contentHash String              @map("content_hash")
+  storageUri  String              @map("storage_uri")
+  content     String?
+  createdAt   DateTime            @default(now()) @map("created_at")
+  bindings    AgentSkillBinding[]
+
+  @@unique([skillId, version])
+  @@unique([skillId, contentHash])
+  @@map("skill_versions")
+}
+
+model AgentSkillBinding {
+  agentVersionId String       @map("agent_version_id")
+  agentVersion   AgentVersion @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  skillVersionId String       @map("skill_version_id")
+  skillVersion   SkillVersion @relation(fields: [skillVersionId], references: [id], onDelete: Cascade)
+  selectionMode  String       @default("fixed") @map("selection_mode")
+
+  @@id([agentVersionId, skillVersionId])
+  @@map("agent_skill_bindings")
+}
+
+// ─── Run、Attempt、Usage 与 Audit ───
+model Run {
+  id             String            @id @default(uuid())
+  requestId      String            @unique @map("request_id")
+  userId         String?           @map("user_id")
+  user           User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  applicationId  String?           @map("application_id")
+  application    Application?      @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  agentVersionId String?           @map("agent_version_id")
+  agentVersion   AgentVersion?     @relation(fields: [agentVersionId], references: [id], onDelete: SetNull)
+  virtualModelId String?           @map("virtual_model_id")
+  virtualModel   VirtualModel?     @relation(fields: [virtualModelId], references: [id], onDelete: SetNull)
+  status         String            @default("queued")
+  input          Json              @default("{}")
+  output         Json?
+  error          Json?
+  startedAt      DateTime?         @map("started_at")
+  completedAt    DateTime?         @map("completed_at")
+  cancelledAt    DateTime?         @map("cancelled_at")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  steps          RunStep[]
+  events         RunEvent[]
+  attempts       ProviderAttempt[]
+  usageRecords   UsageRecord[]
+
+  @@index([userId, createdAt])
+  @@index([applicationId, createdAt])
+  @@map("runs")
+}
+
+model RunStep {
+  id          String    @id @default(uuid())
+  runId       String    @map("run_id")
+  run         Run       @relation(fields: [runId], references: [id], onDelete: Cascade)
+  sequence    Int
+  type        String
+  status      String
+  input       Json      @default("{}")
+  output      Json?
+  error       Json?
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  @@unique([runId, sequence])
+  @@map("run_steps")
+}
+
+model RunEvent {
+  id        BigInt   @id @default(autoincrement())
+  runId     String   @map("run_id")
+  run       Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  sequence  Int
+  type      String
+  data      Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([runId, sequence])
+  @@map("run_events")
+}
+
+model ProviderAttempt {
+  id           String          @id @default(uuid())
+  requestId    String          @map("request_id")
+  runId        String?         @map("run_id")
+  run          Run?            @relation(fields: [runId], references: [id], onDelete: SetNull)
+  deploymentId String          @map("deployment_id")
+  deployment   ModelDeployment @relation(fields: [deploymentId], references: [id], onDelete: Restrict)
+  attempt      Int
+  status       String
+  errorType    String?         @map("error_type")
+  statusCode   Int?            @map("status_code")
+  ttftMs       Int?            @map("ttft_ms")
+  latencyMs    Int?            @map("latency_ms")
+  inputTokens  Int             @default(0) @map("input_tokens")
+  outputTokens Int             @default(0) @map("output_tokens")
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  @@index([requestId, attempt])
+  @@map("provider_attempts")
+}
+
+model UsageRecord {
+  id              String           @id @default(uuid())
+  requestId       String           @map("request_id")
+  runId           String?          @map("run_id")
+  run             Run?             @relation(fields: [runId], references: [id], onDelete: SetNull)
+  userId          String?          @map("user_id")
+  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  applicationId   String?          @map("application_id")
+  application     Application?     @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  virtualModelId  String?          @map("virtual_model_id")
+  virtualModel    VirtualModel?    @relation(fields: [virtualModelId], references: [id], onDelete: SetNull)
+  deploymentId    String?          @map("deployment_id")
+  deployment      ModelDeployment? @relation(fields: [deploymentId], references: [id], onDelete: SetNull)
+  inputTokens     Int              @default(0) @map("input_tokens")
+  outputTokens    Int              @default(0) @map("output_tokens")
+  cachedTokens    Int              @default(0) @map("cached_tokens")
+  reasoningTokens Int              @default(0) @map("reasoning_tokens")
+  estimatedCost   Decimal          @default(0) @map("estimated_cost") @db.Decimal(18, 8)
+  latencyMs       Int?             @map("latency_ms")
+  fallbackCount   Int              @default(0) @map("fallback_count")
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([applicationId, createdAt])
+  @@index([virtualModelId, createdAt])
+  @@map("usage_records")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  actorUserId  String?  @map("actor_user_id")
+  actorUser    User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  requestId    String?  @map("request_id")
+  metadata     Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([resourceType, resourceId, createdAt])
+  @@map("audit_logs")
+}
