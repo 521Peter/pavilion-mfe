@@ -6,15 +6,29 @@
 const TOKEN_KEY = "pavilion_token";
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  if (token && isTokenExpired(token)) {
+    sessionStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
+  return token;
 }
 
 export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+  sessionStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+}
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: number };
+    return typeof payload.exp !== "number" || payload.exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
 }
 
 export interface ApiResponse<T = unknown> {

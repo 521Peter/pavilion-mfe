@@ -21,9 +21,30 @@ async function bootstrap(): Promise<void> {
     app.useStaticAssets(join(__dirname, 'statics'), { prefix: '/statics' });
     app.setViewEngine('hbs');
 
-    // Proxy routes retain their raw request stream; only reserved local routes parse bodies.
-    for (const prefix of ['/api', '/v1', '/mcp']) {
-        app.use(prefix, json({ limit: '10mb' }), urlencoded({ extended: true, limit: '10mb' }));
+    // Downstream proxy routes must retain their raw stream. Local controllers still need parsed bodies.
+    const jsonParser = json({ limit: '10mb' });
+    const formParser = urlencoded({ extended: true, limit: '10mb' });
+    const proxiedApiPrefixes = env.API_SERVICES.filter((service) => service.prefix.startsWith('api/')).map(
+        (service) => `/${service.prefix.slice(4)}`
+    );
+    app.use('/api', (request, response, next) => {
+        const isProxyRequest = proxiedApiPrefixes.some(
+            (prefix) => request.url === prefix || request.url.startsWith(`${prefix}/`)
+        );
+        if (isProxyRequest) {
+            next();
+            return;
+        }
+        jsonParser(request, response, (error) => {
+            if (error) {
+                next(error);
+                return;
+            }
+            formParser(request, response, next);
+        });
+    });
+    for (const prefix of ['/v1', '/mcp']) {
+        app.use(prefix, jsonParser, formParser);
     }
     app.useGlobalPipes(
         new ValidationPipe({

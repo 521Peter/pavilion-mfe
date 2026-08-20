@@ -15,6 +15,14 @@
       "routes": ["/chat"],
       "devPort": 6020,
       "keepAlive": false
+    },
+    {
+      "appCode": "ai-customer",
+      "name": "AI 客服",
+      "cdn": "",
+      "routes": ["/customer-service"],
+      "devPort": 6030,
+      "keepAlive": false
     }
   ]
 }

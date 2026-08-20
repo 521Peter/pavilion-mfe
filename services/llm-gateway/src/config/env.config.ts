@@ -54,6 +54,14 @@ function buildRedisTls(): ConnectionOptions | undefined {
  * `directPrefixes` (optional) are forwarded to the service WITHOUT stripping the prefix.
  */
 const apiServices = parseApiServices(process.env.API_SERVICES);
+const customerServiceUrl = process.env.CUSTOMER_SERVICE_URL || 'http://127.0.0.1:3100';
+if (!apiServices.some((service) => service.prefix === 'api/customer-service')) {
+    apiServices.push({
+        prefix: 'api/customer-service',
+        host: customerServiceUrl,
+        docUrl: `${customerServiceUrl}/openapi-json`
+    });
+}
 const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:6019')
     .split(',')
     .map((origin) => origin.trim())

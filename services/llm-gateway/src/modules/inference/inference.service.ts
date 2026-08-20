@@ -1,7 +1,7 @@
 import { BadGatewayException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { AIMessage, HumanMessage, SystemMessage, type BaseMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { Prisma } from '@/../generated/prisma/client';
+import { Prisma } from '../../../generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import { LlmProviderService } from '@/modules/llm/services/llm-provider.service';
 import { ModelRoutingService } from '@/modules/model-routing/model-routing.service';

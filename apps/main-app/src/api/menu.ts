@@ -196,6 +196,18 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       menuUrl: "/chat",
       menuIcon: "Menu",
       childrenMenuInfoList: []
+    },
+    {
+      menuCode: "ai-customer",
+      menuName: "AI 客服",
+      menuEnglishName: "",
+      menuTp: "0",
+      parentCode: "",
+      orderNo: 7,
+      status: "1",
+      menuUrl: "/customer-service",
+      menuIcon: "Menu",
+      childrenMenuInfoList: []
     }
   ];
 

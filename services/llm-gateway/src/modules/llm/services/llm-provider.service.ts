@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { Prisma } from '@/../generated/prisma/client';
+import { Prisma } from '../../../../generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import { ProviderFactory } from '../providers/provider.factory';
 import type { ProviderConfig, ModelConfig } from '../interfaces/provider-adapter.interface';
