@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# Git 报告生成器子应用
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+`git-report-generator` 是一个 React 19 微前端示例，开发端口为 `6010`，在主应用中的路由前缀为 `/git`。它也是新增 React 子应用时最接近当前生命周期约定的参考实现。
 
-Currently, two official plugins are available:
+## 启动与构建
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm --filter git-report-generator dev
+pnpm --filter git-report-generator build:dev
+pnpm --filter git-report-generator build
+pnpm --filter git-report-generator preview
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+独立开发地址是 `http://localhost:6010/git`。应用内部使用 `BrowserRouter`，`src/App.tsx` 显式注册 `/git`。
+
+## 接入方式
+
+`vite.config.ts` 使用 `PavilionMfe({ role: "sub-app" })` 并暴露 `./main`。`src/main.tsx` 同时支持：
+
+- 独立运行：挂载到本地 `#root`；
+- 微前端运行：由主应用调用 `mount(context, element)`，返回 React 根节点清理函数。
+
+构建产物包含根目录的 `mf-manifest-main.json` 和 `static/` 资源。生产部署路径为 `<cdn>/mfe/git-report-generator/`。
+
+详细接入规范见仓库根目录 [`AGENTS.md`](../../AGENTS.md)。

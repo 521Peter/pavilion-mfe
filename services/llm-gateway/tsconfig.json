@@ -28,7 +28,10 @@
                 "libs/api-gateway"
             ]
         },
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": [
+            "jest"
+        ]
     },
     "include": [
         "libs",

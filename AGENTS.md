@@ -9,6 +9,7 @@ apps/
   main-app/               # 主应用：React + Module Federation 主入口
   git-report-generator/   # 已接入的子应用，作为新增子应用的参考实现
   ai-chat/                # 已接入的 AI 聊天子应用（含独立开发自动登录鉴权层）
+  ai-customer/            # 已接入的 AI 客服子应用（通过统一网关访问业务服务）
 packages/
   bridge/                 # 主应用-子应用事件通信（EventBus + StorageSync）
   sandbox/                # JS 沙箱、副作用追踪、路由隔离、日志
@@ -21,13 +22,15 @@ packages/
   desktop/                # Electron 桌面壳
 services/
   llm-gateway/            # NestJS 统一后端与 LLM Gateway
+  customer-service/       # 仅监听回环地址的 AI 客服演示服务
 ```
 
 ## 常用命令
 
 ```bash
 pnpm install
-pnpm dev                  # 并行启动主应用和全部子应用开发服务器
+pnpm dev                  # 并行启动核心包监听、全部 Web 应用和后端服务（桌面壳除外）
+pnpm dev:service          # 仅启动 llm-gateway
 pnpm typecheck
 pnpm --filter main-app dev
 pnpm --filter git-report-generator dev
@@ -37,14 +40,17 @@ pnpm --filter git-report-generator build:dev
 
 开发端口约定：
 
-| 应用                   | 端口 |
-| ---------------------- | ---- |
-| `main-app`             | 6019 |
-| `git-report-generator` | 6010 |
-| `ai-chat`              | 6020 |
-| WS 端口发现服务        | 8356 |
+| 应用                   | 端口                   |
+| ---------------------- | ---------------------- |
+| `main-app`             | 6019                   |
+| `git-report-generator` | 6010                   |
+| `ai-chat`              | 6020                   |
+| `ai-customer`          | 6030                   |
+| `llm-gateway`          | 3000                   |
+| `customer-service`     | 3100（仅 `127.0.0.1`） |
+| WS 端口发现服务        | 8356                   |
 
-新增子应用时从 `6030` 开始按 `+10` 递增使用未被占用的端口，并在 `apps/main-app/mfe.json` 中登记 `devPort`。
+新增子应用时从 `6040` 开始按 `+10` 递增使用未被占用的端口，并在 `apps/main-app/mfe.json` 中登记 `devPort`。
 
 ## 核心约定
 
@@ -53,7 +59,8 @@ pnpm --filter git-report-generator build:dev
 - 子应用运行时不得引入 `@pavilion-mfe/*` 代码，只能把 `@pavilion-mfe/vite` 作为 devDependency；独立运行和微前端运行共用同一份 `main.tsx`。
 - 子应用通过 `window.__PAVILION_MFE_ENV__` 区分运行环境，该变量由主应用路由 `start()` 注入。
 - 主应用 `PavilionMfe({ shared: [] })`，子应用同样使用 `shared: []`，框架依赖各自携带，避免版本错配。
-- 修改核心包后按依赖顺序构建：`sandbox` / `bridge` / `tabs` → `router` → `runtime` → `vite`。
+- 修改核心包后按实际依赖顺序构建：先构建 `sandbox` / `bridge` / `tabs` / `vite`，再构建依赖 `sandbox` 的 `router`，最后构建聚合 `router` / `bridge` / `sandbox` 的 `runtime`。
+- `packages/cli` 当前只是早期骨架：`dev` 仅启动端口发现进程，`build` 仅输出参数；开发与构建以根 `package.json` 的 pnpm workspace 脚本为准。
 
 ## 如何新增子应用
 
@@ -65,7 +72,7 @@ pnpm --filter git-report-generator build:dev
 mkdir apps/my-dashboard
 ```
 
-可以直接复制 `apps/git-report-generator` 作为模板，也可以参考 `packages/create-pavilion` 的脚手架生成内容。pnpm workspace 已包含 `apps/*`，无需额外注册。
+应优先复制 `apps/git-report-generator` 作为 React 模板。`packages/create-pavilion` 当前只生成最小无框架原型，缺少 React 依赖、完整独立入口和本仓库全部约定，不能直接替代本节步骤。pnpm workspace 已包含 `apps/*`，无需额外注册。
 
 ### 2. 配置 package.json
 
@@ -94,7 +101,7 @@ mkdir apps/my-dashboard
 
 ### 3. 配置环境变量
 
-至少创建 `.env` 和 `.env.develop`：
+至少创建 `.env` 和 `.env.develop`。前端 `VITE_` 变量会进入浏览器产物，不能保存服务端密钥；若包含开发登录凭据，也只能使用本地测试账号：
 
 ```bash
 # .env
@@ -131,12 +138,12 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           "./main": "./src/main.tsx"
         },
         openDevServe: true,
-        port: 6030,
+        port: 6040,
         shared: [],
         dts: false
       })
     ],
-    server: { port: 6030 }
+    server: { port: 6040, strictPort: true }
   };
 });
 ```
@@ -220,7 +227,7 @@ declare global {
       "name": "我的面板",
       "cdn": "",
       "routes": ["/dashboard"],
-      "devPort": 6030,
+      "devPort": 6040,
       "keepAlive": false
     }
   ]
@@ -283,7 +290,7 @@ declare module "my-dashboard/main" {
 ```bash
 # 子应用独立运行
 pnpm --filter my-dashboard dev
-# 打开 http://localhost:6030
+# 打开 http://localhost:6040
 
 # 主应用 + 子应用联调
 pnpm dev

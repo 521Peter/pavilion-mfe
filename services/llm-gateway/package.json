@@ -75,6 +75,7 @@
         "@types/express": "5.0.6",
         "@types/jest": "^30.0.0",
         "@types/lodash": "4.17.24",
+        "@types/mocha": "^10.0.10",
         "@types/node": "25.3.5",
         "@types/passport-jwt": "^4.0.1",
         "axios": "1.13.6",
