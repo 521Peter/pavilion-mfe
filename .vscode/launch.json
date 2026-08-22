@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug LLM Gateway",
+      "cwd": "${workspaceFolder}/services/llm-gateway",
+      "runtimeExecutable": "node",
+      "args": [
+        "${workspaceFolder}/services/llm-gateway/node_modules/@nestjs/cli/bin/nest.js",
+        "start",
+        "--debug",
+        "--watch",
+        "--no-shell"
+      ],
+      "restart": false,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack://@pavilion-mfe/llm-gateway/*": "${workspaceFolder}/services/llm-gateway/*"
+      },
+      "outFiles": [
+        "${workspaceFolder}/services/llm-gateway/dist/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/**/node_modules/**"
+      ]
+    }
+  ]
+}
