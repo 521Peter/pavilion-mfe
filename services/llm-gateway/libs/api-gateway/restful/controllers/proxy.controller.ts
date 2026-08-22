@@ -5,6 +5,7 @@ import { ProxyService } from '../services/proxy.service';
 export class ProxyController {
     constructor(private proxyService: ProxyService) {}
 
+    // 接口转发给子应用
     @All('/{*splat}')
     async proxy(@Req() req, @Res() res): Promise<void> {
         await this.proxyService.handleRequest(req, res);

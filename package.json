@@ -2,9 +2,9 @@
   "name": "pavilion-mfe-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' dev",
-    "dev:service": "pnpm --filter @pavilion-mfe/llm-gateway dev",
-    "dev:desktop": "pnpm dev & pnpm --filter @pavilion-mfe/desktop dev",
+    "dev:web": "pnpm --parallel -r --filter './apps/**' --filter './packages/**' --filter '!@pavilion-mfe/desktop' dev",
+    "dev:service": "pnpm --parallel -r --filter './services/**' dev",
+    "dev:desktop": "pnpm dev:web & pnpm --filter @pavilion-mfe/desktop dev",
     "build": "pnpm -r build",
     "build:dev": "pnpm --parallel -r --filter '!@pavilion-mfe/desktop' build:dev",
     "build:desktop": "pnpm build:dev && pnpm --filter @pavilion-mfe/desktop build",

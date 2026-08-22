@@ -10,7 +10,7 @@
       "args": [
         "${workspaceFolder}/services/llm-gateway/node_modules/@nestjs/cli/bin/nest.js",
         "start",
-        "--debug",
+        "--debug=127.0.0.1:9229",
         "--watch",
         "--no-shell"
       ],
@@ -28,6 +28,44 @@
         "<node_internals>/**",
         "${workspaceFolder}/**/node_modules/**"
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug AI Customer Service",
+      "cwd": "${workspaceFolder}/services/customer-service",
+      "runtimeExecutable": "node",
+      "args": [
+        "${workspaceFolder}/services/customer-service/node_modules/@nestjs/cli/bin/nest.js",
+        "start",
+        "--debug=127.0.0.1:9230",
+        "--watch",
+        "--no-shell"
+      ],
+      "restart": false,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack://@pavilion-mfe/customer-service/*": "${workspaceFolder}/services/customer-service/*"
+      },
+      "outFiles": [
+        "${workspaceFolder}/services/customer-service/dist/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/**/node_modules/**"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug All Services",
+      "configurations": [
+        "Debug LLM Gateway",
+        "Debug AI Customer Service"
+      ],
+      "stopAll": true
     }
   ]
 }
