@@ -1,4 +1,4 @@
--- CreateTable
+-- 创建表
 CREATE TABLE "llm_providers" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "llm_providers" (
     CONSTRAINT "llm_providers_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
+-- 创建表
 CREATE TABLE "llm_models" (
     "id" TEXT NOT NULL,
     "providerId" TEXT NOT NULL,
@@ -27,8 +27,8 @@ CREATE TABLE "llm_models" (
     CONSTRAINT "llm_models_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
+-- 创建索引
 CREATE UNIQUE INDEX "llm_models_providerId_modelName_key" ON "llm_models"("providerId", "modelName");
 
--- AddForeignKey
+-- 添加外键
 ALTER TABLE "llm_models" ADD CONSTRAINT "llm_models_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "llm_providers"("id") ON DELETE CASCADE ON UPDATE CASCADE;

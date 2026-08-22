@@ -13,11 +13,11 @@ export type * from "./config-types.js";
 export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
   const plugins: PluginOption[] = [];
 
-  // ─── 0. Resolve environment config ───
+  // ─── 0. 解析环境配置 ───
   const env = options.env ?? process.env.VITE_PAVILION_MFE_ENV ?? "develop";
   const cdn = options.cdn ?? "";
 
-  // ─── 0b. Inject env vars into import.meta.env ───
+  // ─── 0b. 将环境变量注入 import.meta.env ───
   plugins.push({
     name: "pavilion-mfe:env-inject",
     config: config => {
@@ -26,7 +26,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     }
   } as PluginOption);
 
-  // ─── 1. Build config: base URL + optimizations ───
+  // ─── 1. 构建配置：基础 URL + 优化 ───
   plugins.push({
     name: "pavilion-mfe:build-config",
     apply: "build",
@@ -35,21 +35,21 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
         config.base = `${cdn}/mfe/${options.name ?? "unknown"}/`;
       }
 
-      // MF shared chunks (e.g. Element Plus ~950kB, Ant Design ~1.5MB)
-      // are single-load shared bundles — raise the limit to avoid noise.
+      // MF 共享分块（如 Element Plus 约 950kB、Ant Design 约 1.5MB）
+      // 是仅加载一次的共享包，提高限制以避免无意义的警告。
       const build = config.build ?? (config.build = {});
       if (!build.chunkSizeWarningLimit) {
         build.chunkSizeWarningLimit = 1500;
       }
-      // Disable sourcemaps in production for smaller bundles
+      // 生产环境禁用 sourcemap 以减小产物体积
       if (build.sourcemap === undefined) {
         build.sourcemap = false;
       }
-      // Enable CSS code splitting for per-route styles
+      // 启用 CSS 代码拆分，支持按路由加载样式
       if (build.cssCodeSplit === undefined) {
         build.cssCodeSplit = true;
       }
-      // Organize chunk/asset output into static/{js,css,ext} dirs
+      // 将分块/资源产物组织到 static/{js,css,ext} 目录
       const rollup = build.rollupOptions ?? (build.rollupOptions = {});
       const output = rollup.output ?? (rollup.output = {});
       if (typeof output === "object" && !Array.isArray(output)) {
@@ -58,26 +58,24 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
         if (!output.assetFileNames) output.assetFileNames = "static/[ext]/[name]-[hash].[ext]";
       }
 
-      // Drop debugger statements in production
+      // 生产环境移除 debugger 语句
       const esbuild = config.esbuild ?? (config.esbuild = {});
       if (typeof esbuild === "object") {
         const drop = esbuild.drop ?? (esbuild.drop = []);
         if (!drop.includes("debugger")) drop.push("debugger");
       }
 
-      // Main app: no public dir (everything is served via MF remotes)
+      // 主应用：不使用 public 目录（所有内容均通过 MF 远程模块提供）
       if (options.role === "main-app") {
         config.publicDir = false;
       }
     }
   } as PluginOption);
 
-  // ─── 1a. Dev config: absolute base URL for sub-apps ───
-  // In dev mode, sub-app code runs inside the main app's page. Asset paths
-  // like "/src/assets/hero.png" would resolve to the main app's origin
-  // instead of the sub-app's dev server. Setting server.origin ensures
-  // Vite generates absolute asset URLs that always point to the sub-app,
-  // regardless of which host page the code runs in.
+  // ─── 1a. 开发配置：子应用绝对基础 URL ───
+  // 开发模式下，子应用代码运行在主应用页面内。类似 "/src/assets/hero.png" 的资源路径
+  // 会解析到主应用来源，而非子应用开发服务器。设置 server.origin 可确保 Vite
+  // 生成始终指向子应用的绝对资源 URL，不受代码所在宿主页影响。
   if ((options.role === "sub-app" || options.role === "runtime") && options.port) {
     plugins.push({
       name: "pavilion-mfe:dev-base",
@@ -91,11 +89,10 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     } as PluginOption);
   }
 
-  // ─── 1b. Mark vite/module-runner as external ───
-  // @module-federation/vite dynamically imports it for SSR (Vite 8+),
-  // but it doesn't exist in Vite 5.x. The import is wrapped in try/catch
-  // at runtime, so we just need Rollup to not resolve it at build time.
-  // enforce: 'pre' ensures this runs BEFORE Vite's built-in resolver.
+  // ─── 1b. 将 vite/module-runner 标记为外部依赖 ───
+  // @module-federation/vite 会为 SSR（Vite 8+）动态导入它，但 Vite 5.x 中不存在。
+  // 运行时导入已由 try/catch 包裹，因此只需阻止 Rollup 在构建时解析它。
+  // enforce: 'pre' 确保此插件在 Vite 内置解析器之前运行。
   plugins.push({
     name: "pavilion-mfe:external",
     enforce: "pre",
@@ -107,9 +104,9 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     }
   } as PluginOption);
 
-  // ─── 1b. Top-level await (build only) ───
-  // Required for MF shared modules that use top-level await syntax.
-  // Injected only in build mode to avoid interfering with dev ESM.
+  // ─── 1b. 顶层 await（仅构建时） ───
+  // 使用顶层 await 语法的 MF 共享模块需要此配置。
+  // 仅在构建模式注入，避免干扰开发环境 ESM。
   plugins.push({
     name: "pavilion-mfe:top-await",
     apply: "build",
@@ -118,7 +115,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     })
   } as PluginOption);
 
-  // ─── 1c. Dev server proxy ───
+  // ─── 1c. 开发服务器代理 ───
   if (options.proxy) {
     plugins.push({
       name: "pavilion-mfe:proxy",
@@ -130,7 +127,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     } as PluginOption);
   }
 
-  // ─── 2. Module Federation ───
+  // ─── 2. 模块联邦 ───
   const mfOptions: ModuleFederationOptions = {
     name: options.name ?? "pavilion-mfe-app"
   };
@@ -148,7 +145,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
   if (options.runtimePlugins) mfOptions.runtimePlugins = options.runtimePlugins;
   if (options.dts !== undefined) (mfOptions as any).dts = options.dts;
 
-  // Manifest at root level (no filePath) so relative paths resolve correctly
+  // 清单放在根层级（不设置 filePath），确保相对路径正确解析
   if (options.manifest !== false) {
     mfOptions.manifest =
       typeof options.manifest === "object"
@@ -158,7 +155,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
 
   plugins.push(mfFederation(mfOptions));
 
-  // ─── 3. CSS Scope (sub-app builds only) ───
+  // ─── 3. CSS 作用域（仅子应用构建） ───
   if (options.role === "sub-app" || options.role === "runtime") {
     const scopePrefix = `pavilion-mfe-${options.name ?? "unknown"}`;
 
@@ -181,7 +178,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
     } as PluginOption);
   }
 
-  // ─── 4. Dev-time WS port discovery ───
+  // ─── 4. 开发时 WS 端口发现 ───
   if (options.openDevServe && options.role === "sub-app" && options.port) {
     plugins.push(wsDiscoveryPlugin({ port: options.port, name: options.name }));
   }

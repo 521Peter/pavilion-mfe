@@ -42,11 +42,9 @@ export class McpToolExecutorService {
         }
 
         try {
-            // The gateway runs with body parsing disabled and the MCP SDK consumes the raw
-            // request stream itself, so `request.body` is never populated for `/mcp`. Expose the
-            // tool arguments (e.g. `path_projectId`) on the request so gateway middleware — most
-            // importantly the project-permission check — can resolve path parameters the same way
-            // it does for a normal REST request.
+            // 网关已禁用请求体解析，MCP SDK 会自行消费原始请求流，因此 `/mcp` 的
+            // `request.body` 始终为空。将工具参数（如 `path_projectId`）暴露到请求对象上，
+            // 使网关中间件（尤其是项目权限检查）能像处理普通 REST 请求一样解析路径参数。
             (request as any).body = args;
 
             await this.throttlerService.checkLimitOfRequest(tool.routerDetail, request as any);

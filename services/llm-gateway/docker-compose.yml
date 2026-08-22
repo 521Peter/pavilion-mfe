@@ -1,4 +1,4 @@
-# Pavilion LLM Gateway local dependencies
+# Pavilion LLM Gateway 本地依赖
 services:
   postgres:
     image: pgvector/pgvector:pg16

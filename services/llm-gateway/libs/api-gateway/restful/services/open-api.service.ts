@@ -18,14 +18,14 @@ export class OpenApiService {
     public apiDocs: { [key in string]: EndpointDetail } = {};
     public originDocs: { [key in string]: any } = {};
     /**
-     * Serialized form of the last successfully loaded document per service, used to skip
-     * re-parsing (and rebuilding every path-to-regexp matcher) when the document is unchanged.
+     * 各服务上次成功加载文档的序列化形式。文档未变化时据此跳过重新解析，
+     * 也无需重建所有 path-to-regexp 匹配器。
      */
     private docSnapshots: { [key in string]: string } = {};
 
     /**
-     * Resolves once the initial load of every service's API document has settled,
-     * so consumers can wait for docs to be available before using them.
+     * 所有服务的 API 文档首次加载结束后完成，
+     * 使消费者可等待文档可用后再使用。
      */
     private markReady!: () => void;
     public readonly ready: Promise<void> = new Promise<void>((resolve) => {
@@ -38,7 +38,7 @@ export class OpenApiService {
     ) {}
 
     /**
-     * Signal that the initial load of all API documents has completed.
+     * 标记所有 API 文档的首次加载已完成。
      */
     markInitialLoadComplete(): void {
         this.markReady();
@@ -85,7 +85,7 @@ export class OpenApiService {
             patch: [],
             put: [],
             /*
-             * For oidc purposes
+             * 用于 OIDC
              **/
             options: [],
             head: [],

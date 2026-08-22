@@ -1,4 +1,4 @@
-// camelcase-keys (pulled in via open-api.service) is ESM-only and not transformed by @swc/jest.
+// open-api.service 引入的 camelcase-keys 仅支持 ESM，且不会被 @swc/jest 转换。
 jest.mock('camelcase-keys', () => ({ __esModule: true, default: (value: unknown) => value }));
 
 import { IncomingMessage } from 'http';

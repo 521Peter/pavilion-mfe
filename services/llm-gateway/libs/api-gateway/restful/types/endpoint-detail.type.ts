@@ -1,7 +1,7 @@
 import { RouterPathType } from './router-path.type';
 
 /**
- * Detail of an endpoint, use to define an endpoint's document in Swagger
+ * 端点详情，用于在 Swagger 中定义端点文档
  */
 export type EndpointDetail = {
     title: string;

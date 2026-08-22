@@ -11,7 +11,7 @@ export type RouterDetail = {
     isBearerAuth: boolean;
     isApiKeyAuth: boolean;
     routerPath: string;
-    pathMatch: any; // TODO: Fix this type PathMatch
+    pathMatch: any; // TODO：将此类型修正为 PathMatch
     rateLimits: RateLimit[];
     extra?: NodeJS.Dict<any>;
 };

@@ -1,4 +1,4 @@
-// PavilionMfe AI 平台 — Prisma Schema
+// PavilionMfe AI 平台 — Prisma 模式
 // 数据库: PostgreSQL 16 + pgvector 扩展
 
 generator client {
@@ -19,7 +19,7 @@ datasource db {
 model User {
   id           String        @id @default(uuid())
   username     String        @unique
-  password     String // bcrypt hash
+  password     String // bcrypt 哈希值
   nickname     String?
   avatar       String?
   status       UserStatus    @default(ACTIVE)
@@ -76,7 +76,7 @@ enum UserRole {
   USER
 }
 
-// ─── LLM Provider 供应商 ───
+// ─── LLM 提供商 ───
 model LlmProvider {
   id          String               @id @default(uuid())
   name        String // 显示名，如 "OpenAI 官方"
@@ -110,7 +110,7 @@ model LlmModel {
   @@map("llm_models")
 }
 
-// ─── MCP Server ───
+// ─── MCP 服务器 ───
 model McpServer {
   id          String  @id @default(uuid())
   name        String // 显示名，如 "GitHub MCP"
@@ -181,7 +181,7 @@ model SkillRepo {
   @@map("skill_repos")
 }
 
-// ─── Pavilion 应用注册 + Gateway 调用方密钥 ───
+// ─── Pavilion 应用注册 + 网关调用方密钥 ───
 model Application {
   id            String           @id @default(uuid())
   code          String           @unique @map("app_code")
@@ -214,7 +214,7 @@ model ApplicationKey {
   @@map("application_keys")
 }
 
-// ─── Provider Secret、实际部署与虚拟模型路由 ───
+// ─── 提供商密钥、实际部署与虚拟模型路由 ───
 model ProviderCredential {
   id               String      @id @default(uuid())
   providerId       String      @map("provider_id")
@@ -300,7 +300,7 @@ model RouteTarget {
   @@map("route_targets")
 }
 
-// ─── Agent、Tool 与不可变 Skill 版本 ───
+// ─── 智能体、工具与不可变 Skill 版本 ───
 model AgentDefinition {
   id               String         @id @default(uuid())
   code             String         @unique
@@ -388,7 +388,7 @@ model AgentSkillBinding {
   @@map("agent_skill_bindings")
 }
 
-// ─── Run、Attempt、Usage 与 Audit ───
+// ─── 运行、尝试、用量与审计 ───
 model Run {
   id             String            @id @default(uuid())
   requestId      String            @unique @map("request_id")

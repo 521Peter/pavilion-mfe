@@ -19,15 +19,15 @@ const MIME: Record<string, string> = {
 };
 
 /**
- * Lightweight static file server using only Node built-ins.
- * Module Federation remotes resolve against the origin, so a real HTTP origin
- * (rather than file://) keeps remote manifests / ES modules loading reliably.
+ * 仅使用 Node 内置模块实现的轻量静态文件服务器。
+ * Module Federation 远程模块基于来源解析，因此使用真实 HTTP 来源
+ *（而非 file://）可确保远程清单和 ES 模块可靠加载。
  */
 export function createStaticServer(root: string) {
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     try {
       const urlPath = decodeURIComponent((req.url ?? "/").split("?")[0]);
-      // SPA fallback: non-file requests serve index.html
+      // SPA 降级处理：非文件请求返回 index.html
       let filePath = join(root, normalize(urlPath));
       let safe = relative(root, filePath);
       if (safe.startsWith("..") || safe.includes("\0")) {
@@ -38,7 +38,7 @@ export function createStaticServer(root: string) {
 
       let st = await stat(filePath).catch(() => null);
       if (st?.isDirectory() || (!st && !extname(urlPath))) {
-        // Try index.html inside directory, else SPA fallback to root index
+        // 优先尝试目录内的 index.html，否则降级到根目录 index.html
         const idx = st?.isDirectory() ? join(filePath, "index.html") : join(root, "index.html");
         const idxStat = await stat(idx).catch(() => null);
         if (idxStat?.isFile()) {
@@ -60,7 +60,7 @@ export function createStaticServer(root: string) {
     }
   });
 
-  // Port 0 lets the OS pick an available port
+  // 端口 0 表示由操作系统选择可用端口
   return new Promise<{ port: number; close: () => void }>((resolve, reject) => {
     server.on("error", reject);
     server.listen(0, "127.0.0.1", () => {

@@ -1,12 +1,11 @@
 /**
- * Self-contained logger for @pavilion-mfe/bridge.
+ * @pavilion-mfe/bridge 的独立日志器。
  *
- * Bridge is a standalone package with no dependencies on other PavilionMfe
- * packages. This logger reads the same global config
- * (window.__PAVILION_MFE_LOG__) as @pavilion-mfe/sandbox's logger, ensuring
- * consistent output format and module toggling across all packages.
+ * Bridge 是不依赖其他 PavilionMfe 包的独立包。此日志器读取与
+ * @pavilion-mfe/sandbox 日志器相同的全局配置
+ *（window.__PAVILION_MFE_LOG__），确保所有包的输出格式和模块开关一致。
  *
- * See @pavilion-mfe/sandbox/src/logger.ts for the canonical implementation.
+ * 标准实现参见 @pavilion-mfe/sandbox/src/logger.ts。
  */
 
 const STYLE_PREFIX = "color:#42b883;font-weight:bold";

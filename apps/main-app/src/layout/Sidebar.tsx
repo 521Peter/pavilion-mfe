@@ -109,7 +109,7 @@ export default function Sidebar() {
 
   return (
     <aside className="bg-sidebar-bg flex flex-col overflow-hidden relative transition-[width] duration-300 ease">
-      {/* Logo */}
+      {/* 标志 */}
       <div
         className={cn(
           "flex items-center cursor-pointer select-none min-h-[60px] border-b border-white/[0.08] transition-[padding] duration-300",

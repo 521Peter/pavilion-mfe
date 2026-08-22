@@ -1,8 +1,7 @@
-// 1. Bundles the Electron main/preload TS into dist/
-// 2. Aggregates the already-built Vite outputs of every segment into a single
-//    `dist/renderer/` directory so the packaged local static server can
-//    serve them under one origin. Run the Vite builds first (see root
-//    package.json `build:desktop`).
+// 1. 将 Electron 主进程/preload TS 打包到 dist/
+// 2. 将各模块已构建的 Vite 产物汇总到统一的 `dist/renderer/` 目录，
+//    使打包后的本地静态服务器可通过同一来源提供这些文件。
+//    请先运行 Vite 构建（参见根 package.json 的 `build:desktop`）。
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, join } from "node:path";
@@ -13,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const appDir = resolve(__dirname, "..");
 const monorepoRoot = resolve(appDir, "../..");
 
-// appCode -> monorepo app directory name
+// appCode -> monorepo 应用目录名
 const segments = [
   { dir: "main-app", isMain: true },
   { dir: "git-report-generator", code: "git-report-generator" }
@@ -53,11 +52,11 @@ async function aggregate() {
       throw new Error(`[desktop] ${seg.dir}/dist not found. Run the Vite builds first (pnpm build:desktop).`);
     }
     if (seg.isMain) {
-      // Main app at the origin root
+      // 主应用位于来源根目录
       await cp(segDist, rendererDir, { recursive: true });
       console.log(`[desktop] copied ${seg.dir} -> renderer/ (main app)`);
     } else {
-      // Sub-app under /mfe/<appCode>/ matching its publicPath
+      // 子应用位于与 publicPath 匹配的 /mfe/<appCode>/ 下
       const dest = join(rendererDir, "mfe", seg.code);
       await mkdir(dest, { recursive: true });
       await cp(segDist, dest, { recursive: true });

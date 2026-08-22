@@ -5,7 +5,7 @@ import { ProxyServerOptions } from './proxy-server-option.type';
 import { IncomingMessage } from 'http';
 
 export class ProxySocket {
-    /** Bytes of the upgraded protocol that the HTTP parser consumed alongside the client handshake. */
+    /** HTTP 解析器在客户端握手期间一并消费的升级协议字节。 */
     private clientHead?: Buffer;
 
     constructor(
@@ -58,12 +58,10 @@ export class ProxySocket {
                 ...extraHeaders
             },
             path: this.req.url,
-            // Never borrow a socket from the keep-alive pool for an upgrade. A pooled
-            // socket arrives with the agent's idle timeout already armed and partly
-            // elapsed, and that timer survives the handover to the upgraded protocol —
-            // the tunnel then dies mid-session once the peers go quiet, which for
-            // Engine.IO is the 25s gap between pings. An upgrade needs a socket the
-            // agent will never reclaim.
+            // 升级时绝不能从 keep-alive 池借用套接字。池化套接字到达时，代理的空闲超时
+            // 已启动且计时部分经过，该定时器会在移交给升级协议后继续存在；一旦对端静默，
+            // 隧道便会在会话中途断开。对 Engine.IO 而言，这发生在两次 ping 之间的 25 秒间隔。
+            // 升级需要使用代理永远不会回收的套接字。
             agent: false
         };
     }
@@ -97,15 +95,13 @@ export class ProxySocket {
             this.socket.end();
         });
 
-        // Node's HTTP parser reads in whole chunks, so bytes belonging to the upgraded
-        // protocol can be consumed along with the handshake and handed over as a head
-        // buffer. They are already out of the stream, so piping alone would drop them —
-        // push each head back to the front of its socket before the pipes are wired.
-        // Servers that speak first (Engine.IO sends its OPEN packet immediately) lose
-        // that first frame otherwise, leaving a connection that looks live but never
-        // completes its handshake.
-        // The client socket is cleared the same way in handleWebsocket; do the same
-        // upstream so no inherited idle timer can reclaim the tunnel.
+        // Node 的 HTTP 解析器按完整数据块读取，因此升级协议的字节可能随握手一起被消费，
+        // 并作为 head 缓冲区移交。它们已经离开数据流，仅连接管道会丢失这些字节，
+        // 因此要在连接管道前将每个 head 推回对应套接字前端。
+        // 主动先发送数据的服务器（Engine.IO 会立即发送 OPEN 包）否则会丢失第一帧，
+        // 使连接看似存活却永远无法完成握手。
+        // handleWebsocket 会以相同方式清理客户端套接字；上游也要这样处理，
+        // 防止继承的空闲定时器回收隧道。
         proxySocket.setTimeout(0);
 
         if (proxyHead?.length) {
@@ -150,7 +146,7 @@ export class ProxySocket {
                 this.socket.destroySoon();
             });
         } else {
-            // make sure response is consumed
+            // 确保响应已被消费
             proxyRes.resume();
         }
     }

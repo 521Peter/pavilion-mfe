@@ -1,9 +1,8 @@
 /**
- * LocalStorage observer with subscription support.
- * Extracted from chagee's event.js LocalStorageObserver.
+ * 支持订阅的 localStorage 观察器。
+ * 提取自 chagee 的 event.js LocalStorageObserver。
  *
- * Allows the main app and sub-apps to share state via localStorage
- * with reactive subscriptions.
+ * 允许主应用和子应用通过 localStorage 共享状态，并支持响应式订阅。
  */
 
 import { bridgeLog } from "./logger.js";
@@ -95,7 +94,7 @@ export class StorageSync {
   private start(): void {
     window.addEventListener("storage", event => {
       if (event.key) {
-        // event.newValue is a raw JSON string — parse to match set() semantics
+        // event.newValue 是原始 JSON 字符串，需要解析以匹配 set() 的语义
         let value: unknown = null;
         if (event.newValue) {
           try {

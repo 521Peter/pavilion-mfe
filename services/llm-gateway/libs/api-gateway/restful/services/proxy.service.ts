@@ -45,7 +45,7 @@ export class ProxyService implements OnModuleInit {
     ) {}
 
     /**
-     * Initializes API services and sets up a WebSocket handler when the module is initialized
+     * 模块初始化时初始化 API 服务并设置 WebSocket 处理器。
      */
     onModuleInit(): void {
         const serverInstance = this.adapterHost.httpAdapter;
@@ -78,16 +78,16 @@ export class ProxyService implements OnModuleInit {
             this.createProxyServer(apiService);
         }
 
-        // Signal readiness once every service's initial document load has settled,
-        // without blocking the rest of the module initialization.
+        // 所有服务的文档首次加载结束后标记就绪，
+        // 且不阻塞模块其余初始化过程。
         Promise.allSettled(initialLoads).then(() => this.swaggerService.markInitialLoadComplete());
     }
 
     /**
-     * Register a service's direct prefixes against the service's normal prefix.
-     * Direct prefixes are forwarded to the owning service WITHOUT being stripped.
-     * On a cross-service collision the first service in configuration order wins.
-     * @param {ApiServiceDetail} apiService API Service Detail
+     * 根据服务的普通前缀注册其直接前缀。
+     * 直接前缀会原样转发给所属服务，不会被移除。
+     * 不同服务发生冲突时，配置顺序靠前的服务优先。
+     * @param {ApiServiceDetail} apiService API 服务详情
      */
     private registerDirectPrefixes(apiService: ApiServiceDetail): void {
         for (const directPrefix of apiService.directPrefixes ?? []) {
@@ -99,20 +99,18 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Determine whether a request URL belongs to a configured direct prefix
-     * (matched on a whole-path-segment basis).
-     * @param {string} url A URL
-     * @returns {boolean} Whether the URL is a direct-prefix request
+     * 判断请求 URL 是否属于已配置的直接前缀（按完整路径段匹配）。
+     * @param {string} url URL
+     * @returns {boolean} URL 是否为直接前缀请求
      */
     private isDirectPrefixRequest(url: string): boolean {
         return this.directPrefixServers.some((directPrefix) => matchesPrefixSegment(url, directPrefix));
     }
 
     /**
-     * Set up a proxy server for a given API service, handling both HTTP and WebSocket requests,
-     * configure the proxy to forward requests to the target service
-     * and also manages error handling and request modification
-     * @param {ApiServiceDetail} apiService API Service Detail
+     * 为指定 API 服务设置代理服务器，同时处理 HTTP 和 WebSocket 请求，
+     * 配置代理将请求转发到目标服务，并管理错误处理和请求修改。
+     * @param {ApiServiceDetail} apiService API 服务详情
      */
     private createProxyServer(apiService: ApiServiceDetail): void {
         this.proxyServers[apiService.prefix] = new ProxyServer({
@@ -150,9 +148,9 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Modify the path of an incoming request by removing a specific prefix from it
-     * @param {ClientRequest} request A request
-     * @param {string} prefix A prefix
+     * 从传入请求中移除指定前缀以修改路径。
+     * @param {ClientRequest} request 请求
+     * @param {string} prefix 前缀
      */
     private rewritePath(request: Request, prefix: string): string {
         const newPath = this.removePath(prefix, request.path);
@@ -164,12 +162,11 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Remove the specified prefix from the URL, but only when it is the LEADING path segment.
-     * Direct-prefix requests (whose path does not begin with the service's normal prefix) are
-     * therefore left untouched, preserving their prefix on forward.
-     * @param {string} prefix A Prefix
-     * @param {string} url A URL
-     * @returns {string} The URL is properly cleaned up before being forwarded to a backend service
+     * 仅当指定前缀是首个路径段时才将其从 URL 中移除。
+     * 因此直接前缀请求（路径不以服务的普通前缀开头）保持不变，转发时保留其前缀。
+     * @param {string} prefix 前缀
+     * @param {string} url URL
+     * @returns {string} 转发到后端服务前正确清理后的 URL
      */
     private removePath(prefix: string, url: string): string {
         const base = `/${prefix}`;
@@ -184,9 +181,9 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Determine how to process an incoming request by checking if it's for a static resource or a regular HTTP request.
-     * @param {Request} request A request
-     * @param {Response} response A response
+     * 根据传入请求是静态资源请求还是普通 HTTP 请求，决定处理方式。
+     * @param {Request} request 请求
+     * @param {Response} response 响应
      */
     async handleRequest(request: Request, response: Response): Promise<void> {
         if (this.requestService.isStaticRequest(request)) {
@@ -197,10 +194,10 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Handle requests to static resources by forwarding them to a proxy server,
-     * determine which proxy server to use based on the request URL and forwards the request using the proxy's web method.
-     * @param {Response} response A response
-     * @param {Request} request A request
+     * 将静态资源请求转发给代理服务器。根据请求 URL 决定使用哪个代理服务器，
+     * 并通过代理的 web 方法转发请求。
+     * @param {Response} response 响应
+     * @param {Request} request 请求
      */
     private async handleStaticRequest(response: Response, request: Request): Promise<void> {
         const serverName = this.getServerName(request.url);
@@ -208,11 +205,11 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Handle WebSocket connection upgrade requests, determine which proxy server should handle the WebSocket request,
-     * validate the WebSocket token, and forwards the request to the appropriate server with any necessary headers
-     * @param {Request} request A request
-     * @param {Socket} socket A socket
-     * @param {Buffer} head Upgraded-protocol bytes the HTTP parser consumed with the handshake
+     * 处理 WebSocket 连接升级请求，决定由哪个代理服务器处理，验证 WebSocket 令牌，
+     * 并携带必要请求头将请求转发到适当的服务器。
+     * @param {Request} request 请求
+     * @param {Socket} socket 套接字
+     * @param {Buffer} head HTTP 解析器随握手一并消费的升级协议字节
      */
     private async handleWebSocketRequest(request: Request, socket: Socket, head?: Buffer): Promise<void> {
         const serverName = this.getServerName(request.url);
@@ -227,12 +224,10 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Process incoming HTTP requests by determining which backend service to forward the request to,
-     * applying rate-limiting (throttling) checks, and ensuring that the appropriate headers are set.
-     * It also handles custom throttling limits for specific routes
-     * and ensures that the correct backend server handles the request.
-     * @param {Request} request A request
-     * @param {Response} response A response
+     * 处理传入的 HTTP 请求：确定转发目标后端服务、执行限流检查并设置适当的请求头。
+     * 同时处理特定路由的自定义限流，并确保由正确的后端服务器处理请求。
+     * @param {Request} request 请求
+     * @param {Response} response 响应
      */
     private async handleHttpRequest(request: Request, response: Response): Promise<void> {
         const serverName = this.getServerName(request.url);
@@ -252,8 +247,8 @@ export class ProxyService implements OnModuleInit {
             throw new MethodNotAllowedException();
         }
 
-        // Apply the global IP ceiling before auth so unauthenticated/forbidden floods are capped too.
-        // It marks the request, so checkLimitOfRequest below won't re-run it (no double-count).
+        // 在认证前应用全局 IP 上限，使未认证/被拒绝的洪泛请求同样受限。
+        // 此检查会标记请求，因此下方的 checkLimitOfRequest 不会重复执行（避免重复计数）。
         await this.throttlerService.checkGlobalIpRequest(request);
 
         const proxyRequest = new ProxyRequest();
@@ -272,14 +267,14 @@ export class ProxyService implements OnModuleInit {
     }
 
     /**
-     * Determine the correct proxy server (or backend service) to handle a request based on the URL,
-     * check the URL for a matching prefix from a list of predefined server prefixes and returns the corresponding server name
-     * @param {string} url A URL
-     * @returns {string} Return server's name
+     * 根据 URL 确定处理请求的正确代理服务器（或后端服务）。
+     * 在预定义服务器前缀列表中查找匹配项并返回对应服务器名称。
+     * @param {string} url URL
+     * @returns {string} 服务器名称
      */
     getServerName(url: string): string {
-        // Direct prefixes are evaluated before normal prefixes (FR-006): on overlap the direct
-        // (retain) owner wins. The matched prefix is preserved by removePath (leading-only strip).
+        // 直接前缀先于普通前缀求值（FR-006）：重叠时直接前缀（保留方）所属服务优先。
+        // removePath 仅移除开头前缀，因此会保留匹配到的直接前缀。
         for (const directPrefix of this.directPrefixServers) {
             if (matchesPrefixSegment(url, directPrefix)) {
                 return this.directPrefixOwner[directPrefix];

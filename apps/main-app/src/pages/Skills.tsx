@@ -613,7 +613,7 @@ export default function Skills() {
         </div>
       )}
 
-      {/* 详情 Modal */}
+      {/* 详情对话框 */}
       <Modal isOpen={detailOpen} onOpenChange={setDetailOpen}>
         <Modal.Backdrop>
           <Modal.Container>
@@ -629,7 +629,7 @@ export default function Skills() {
         </Modal.Backdrop>
       </Modal>
 
-      {/* 新建 Modal */}
+      {/* 新建对话框 */}
       <Modal isOpen={createOpen} onOpenChange={setCreateOpen}>
         <Modal.Backdrop>
           <Modal.Container>
@@ -679,7 +679,7 @@ export default function Skills() {
         </Modal.Backdrop>
       </Modal>
 
-      {/* 远程安装 Modal */}
+      {/* 远程安装对话框 */}
       <Modal isOpen={remoteOpen} onOpenChange={setRemoteOpen}>
         <Modal.Backdrop>
           <Modal.Container>

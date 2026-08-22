@@ -1,7 +1,7 @@
 /**
- * Validate whether a value is valid URL.
- * @param {any} string Any value.
- * @returns {boolean} Return whether URL is valid of not.
+ * 验证某个值是否为有效 URL。
+ * @param {any} string 任意值
+ * @returns {boolean} URL 是否有效
  */
 export function isValidUrl(string: any): boolean {
     try {
@@ -13,9 +13,9 @@ export function isValidUrl(string: any): boolean {
 }
 
 /**
- * Get path from a URL
- * @param {string} value A URL
- * @returns {string} The path
+ * 从 URL 获取路径。
+ * @param {string} value URL
+ * @returns {string} 路径
  */
 export function getPathFromUrl(value: string): string {
     if (isValidUrl(value)) {
@@ -26,9 +26,9 @@ export function getPathFromUrl(value: string): string {
 }
 
 /**
- * Convert ttl to a human readable sentence.
- * @param {number} ttl Time to live
- * @returns {string} A string.
+ * 将 ttl 转换为便于阅读的描述。
+ * @param {number} ttl 生存时间
+ * @returns {string} 描述字符串
  */
 export function ttlToHumanReadable(ttl: number): string {
     const minutes = Math.floor(ttl / 60);

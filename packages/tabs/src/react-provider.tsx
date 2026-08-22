@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
 import { TabsStateManager, type TabInfo } from "./state-manager.js";
 
-// ─── Public API ───
+// ─── 公共 API ───
 
 /** openTab 入参：path + title 必填，其余可选 */
 export type OpenTabInput = Pick<TabInfo, "path" | "title"> & Partial<Omit<TabInfo, "id">> & { id?: string };
@@ -25,7 +25,7 @@ function saveState(state: { tabs: TabInfo[]; activeTabId: string | null }) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    /* ignore quota errors */
+    /* 忽略配额错误 */
   }
 }
 
@@ -39,11 +39,11 @@ function loadState(): { tabs: TabInfo[]; activeTabId: string | null } | null {
   }
 }
 
-// ─── Context ───
+// ─── 上下文 ───
 
 const TabsContext = createContext<TabsAPI | null>(null);
 
-// ─── Provider ───
+// ─── 提供器 ───
 
 export function TabsProvider({ children }: { children: ReactNode }) {
   const { current: manager } = React.useRef(new TabsStateManager());
@@ -115,7 +115,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   return <TabsContext.Provider value={api}>{children}</TabsContext.Provider>;
 }
 
-// ─── Hook ───
+// ─── 钩子 ───
 
 export function useTabs(): TabsAPI {
   const api = useContext(TabsContext);

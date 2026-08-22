@@ -1,6 +1,6 @@
 /**
- * Path matching utility.
- * Extracted from chagee's app.js — prefix-based routing.
+ * 路径匹配工具。
+ * 提取自 chagee 的 app.js，使用基于前缀的路由。
  */
 
 export interface SubAppRouteConfig {
@@ -9,10 +9,10 @@ export interface SubAppRouteConfig {
 }
 
 /**
- * Create a path matcher function for a set of route prefixes.
- * Uses trailing-slash normalization for consistent prefix matching.
+ * 为一组路由前缀创建路径匹配函数。
+ * 通过规范化尾斜杠确保前缀匹配行为一致。
  *
- * Usage:
+ * 用法：
  *   const match = createPathMatcher(['/demo', '/demo/list'])
  *   match('/demo/list')  // true
  *   match('/react')      // false
@@ -22,13 +22,13 @@ export function createPathMatcher(routes: string[]): (path: string) => boolean {
 }
 
 /**
- * Match a URL path to a sub-app by prefix.
- * Both sides normalize trailing slashes for consistent matching.
+ * 根据前缀将 URL 路径匹配到子应用。
+ * 双方都会规范化尾斜杠，以确保匹配行为一致。
  */
 export function matchAppByPath(path: string, subApps: SubAppRouteConfig[]): SubAppRouteConfig | null {
   if (!path) return null;
 
-  // Extract pathname from full URLs
+  // 从完整 URL 中提取路径名
   if (/^(https?:\/\/)/.test(path)) {
     path = new URL(path, location.origin).pathname || "";
   }
@@ -51,6 +51,6 @@ export function navigateTo(url: string, options: { replace?: boolean; open?: boo
     window.history.pushState(null, "", url);
   }
 
-  // Dispatch synthetic popstate so custom routers pick up the change
+  // 分发模拟的 popstate 事件，让自定义路由器感知变化
   window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
 }

@@ -1,6 +1,6 @@
 /**
- * Event bus for main-app ↔ sub-app and sub-app ↔ sub-app communication.
- * Extracted from chagee's event.js EventEmitter.
+ * 用于主应用 ↔ 子应用及子应用 ↔ 子应用通信的事件总线。
+ * 提取自 chagee 的 event.js EventEmitter。
  */
 
 import type { EventCallback } from "./types.js";
@@ -46,7 +46,7 @@ export class EventBus {
     return this;
   }
 
-  /** Like emit, but only notifies listeners matching the given appCode */
+  /** 与 emit 类似，但只通知匹配指定 appCode 的监听器 */
   emitToApp(eventName: string, appCode: string, detail?: unknown): this {
     const listeners = this.events[eventName];
     if (!listeners) return this;

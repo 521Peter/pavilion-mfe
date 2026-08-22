@@ -13,22 +13,22 @@ export interface FederationUserOptions {
 export interface PavilionMfePluginOptions extends FederationUserOptions {
   role: "main-app" | "sub-app" | "runtime" | "login";
 
-  /** pkg@version → resolves to CDN manifest URL */
+  /** pkg@version → 解析为 CDN 清单 URL */
   pavilionMfeRemotes?: Record<string, string>;
 
-  /** Build-time CDN base URL */
+  /** 构建时 CDN 基础 URL */
   cdn?: string;
 
-  /** Dev server port (used for WS discovery) */
+  /** 开发服务器端口（用于 WS 发现） */
   port?: number;
 
-  /** Enable dev-time WS port discovery */
+  /** 启用开发时 WS 端口发现 */
   openDevServe?: boolean;
 
-  /** CSS scope: files to exclude from prefixing */
+  /** CSS 作用域：排除前缀处理的文件 */
   cssExclude?: RegExp[];
 
-  /** DTS type generation/consumption. Set false to disable. */
+  /** DTS 类型生成/消费，设为 false 可禁用 */
   dts?:
     | boolean
     | {
@@ -36,9 +36,9 @@ export interface PavilionMfePluginOptions extends FederationUserOptions {
         consumeTypes?: boolean | Record<string, unknown>;
       };
 
-  /** Dev server proxy rules (dev mode only) */
+  /** 开发服务器代理规则（仅开发模式） */
   proxy?: Record<string, string | ProxyOptions>;
 
-  /** Current environment (e.g. 'develop', 'production'). Falls back to VITE_PAVILION_MFE_ENV env var. */
+  /** 当前环境（如 'develop'、'production'），未设置时使用 VITE_PAVILION_MFE_ENV 环境变量 */
   env?: string;
 }

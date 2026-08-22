@@ -5,7 +5,7 @@ import { Icon } from "../components/Icon";
 import { Card, Chip } from "@heroui/react";
 import logoSvg from "../assets/pavilion-mfe-logo.svg";
 
-/** 卡片 accent 色板（按索引循环） */
+/** 卡片强调色色板（按索引循环） */
 const accents = ["#42B883", "#38BDF8", "#61DAFB", "#F59E0B", "#64748B", "#EF4444"];
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* Hero */}
+      {/* 首屏展示区 */}
       <section className="mb-10">
         <div className="flex items-center gap-6 max-md:flex-col max-md:items-start max-md:gap-4">
           <img className="w-[72px] h-[72px] shrink-0 max-md:w-14 max-md:h-14" src={logoSvg} alt="PavilionMfe" />
@@ -45,7 +45,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* App Cards */}
+      {/* 应用卡片 */}
       <section>
         <div className="flex items-baseline gap-3 mb-5">
           <h2 className="text-base font-bold text-text-primary m-0">应用模块</h2>

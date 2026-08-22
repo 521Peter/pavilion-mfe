@@ -9,7 +9,7 @@ import { SecretEncryptionService } from '@/common/security/secret-encryption.ser
 import { UrlSafetyService } from '@/common/security/url-safety.service';
 
 /**
- * LLM Provider Service
+ * LLM 提供商服务
  *
  * 职责：
  *   - Provider / Model 的数据库 CRUD
@@ -124,7 +124,7 @@ export class LlmProviderService {
         this.modelCache.clear();
     }
 
-    // ── Provider CRUD ────────────────────────────
+    // ── 提供商增删改查 ────────────────────────────
 
     async listProviders() {
         const providers = await this.prisma.llmProvider.findMany({
@@ -232,7 +232,7 @@ export class LlmProviderService {
         this.invalidateProvider(id);
     }
 
-    // ── Model CRUD ───────────────────────────────
+    // ── 模型增删改查 ───────────────────────────────
 
     async listModels(providerId: string) {
         return this.prisma.llmModel.findMany({

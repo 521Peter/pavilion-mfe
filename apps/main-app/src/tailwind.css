@@ -49,7 +49,7 @@
   --radius-lg: 12px;
 }
 
-/* ─── Design Tokens ─── */
+/* ─── 设计令牌 ─── */
 :root {
   /* 品牌色 */
   --primary: #635bff;
@@ -149,7 +149,7 @@ body {
   height: 100%;
 }
 
-/* ─── 动画 keyframes ─── */
+/* ─── 动画关键帧 ─── */
 @theme {
   --animate-fade-in: fadeIn 0.3s ease;
   --animate-icon-swap: iconSwap 0.25s ease;
@@ -203,13 +203,13 @@ body {
   }
 }
 
-/* ─── 宽 Modal ─── */
+/* ─── 宽对话框 ─── */
 @utility modal-wide {
   width: 900px;
   max-width: calc(100vw - 48px);
 }
 
-/* ─── 中等宽度 Modal ─── */
+/* ─── 中等宽度对话框 ─── */
 @utility modal-medium {
   width: 600px;
   max-width: calc(100vw - 48px);

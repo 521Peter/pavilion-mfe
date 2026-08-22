@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * WebSocket server for dev port discovery.
- * Extracted from chagee's ws-server.js.
+ * 用于发现开发端口的 WebSocket 服务器。
+ * 提取自 chagee 的 ws-server.js。
  *
- * Receives port registrations from local dev servers
- * and broadcasts the port list to connected clients (browser plugin, main app).
+ * 接收本地开发服务器的端口注册，并将端口列表广播给已连接的客户端
+ *（浏览器插件、主应用）。
  */
 
 import { WebSocketServer, WebSocket } from "ws";
@@ -41,7 +41,7 @@ export function startWsServer(): void {
 
     if (isBrowser) {
       browserClients.add(ws);
-      // Send current port list on connect
+      // 连接时发送当前端口列表
       const ports = Array.from(portList.values());
       ws.send(JSON.stringify({ action: "portList", ports }));
     }
@@ -67,7 +67,7 @@ export function startWsServer(): void {
           ws.send(JSON.stringify({ action: "portList", ports }));
         }
       } catch {
-        // ignore malformed messages
+        // 忽略格式错误的消息
       }
     });
 
@@ -85,7 +85,7 @@ export function startWsServer(): void {
   });
 }
 
-// Auto-start when this module is executed directly
+// 直接执行此模块时自动启动
 if (process.argv[1]?.endsWith("ws-server.ts") || process.argv[1]?.endsWith("ws-server.js")) {
   startWsServer();
 }

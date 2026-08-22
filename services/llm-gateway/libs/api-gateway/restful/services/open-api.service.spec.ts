@@ -1,4 +1,4 @@
-// camelcase-keys is ESM-only and is not transformed by @swc/jest; replace it with a
+// camelcase-keys 仅支持 ESM，且不会被 @swc/jest 转换；测试中使用本地桩替代。
 jest.mock('camelcase-keys', () => ({
     __esModule: true,
     default: (object: Record<string, unknown>) => {

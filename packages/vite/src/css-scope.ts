@@ -1,41 +1,40 @@
 /**
- * PostCSS plugin: auto-prefix CSS selectors with appCode scope.
+ * PostCSS 插件：自动为 CSS 选择器添加 appCode 作用域前缀。
  *
- * Inspired by chagee's @chagee/vite-plugin-sandbox.
+ * 灵感来自 chagee 的 @chagee/vite-plugin-sandbox。
  *
- * Input:
+ * 输入：
  *   .card { color: red; }
  *   .container .title { font-size: 12px; }
  *   @keyframes fade { from { opacity: 0; } }
  *
- * Output (prefix = 'pavilion-mfe-dashboard'):
+ * 输出（prefix = 'pavilion-mfe-dashboard'）：
  *   :where(.pavilion-mfe-dashboard) .card { color: red; }
  *   :where(.pavilion-mfe-dashboard) .container .title { font-size: 12px; }
  *   @keyframes pavilion-mfe-dashboard-fade { from { opacity: 0; } }
  *
- * :where() wraps the scope class with zero specificity, so scoped
- * styles keep the same specificity as the original selectors.
+ * :where() 以零优先级包装作用域类，因此作用域样式与原选择器保持相同优先级。
  */
 
 import type { Plugin, Rule, AtRule } from "postcss";
 
 export interface CssScopeOptions {
-  /** CSS class prefix, e.g. 'pavilion-mfe-dashboard' */
+  /** CSS 类前缀，例如 'pavilion-mfe-dashboard' */
   prefix: string;
-  /** Regex patterns for files that should NOT be scoped */
+  /** 不应添加作用域的文件正则模式 */
   exclude?: RegExp[];
-  /** Regex patterns for files that SHOULD be scoped (if empty, scope all) */
+  /** 应添加作用域的文件正则模式（为空时处理全部文件） */
   include?: RegExp[];
 }
 
-// ─── Build-time stats ───
+// ─── 构建时统计 ───
 let scopedSelectors = 0;
 let skippedSelectors = 0;
 let scopedKeyframes = 0;
 
 /**
- * Determine if a PostCSS node's source file matches any exclude/include pattern.
- * Returns false if the file should be scoped, true if it should be skipped.
+ * 判断 PostCSS 节点的源文件是否匹配任一排除/包含模式。
+ * 文件应添加作用域时返回 false，应跳过时返回 true。
  */
 function shouldSkip(node: Rule | AtRule, exclude?: RegExp[], include?: RegExp[]): boolean {
   const file = node.source?.input?.file;
@@ -48,7 +47,7 @@ function shouldSkip(node: Rule | AtRule, exclude?: RegExp[], include?: RegExp[])
 }
 
 /**
- * Prepend scope prefix to a single CSS selector.
+ * 为单个 CSS 选择器添加作用域前缀。
  */
 function scopeSelector(selector: string, prefix: string): string {
   const trimmed = selector.trim();
@@ -59,27 +58,27 @@ function scopeSelector(selector: string, prefix: string): string {
     return trimmed;
   }
 
-  // :root → scope directly
+  // :root → 直接替换为作用域
   if (trimmed === ":root" || trimmed === ":root(") {
     return scope;
   }
 
-  // ::before, ::after, etc. — pseudo-elements that can't be prefixed
+  // ::before、::after 等伪元素不能直接添加前缀
   if (trimmed.startsWith("::")) {
     return `${scope} ${trimmed}`;
   }
 
-  // Already scoped — skip
+  // 已添加作用域，跳过
   if (trimmed.startsWith(scope) || trimmed.startsWith(`.${prefix}`)) {
     return trimmed;
   }
 
-  // Special selectors that need wrapping, not prefixing
+  // 特殊选择器需要包装，不能直接添加前缀
   if (trimmed.startsWith("@") || (trimmed.startsWith(":") && !trimmed.startsWith(":where"))) {
     return `${scope} ${trimmed}`;
   }
 
-  // Default: prepend scope with space combinator
+  // 默认：使用空格组合符添加作用域前缀
   return `${scope} ${trimmed}`;
 }
 
@@ -90,8 +89,8 @@ export function cssScopePlugin(options: CssScopeOptions): Plugin {
     postcssPlugin: "pavilion-mfe-css-scope",
 
     Rule(rule: Rule) {
-      // Skip keyframe selectors (0%, 100%, from, to) inside @keyframes —
-      // they must not be prefixed like normal selectors
+      // 跳过 @keyframes 内的关键帧选择器（0%、100%、from、to），
+      // 它们不能像普通选择器一样添加前缀
       const parent = rule.parent;
       if (parent?.type === "atrule") {
         const atParent = parent as AtRule;
@@ -112,7 +111,7 @@ export function cssScopePlugin(options: CssScopeOptions): Plugin {
     AtRule(atRule: AtRule) {
       if (shouldSkip(atRule, exclude, include)) return;
 
-      // Prefix keyframe names
+      // 为关键帧名称添加前缀
       if (atRule.name === "keyframes" || atRule.name === "-webkit-keyframes") {
         atRule.params = `${prefix}-${atRule.params}`;
         scopedKeyframes++;
@@ -123,7 +122,7 @@ export function cssScopePlugin(options: CssScopeOptions): Plugin {
       console.log(
         `[PavilionMfe] CSS scope: prefix=${prefix}  selectors=${scopedSelectors}  skipped=${skippedSelectors}  keyframes=${scopedKeyframes}`
       );
-      // Reset for next file
+      // 为下一个文件重置状态
       scopedSelectors = 0;
       skippedSelectors = 0;
       scopedKeyframes = 0;

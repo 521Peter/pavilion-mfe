@@ -9,9 +9,9 @@ import { loadRemote } from "@module-federation/runtime";
 import { fetchMenus } from "./api/menu.ts";
 import { deployBasePath } from "./utils/path.ts";
 
-// ─── PavilionMfe log configuration ───
-// Toggle per-module: router | sandbox | preload | bridge
-// Set to false to silence that module's logs.
+// ─── PavilionMfe 日志配置 ───
+// 可按模块切换：router | sandbox | preload | bridge
+// 将对应项设为 false 可关闭该模块的日志。
 configureLog({
   enabled: true,
   modules: {
@@ -22,7 +22,7 @@ configureLog({
   }
 });
 
-// ─── PavilionMfe config info ───
+// ─── PavilionMfe 配置信息 ───
 const appCode = import.meta.env.VITE_PAVILION_MFE_APP_CODE;
 const pavilionMfeEnv = import.meta.env.VITE_PAVILION_MFE_ENV || "develop";
 const apiBase = import.meta.env.VITE_BASE_API_URL || "";

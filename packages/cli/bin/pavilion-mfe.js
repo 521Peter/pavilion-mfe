@@ -7,11 +7,11 @@ import { fileURLToPath } from "url";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const distMain = resolve(__dirname, "../dist/index.js");
 
-// Fallback to tsx for development
+// 开发环境降级使用 tsx
 try {
   await import(distMain);
 } catch {
-  // Use tsx if running from source
+  // 从源码运行时使用 tsx
   execSync(`npx tsx ${resolve(__dirname, "../src/index.ts")} ${process.argv.slice(2).join(" ")}`, {
     stdio: "inherit"
   });

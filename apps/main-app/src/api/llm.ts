@@ -1,6 +1,6 @@
 import { api, http } from "./http";
 
-/** LLM Provider 供应商 */
+/** LLM 提供商 */
 export interface LlmProvider {
   id: string;
   name: string;
@@ -46,12 +46,12 @@ export interface CreateModelInput {
 
 export interface UpdateModelInput extends Partial<CreateModelInput> {}
 
-/** LLM Provider / Model API */
+/** LLM 提供商 / 模型 API */
 export const llmApi = {
   // ── 平台元信息 ──
   getTypes: () => api.get<string[]>("/llm/types"),
 
-  // ── Provider CRUD ──
+  // ── 提供商增删改查 ──
   listProviders: () => api.get<LlmProvider[]>("/llm/providers"),
   getProvider: (id: string) => api.get<LlmProvider>(`/llm/providers/${id}`),
   createProvider: (data: CreateProviderInput) => api.post<LlmProvider>("/llm/providers", data),
@@ -62,7 +62,7 @@ export const llmApi = {
     }),
   deleteProvider: (id: string) => http<{ success: boolean }>(`/llm/providers/${id}`, { method: "DELETE" }),
 
-  // ── Model CRUD ──
+  // ── 模型增删改查 ──
   listModels: (providerId: string) => api.get<LlmModel[]>(`/llm/providers/${providerId}/models`),
   createModel: (providerId: string, data: CreateModelInput) =>
     api.post<LlmModel>(`/llm/providers/${providerId}/models`, data),

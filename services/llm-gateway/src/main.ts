@@ -10,8 +10,8 @@ import { json, urlencoded } from 'express';
 import { OpenApiService } from '@hodfords/api-gateway';
 
 /**
- * Initialize and configures a NestJS application,
- * set up view directories, static assets, CORS (Cross-Origin Resource Sharing) settings, and start the application server
+ * 初始化并配置 NestJS 应用，设置视图目录、静态资源和 CORS（跨源资源共享），
+ * 然后启动应用服务器。
  */
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -21,7 +21,7 @@ async function bootstrap(): Promise<void> {
     app.useStaticAssets(join(__dirname, 'statics'), { prefix: '/statics' });
     app.setViewEngine('hbs');
 
-    // Downstream proxy routes must retain their raw stream. Local controllers still need parsed bodies.
+    // 下游代理路由必须保留原始请求流，本地控制器仍需使用解析后的请求体。
     const jsonParser = json({ limit: '10mb' });
     const formParser = urlencoded({ extended: true, limit: '10mb' });
     const proxiedApiPrefixes = env.API_SERVICES.filter((service) => service.prefix.startsWith('api/')).map(

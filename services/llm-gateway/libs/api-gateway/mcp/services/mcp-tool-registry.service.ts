@@ -21,9 +21,8 @@ export class McpToolRegistryService implements OnApplicationBootstrap {
     ) {}
 
     async onApplicationBootstrap(): Promise<void> {
-        // Runs after every module's onModuleInit has completed, so ProxyService has
-        // already kicked off the initial API document load. Wait for that load to
-        // settle before building the first tool registry.
+        // 此方法在所有模块的 onModuleInit 完成后运行，因此 ProxyService 已启动首次 API 文档加载。
+        // 等待该加载结束后再构建首个工具注册表。
         await this.openApiService.ready;
         this.refreshTools();
     }
@@ -219,12 +218,12 @@ export class McpToolRegistryService implements OnApplicationBootstrap {
     }
 
     /**
-     * Rewrites a schema's own `type` field to a valid JSON Schema type in place.
+     * 就地将模式自身的 `type` 字段重写为有效的 JSON Schema 类型。
      *
-     * Upstream Swagger generators sometimes leak a constructor (`type: String`) or its
-     * stringified form (`"function String() { [native code] }"`) into the served document.
-     * MCP clients reject such schemas, so we coerce them to lowercase JSON Schema types and
-     * drop anything we can't map.
+     * 上游 Swagger 生成器有时会把构造函数（`type: String`）或其字符串形式
+     *（`"function String() { [native code] }"`）泄漏到提供的文档中。
+     * MCP 客户端会拒绝此类模式，因此将其强制转换为小写 JSON Schema 类型，
+     * 并丢弃无法映射的值。
      */
     private normalizeSchemaTypeInPlace(schema: any): void {
         if (!schema || typeof schema !== 'object' || !('type' in schema)) {
@@ -247,8 +246,8 @@ export class McpToolRegistryService implements OnApplicationBootstrap {
     }
 
     /**
-     * Produces a log-friendly description of a schema `type` value. Functions don't survive
-     * `JSON.stringify`, so render them by name to keep the warning useful.
+     * 为模式的 `type` 值生成适合日志输出的描述。函数无法通过 `JSON.stringify` 保留，
+     * 因此按名称呈现，以保证警告信息有用。
      */
     private describeType(type: unknown): string {
         if (typeof type === 'function') {
@@ -262,7 +261,7 @@ export class McpToolRegistryService implements OnApplicationBootstrap {
             return undefined;
         }
 
-        // OpenAPI 3.1 allows an array of types — normalize every entry.
+        // OpenAPI 3.1 允许类型数组，需要规范化每一项。
         if (Array.isArray(type)) {
             const normalized = type
                 .map((entry) => this.normalizeSchemaType(entry))
@@ -270,13 +269,13 @@ export class McpToolRegistryService implements OnApplicationBootstrap {
             return normalized.length ? normalized : undefined;
         }
 
-        // A constructor function leaked in directly, e.g. `type: String`.
+        // 构造函数被直接泄漏进来，例如 `type: String`。
         if (typeof type === 'function') {
             return this.constructorNameToJsonType((type as { name?: string }).name);
         }
 
         if (typeof type === 'string') {
-            // A constructor that was stringified upstream, e.g. "function String() { [native code] }".
+            // 上游已字符串化的构造函数，例如 "function String() { [native code] }"。
             const functionMatch = type.match(/^\s*(?:async\s+)?function\*?\s+(\w+)/);
             if (functionMatch) {
                 return this.constructorNameToJsonType(functionMatch[1]);

@@ -2,7 +2,7 @@ import type { App, Ref, ComputedRef, InjectionKey } from "vue";
 import { ref, computed, inject } from "vue";
 import { TabsStateManager, type TabInfo } from "./state-manager.js";
 
-// ─── Public API ───
+// ─── 公共 API ───
 
 /** openTab 入参：path + title 必填，其余可选 */
 export type OpenTabInput = Pick<TabInfo, "path" | "title"> & Partial<Omit<TabInfo, "id">> & { id?: string };
@@ -18,7 +18,7 @@ export interface TabsAPI {
   closeAll(): void;
 }
 
-// ─── Injection key ───
+// ─── 注入键 ───
 
 const TABS_KEY: InjectionKey<TabsAPI> = Symbol("pavilion-mfe-tabs");
 
@@ -30,7 +30,7 @@ function saveState(state: { tabs: TabInfo[]; activeTabId: string | null }) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    /* ignore quota errors */
+    /* 忽略配额错误 */
   }
 }
 
@@ -44,7 +44,7 @@ function loadState(): { tabs: TabInfo[]; activeTabId: string | null } | null {
   }
 }
 
-// ─── Plugin ───
+// ─── 插件 ───
 
 export const tabsPlugin = {
   install(app: App) {
@@ -112,7 +112,7 @@ export const tabsPlugin = {
   }
 };
 
-// ─── Composable ───
+// ─── 组合式函数 ───
 
 export function useTabs(): TabsAPI {
   const api = inject(TABS_KEY);

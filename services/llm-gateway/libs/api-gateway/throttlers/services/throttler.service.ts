@@ -51,11 +51,10 @@ export class ThrottlerService implements OnModuleInit {
             return;
         }
 
-        // The global IP ceiling is an always-on safety net keyed by the network address. It applies
-        // before the key resolver and regardless of what the resolver returns (including the
-        // skip-on-empty case), so exempt requests still count against the per-IP DoS limit. Callers
-        // that already ran it earlier in the pipeline (e.g. the proxy, before auth) mark the request
-        // so we don't double-count here; standalone callers (e.g. the MCP path) still get the check.
+        // 全局 IP 上限是以网络地址为键、始终启用的安全网。它在键解析器前执行，
+        // 且不受解析器返回值影响（包括 skip-on-empty），因此豁免请求仍计入每 IP DoS 限制。
+        // 已在管线前段执行过检查的调用方（如认证前的代理）会标记请求，避免在此重复计数；
+        // 独立调用方（如 MCP 路径）仍会执行此检查。
         if (!(request as any)[globalIpCheckedKey]) {
             await this.checkGlobalIpRequest(request);
         }
@@ -80,7 +79,7 @@ export class ThrottlerService implements OnModuleInit {
         if (!this.option.isEnable) {
             return;
         }
-        // Mark the request so a later checkLimitOfRequest call doesn't re-run the IP check.
+        // 标记请求，避免后续调用 checkLimitOfRequest 时重复执行 IP 检查。
         (request as any)[globalIpCheckedKey] = true;
         const key = this.getGlobalIpKey(request.ip);
         const expire = await this.getExpireAndIncreaseLimit(

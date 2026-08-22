@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { mcpApi, type McpServer, type CreateMcpServerInput, type McpTestResult } from "../api/mcp";
 import { Button, Card, Chip, Input, Modal, Skeleton, Switch, TextArea } from "@heroui/react";
 
-// ─── Inline SVG 图标 ───
+// ─── 内联 SVG 图标 ───
 const ic = {
   fill: "none",
   stroke: "currentColor",
@@ -84,7 +84,7 @@ function Toggle({
   );
 }
 
-// ─── transport 标签颜色 ───
+// ─── 传输类型标签颜色 ───
 function transportColor(t: string): "accent" | "success" | "warning" {
   switch (t) {
     case "stdio":
@@ -98,7 +98,7 @@ function transportColor(t: string): "accent" | "success" | "warning" {
   }
 }
 
-// ─── Server 表单 ───
+// ─── 服务器表单 ───
 function ServerForm({
   initial,
   onSubmit,

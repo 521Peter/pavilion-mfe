@@ -14,7 +14,7 @@ export class UpdateApiDocumentTask {
     ) {}
 
     /**
-     * Cronjob to update API documents of microservices, run every 10 seconds.
+     * 更新微服务 API 文档的定时任务，每 10 秒运行一次。
      */
     @Cron(CronExpression.EVERY_10_SECONDS)
     updateApiDoc(): void {

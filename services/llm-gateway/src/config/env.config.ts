@@ -31,8 +31,8 @@ function parseApiServices(value: string | undefined): ApiServiceDetail[] {
 }
 
 /**
- * Builds the TLS options for Redis from the environment.
- * Returns `undefined` when `REDIS_TLS` is not enabled, so the connection stays plain TCP.
+ * 根据环境变量构建 Redis TLS 选项。
+ * 未启用 `REDIS_TLS` 时返回 `undefined`，使连接保持普通 TCP。
  */
 function buildRedisTls(): ConnectionOptions | undefined {
     if (process.env.REDIS_TLS !== 'true') {
@@ -49,9 +49,9 @@ function buildRedisTls(): ConnectionOptions | undefined {
 }
 
 /**
- * Microservices which the gateway invokes and aggregates their results.
- * Declared as a structured object — `host` is derived from `docUrl`.
- * `directPrefixes` (optional) are forwarded to the service WITHOUT stripping the prefix.
+ * 网关调用并聚合结果的微服务。
+ * 以结构化对象声明，其中 `host` 由 `docUrl` 派生。
+ * 可选的 `directPrefixes` 会原样转发给服务，不移除前缀。
  */
 const apiServices = parseApiServices(process.env.API_SERVICES);
 
@@ -68,15 +68,15 @@ if (
 }
 
 export const env = {
-    APP_PORT: Number(process.env.PORT || process.env.APP_PORT) || 3000, //API Gateway Port
+    APP_PORT: Number(process.env.PORT || process.env.APP_PORT) || 3000, // API 网关端口
     CORS_ORIGINS: corsOrigins,
-    API_SERVICES: apiServices, //Microservices which the gateway invokes and aggregates their results.
+    API_SERVICES: apiServices, // 网关调用并聚合结果的微服务。
     REDIS: {
-        HOST: process.env.REDIS_HOST, //Redis host
-        PORT: Number(process.env.REDIS_PORT || '6379'), //Redis port
-        DB: Number(process.env.REDIS_DB || '0'), //Redis DB
-        USERNAME: process.env.REDIS_USERNAME, //Redis username (ACL)
-        PASSWORD: process.env.REDIS_PASSWORD, //Redis password
-        TLS: buildRedisTls() //Redis TLS options, undefined when REDIS_TLS is not "true"
+        HOST: process.env.REDIS_HOST, // Redis 主机
+        PORT: Number(process.env.REDIS_PORT || '6379'), // Redis 端口
+        DB: Number(process.env.REDIS_DB || '0'), // Redis 数据库
+        USERNAME: process.env.REDIS_USERNAME, // Redis 用户名（ACL）
+        PASSWORD: process.env.REDIS_PASSWORD, // Redis 密码
+        TLS: buildRedisTls() // Redis TLS 选项，REDIS_TLS 不为 "true" 时是 undefined
     }
 };

@@ -1,17 +1,17 @@
-/** Built-in PavilionMfe routing events dispatched by createRouter.
- *  These match the event names used by window.dispatchEvent in create-router.ts. */
+/** 由 createRouter 分发的 PavilionMfe 内置路由事件。
+ *  这些事件与 create-router.ts 中 window.dispatchEvent 使用的事件名一致。 */
 export enum MFEEvent {
-  /** Fired before main-app routing (pushState/replaceState/popstate/init) */
+  /** 在主应用路由（pushState/replaceState/popstate/init）前触发 */
   BEFORE_ROUTING = "pavilion-mfe:before-routing",
-  /** Fired after main-app routing completes */
+  /** 在主应用路由完成后触发 */
   AFTER_ROUTING = "pavilion-mfe:after-routing",
-  /** Fired when switching from one sub-app to another */
+  /** 从一个子应用切换到另一个子应用时触发 */
   SUB_APP_SWITCH = "pavilion-mfe:sub-app-switch",
-  /** Fired before a sub-app is cached (keep-alive) */
+  /** 子应用进入缓存（keep-alive）前触发 */
   BEFORE_CACHE = "pavilion-mfe:before-cache",
-  /** Fired after a cached sub-app is restored */
+  /** 已缓存的子应用恢复后触发 */
   AFTER_RESTORE = "pavilion-mfe:after-restore",
-  /** Fired when a sub-app encounters an error */
+  /** 子应用发生错误时触发 */
   SUB_APP_ERROR = "pavilion-mfe:sub-app-error"
 }
 
@@ -33,9 +33,9 @@ export interface SwitchAppDetail {
 }
 
 export interface BridgeOptions {
-  /** Identifies the app in the bridge */
+  /** 标识桥接通信中的应用 */
   appCode: string;
-  /** 'main-app' for the main app, 'sub-app' for sub-apps */
+  /** 主应用使用 'main-app'，子应用使用 'sub-app' */
   role: "main-app" | "sub-app";
 }
 
@@ -43,7 +43,7 @@ export type EventCallback<T = unknown> = (detail: T) => void;
 
 export interface Subscription {
   event: string;
-  /** Unique id for tracking */
+  /** 用于追踪的唯一 ID */
   id: string;
   unsubscribe: () => void;
 }

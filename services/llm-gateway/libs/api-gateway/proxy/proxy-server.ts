@@ -37,7 +37,7 @@ export class ProxyServer {
 
     getRequestHeaders(req: Request, customHeaders?: NodeJS.Dict<string>) {
         const requestHeaders = this.removeHopByHopHeader(req.headers);
-        // Add x-forwarded-* headers
+        // 添加 x-forwarded-* 请求头
         if (req.headers['x-forwarded-for']) {
             const xff = req.headers['x-forwarded-for'];
             if (typeof xff === 'string') {

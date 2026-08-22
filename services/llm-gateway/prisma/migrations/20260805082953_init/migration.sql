@@ -1,10 +1,10 @@
--- CreateEnum
+-- 创建枚举
 CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'DISABLED');
 
--- CreateEnum
+-- 创建枚举
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
--- CreateTable
+-- 创建表
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
@@ -19,5 +19,5 @@ CREATE TABLE "users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
+-- 创建索引
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");

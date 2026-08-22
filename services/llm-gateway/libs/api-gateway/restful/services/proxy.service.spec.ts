@@ -1,5 +1,5 @@
-// camelcase-keys (pulled in transitively via open-api.service) is ESM-only and is not
-// transformed by @swc/jest; it is unused on the code paths under test, so stub it out.
+// 由 open-api.service 间接引入的 camelcase-keys 仅支持 ESM，且不会被 @swc/jest 转换；
+// 测试路径不会使用它，因此以桩替代。
 jest.mock('camelcase-keys', () => ({ __esModule: true, default: (value: unknown) => value }));
 
 import { ServiceUnavailableException } from '@nestjs/common';
@@ -8,9 +8,9 @@ import { ProxyService } from './proxy.service';
 import { ApiServiceDetail } from '../types/api-service.type';
 
 /**
- * These tests exercise the routing/forwarding logic directly (getServerName, removePath,
- * rewritePath, handleProxyResponse, registerDirectPrefixes) without running onModuleInit,
- * so no real ProxyServer/undici pools are created.
+ * 这些测试直接验证路由/转发逻辑（getServerName、removePath、rewritePath、
+ * handleProxyResponse、registerDirectPrefixes），不会运行 onModuleInit，
+ * 因此不会创建真实的 ProxyServer/undici 池。
  */
 function createService(optionOverrides: Record<string, unknown> = {}): {
     service: ProxyService;
@@ -25,8 +25,8 @@ function createService(optionOverrides: Record<string, unknown> = {}): {
     const wsRequestService = {};
     const throttlerService = {};
     const adapterHost = {};
-    // A non-matching bypass list keeps isReqUrlInWhitelist() from falling back to the default
-    // whitelist constants, so the redirect tests observe only the direct-prefix guard.
+    // 使用不匹配的绕过列表，防止 isReqUrlInWhitelist() 回退到默认白名单常量，
+    // 使重定向测试仅观察直接前缀守卫。
     const apiGatewayOption = { bypassRoutePrefixes: ['/___no_whitelist_match___'], ...optionOverrides };
 
     const service = new ProxyService(
@@ -109,7 +109,7 @@ describe('ProxyService routing', () => {
             });
             swaggerService.apiDocs = { 'user-services': { router: {} } };
 
-            // /oauthtoken matches neither the direct prefix nor the normal prefix → unavailable.
+            // /oauthtoken 既不匹配直接前缀，也不匹配普通前缀 → 不可用。
             expect(() => service.getServerName('/oauthtoken/x')).toThrow(ServiceUnavailableException);
         });
     });

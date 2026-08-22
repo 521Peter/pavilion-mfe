@@ -7,16 +7,16 @@ const TEMPLATES: Record<string, Record<string, string>> = {
   "sub-app-main.ts": {
     path: "src/sub-app-main.ts",
     content: `/**
- * PavilionMfe sub-app lifecycle entry.
- * Export mount/unmount to be loaded by the main app.
+ * PavilionMfe 子应用生命周期入口。
+ * 导出 mount/unmount 供主应用加载。
  */
 export default {
   mount: async (ctx: { appCode: string; basename: string }, el: HTMLElement) => {
-    // Your mount logic here
+    // 在此实现挂载逻辑
     el.innerHTML = '<h1>Hello from PavilionMfe!</h1>'
   },
   unmount: async () => {
-    // Cleanup
+    // 清理
   },
 }
 `

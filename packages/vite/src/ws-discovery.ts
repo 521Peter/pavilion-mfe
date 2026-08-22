@@ -1,9 +1,9 @@
 /**
- * Vite plugin for dev-server port discovery via WebSocket.
- * Extracted from chagee's vite-plugin-serve-ports-ws.
+ * 通过 WebSocket 发现开发服务器端口的 Vite 插件。
+ * 提取自 chagee 的 vite-plugin-serve-ports-ws。
  *
- * Each sub-app dev server registers its port with a central WS service,
- * so the main app can auto-discover locally running sub-apps.
+ * 每个子应用开发服务器都会向中央 WS 服务注册端口，
+ * 使主应用能自动发现本地运行的子应用。
  */
 
 import type { Plugin } from "vite";
@@ -11,8 +11,8 @@ import type { Plugin } from "vite";
 const WS_PORT = 8356;
 
 /**
- * Creates a Vite plugin that broadcasts this dev server's port
- * to the PavilionMfe WS discovery service on start.
+ * 创建一个 Vite 插件，在启动时将此开发服务器的端口
+ * 广播到 PavilionMfe WS 发现服务。
  */
 export function wsDiscoveryPlugin(
   options: {
@@ -34,7 +34,7 @@ export function wsDiscoveryPlugin(
       };
 
       ws.onerror = err => {
-        // WS may not be running in standalone mode — that's fine
+        // 独立模式下 WS 可能未运行，这是正常情况
         console.debug("[PavilionMfe] Dev discovery service not available");
         reject(err);
       };
@@ -60,20 +60,20 @@ export function wsDiscoveryPlugin(
           await connectWsServer();
           broadcastPort("add");
         } catch {
-          // WS discovery not available — dev standalone
+          // WS 发现不可用，按独立开发模式运行
         }
       });
 
-      // Clean up on dev server close.
-      // closeBundle is a build-only hook — it never fires in dev mode,
-      // so we listen on httpServer 'close' instead.
+      // 开发服务器关闭时清理。
+      // closeBundle 是仅构建时触发的钩子，在开发模式下不会触发，
+      // 因此改为监听 httpServer 的 'close' 事件。
       server.httpServer?.on("close", () => {
         broadcastPort("remove");
         wsClient?.close();
       });
     },
 
-    // Keep closeBundle for build-mode cleanup (no-op in dev)
+    // 保留 closeBundle 用于构建模式清理（开发模式下无操作）
     closeBundle() {
       broadcastPort("remove");
       setTimeout(() => wsClient?.close(), 200);

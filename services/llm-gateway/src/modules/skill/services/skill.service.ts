@@ -181,7 +181,7 @@ export class SkillService {
                             skills.push({ name: dir.name, description, path: dirPath });
                         }
                     } catch {
-                        /* skip */
+                        /* 跳过 */
                     }
                 }
                 if (skills.length > 0) return skills;

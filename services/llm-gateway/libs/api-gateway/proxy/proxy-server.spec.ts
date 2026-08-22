@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { ProxyServer } from './proxy-server';
 
 function createServer(): ProxyServer {
-    // The Pool is created lazily against this host; no connection is opened in these tests.
+    // Pool 会针对该主机延迟创建；这些测试不会打开实际连接。
     return new ProxyServer({ host: 'http://localhost:18080' });
 }
 

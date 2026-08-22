@@ -1,11 +1,11 @@
 /**
- * PavilionMfe runtime preload plugin for Module Federation.
+ * PavilionMfe 的 Module Federation 运行时预加载插件。
  *
- * ① beforeInit: dynamically register all sub-apps as MF remotes
- *    (no need to statically declare them in vite.config.ts)
+ * ① beforeInit：将所有子应用动态注册为 MF 远程模块
+ *    （无需在 vite.config.ts 中静态声明）
  *
- * ② preload: immediately load the current sub-app, then preload
- *    other sub-apps after a 1s delay
+ * ② preload：立即加载当前子应用，延迟 1 秒后再预加载
+ *    其他子应用
  */
 import mfeConfig from "../mfe.json";
 import { loadRemote, preloadRemote } from "@module-federation/runtime";
@@ -19,8 +19,8 @@ interface MfeApp {
   keepAlive?: boolean;
 }
 
-// ─── Inline logger (reads same global config as @pavilion-mfe/sandbox) ───
-// Avoids importing @pavilion-mfe/* packages at MF runtime init time.
+// ─── 内联日志器（读取与 @pavilion-mfe/sandbox 相同的全局配置） ───
+// 避免在 MF 运行时初始化阶段导入 @pavilion-mfe/* 包。
 const ST_PX = "color:#42b883;font-weight:bold";
 const ST_MOD = "color:#00b4d8;font-weight:bold";
 const ST_EVT = "color:#e8a838;font-weight:bold";
@@ -42,8 +42,8 @@ function preloadLog(event: string, detail: Record<string, unknown> = {}): void {
 }
 
 /**
- * Match a sub-app by URL path.
- * Uses the same trailing-slash normalization as createRouter.
+ * 根据 URL 路径匹配子应用。
+ * 使用与 createRouter 相同的尾斜杠规范化规则。
  */
 function matchAppByPath(apps: MfeApp[], path: string): MfeApp | null {
   for (const app of apps) {
@@ -55,16 +55,16 @@ function matchAppByPath(apps: MfeApp[], path: string): MfeApp | null {
 }
 
 /**
- * Preload strategy:
- * - Current sub-app: loadRemote immediately (user is waiting)
- * - Other sub-apps: preloadRemote after 1s delay (idle prefetch)
+ * 预加载策略：
+ * - 当前子应用：立即调用 loadRemote（用户正在等待）
+ * - 其他子应用：延迟 1 秒后调用 preloadRemote（空闲预取）
  */
 function preload(apps: MfeApp[]): void {
   const currentApp = matchAppByPath(apps, location.pathname);
 
   const otherApps = apps.filter(app => app.appCode !== currentApp?.appCode);
 
-  // ① Immediately load the current sub-app
+  // ① 立即加载当前子应用
   if (currentApp) {
     loadRemote(`${currentApp.appCode}/main`)
       .then(() => {
@@ -76,7 +76,7 @@ function preload(apps: MfeApp[]): void {
       });
   }
 
-  // ② Delay-preload other sub-apps
+  // ② 延迟预加载其他子应用
   setTimeout(() => {
     preloadRemote(
       otherApps.map(app => ({
@@ -99,8 +99,8 @@ export default function () {
     name: "pavilion-mfe-preload",
 
     /**
-     * Register all sub-apps as MF remotes at runtime.
-     * Sub-app config comes from mfe.json (build-time).
+     * 在运行时将所有子应用注册为 MF 远程模块。
+     * 子应用配置在构建时读取自 mfe.json。
      */
     beforeInit(args: any) {
       const apps = mfeConfig.apps as MfeApp[];
@@ -120,7 +120,7 @@ export default function () {
         remotes: apps.length,
         apps: apps.map(a => a.appCode).join(", ")
       });
-      // Kick off preloading after MF runtime initializes
+      // MF 运行时初始化后启动预加载
       Promise.resolve().then(() => preload(apps));
       return args;
     }

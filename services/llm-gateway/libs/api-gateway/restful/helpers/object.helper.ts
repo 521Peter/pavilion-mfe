@@ -1,8 +1,8 @@
 import { kebabCase } from 'lodash';
 
 /**
- * Memoized kebab-case conversions. Keys come from gateway middleware, so the set is small
- * and stable; the cap only guards against unbounded growth from dynamic keys.
+ * 缓存 kebab-case 转换结果。键来自网关中间件，因此集合规模小且稳定；
+ * 上限仅用于防止动态键导致无限增长。
  */
 const kebabKeyCache = new Map<string, string>();
 const kebabKeyCacheLimit = 1000;
@@ -19,9 +19,9 @@ function toKebabKey(key: string): string {
 }
 
 /**
- * Convert the keys of an object from their original format (e.g., camelCase or snake_case) to kebab-case
- * @param {Object} object An object
- * @returns {Object} The converted object with every key is kebab-case.
+ * 将对象的键从原格式（如 camelCase 或 snake_case）转换为 kebab-case。
+ * @param {Object} object 待转换的对象
+ * @returns {Object} 所有键均为 kebab-case 的转换后对象
  */
 export function kebabConvertKeys<T>(object: object): T {
     const newObject: any = {};

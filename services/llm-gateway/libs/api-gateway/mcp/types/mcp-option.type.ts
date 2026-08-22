@@ -11,7 +11,7 @@ export type McpToolNameContext = {
     method: string;
     operationId: string;
     path: string;
-    /** The tool name produced by the default naming strategy. */
+    /** 默认命名策略生成的工具名称。 */
     defaultName: string;
 };
 

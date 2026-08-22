@@ -22,7 +22,7 @@ body {
   height: 100vh;
 }
 
-/* Thin scrollbar for chat areas */
+/* 聊天区域使用细滚动条 */
 .aui-scroll::-webkit-scrollbar {
   width: 6px;
 }

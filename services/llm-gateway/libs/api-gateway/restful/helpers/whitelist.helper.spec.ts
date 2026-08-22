@@ -21,7 +21,7 @@ describe('isReqUrlInWhitelist', () => {
     });
 
     it('uses prefix (startsWith) semantics', () => {
-        // Documents current behavior: a partial segment name still matches.
+        // 记录当前行为：部分路径段名称仍会匹配。
         expect(isReqUrlInWhitelist('/oauth-other/x', ['/oauth'])).toBe(true);
     });
 });

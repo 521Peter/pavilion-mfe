@@ -52,7 +52,7 @@ const routerDetail: RouterDetail = {
     rateLimits: []
 };
 
-// High global limits so these tests only exercise the per-router limit.
+// 提高全局限制，使这些测试仅验证单路由限制。
 const baseOption: ThrottlerOption = {
     isEnable: true,
     globalIpRateLimit: 1_000_000,

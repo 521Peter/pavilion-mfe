@@ -10,7 +10,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appCode = env.VITE_PAVILION_MFE_APP_CODE;
   const pavilionMfeEnv = env.VITE_PAVILION_MFE_ENV || "develop";
-  // 优先从 process.env 读取（CI），fallback 到 .env 文件
+  // 优先从 process.env 读取（CI），否则回退到 .env 文件
   const cdn = process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
   const apiBase = process.env.VITE_BASE_API_URL || env.VITE_BASE_API_URL || "";
 

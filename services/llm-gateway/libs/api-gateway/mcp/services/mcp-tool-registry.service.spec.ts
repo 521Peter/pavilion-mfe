@@ -1,4 +1,4 @@
-// camelcase-keys (pulled in via open-api.service) is ESM-only and not transformed by @swc/jest.
+// open-api.service 引入的 camelcase-keys 仅支持 ESM，且不会被 @swc/jest 转换。
 jest.mock('camelcase-keys', () => ({ __esModule: true, default: (value: unknown) => value }));
 
 import { McpToolRegistryService } from './mcp-tool-registry.service';
@@ -167,7 +167,7 @@ describe('McpToolRegistryService.buildInputSchema (via refreshTools)', () => {
         const body = service.getTools()[0].inputSchema.properties['body'];
 
         expect(body.properties.name).toEqual({ type: 'string' });
-        // The circular UserDto.friend reference resolves to an empty schema instead of recursing forever.
+        // 循环的 UserDto.friend 引用会解析为空模式，避免无限递归。
         expect(body.properties.friend).toEqual({});
     });
 

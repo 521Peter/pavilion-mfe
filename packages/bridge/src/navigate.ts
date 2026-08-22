@@ -1,10 +1,9 @@
 /**
- * Cross-app navigation utility for sub-apps.
+ * 供子应用使用的跨应用导航工具。
  *
- * Sub-apps cannot import @pavilion-mfe/router (it patches history
- * in the main-app context). This function replicates the same
- * pushState + popstate dispatch so the pavilion router detects
- * the route change and switches apps.
+ * 子应用不能导入 @pavilion-mfe/router（它会在主应用上下文中修补 history）。
+ * 此函数复用相同的 pushState + popstate 分发逻辑，使 Pavilion 路由器能检测
+ * 路由变化并切换应用。
  */
 export function navigateTo(url: string, options: { replace?: boolean; open?: boolean } = {}): void {
   if (options.open) {
@@ -18,6 +17,6 @@ export function navigateTo(url: string, options: { replace?: boolean; open?: boo
     window.history.pushState(null, "", url);
   }
 
-  // Dispatch synthetic popstate so custom routers pick up the change
+  // 分发模拟的 popstate 事件，让自定义路由器感知变化
   window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
 }

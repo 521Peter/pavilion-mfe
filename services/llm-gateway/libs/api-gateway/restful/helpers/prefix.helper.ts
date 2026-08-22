@@ -1,13 +1,12 @@
 /**
- * Determine whether a request URL belongs to a prefix on a whole-path-segment basis.
+ * 按完整路径段判断请求 URL 是否属于某个前缀。
  *
- * Matches when the URL equals the prefix or continues with a segment boundary
- * (`/`, `?`, `#`) immediately after it. A single leading slash on the URL is optional,
- * so both `/oauth/authorize` and `oauth/authorize` match the prefix `oauth`, while
- * `oauthtoken/...` does NOT (avoids partial-name collisions).
- * @param {string} url The incoming request URL/path
- * @param {string} prefix The prefix to test (without surrounding slashes), i.e, `oauth`
- * @returns {boolean} Whether the URL is within the prefix's path namespace
+ * 当 URL 等于前缀，或前缀后紧跟路径段边界（`/`、`?`、`#`）时匹配。
+ * URL 开头的单个斜杠可省略，因此 `/oauth/authorize` 和 `oauth/authorize`
+ * 都匹配前缀 `oauth`，而 `oauthtoken/...` 不匹配（避免部分名称冲突）。
+ * @param {string} url 传入的请求 URL/路径
+ * @param {string} prefix 待测试的前缀（不含首尾斜杠），例如 `oauth`
+ * @returns {boolean} URL 是否位于此前缀的路径命名空间内
  */
 export function matchesPrefixSegment(url: string, prefix: string): boolean {
     for (const base of [prefix, `/${prefix}`]) {

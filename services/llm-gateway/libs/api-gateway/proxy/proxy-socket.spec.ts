@@ -59,10 +59,9 @@ describe('ProxySocket.createHttpHeader', () => {
 
 describe('ProxySocket upgrade head', () => {
     /**
-     * Node hands over any upgraded-protocol bytes its HTTP parser consumed alongside the
-     * handshake. Those bytes are already out of the stream, so they must be pushed back
-     * before the sockets are piped or the first frame is lost — for a server that speaks
-     * first, that is the whole handshake.
+     * Node 会移交 HTTP 解析器在握手期间一并消费的升级协议字节。这些字节已离开流，
+     * 因此必须在连接管道前推回，否则会丢失第一帧；对于主动先发送数据的服务器，
+     * 这第一帧就是完整握手。
      */
     function socketDouble() {
         return {
@@ -134,10 +133,9 @@ describe('ProxySocket upgrade head', () => {
 
 describe('ProxySocket upstream idle timer', () => {
     /**
-     * A socket taken from the keep-alive pool carries the agent's idle timeout, already
-     * partly elapsed. That timer outlives the protocol handover, so a quiet tunnel gets
-     * reclaimed mid-session. The upgrade must never use a pooled socket, and the
-     * upstream socket's timeout must be cleared exactly as the client's is.
+     * 从 keep-alive 池取得的套接字携带代理的空闲超时，且计时已经部分经过。
+     * 该定时器在协议移交后仍然存在，会在会话中途回收静默隧道。
+     * 升级绝不能使用池化套接字，上游套接字的超时也必须像客户端一样被清除。
      */
     it('opts out of the keep-alive agent for the upgrade request', () => {
         const options = createProxySocket({

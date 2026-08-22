@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { llmApi, type LlmProvider, type LlmModel, type CreateProviderInput } from "../api/llm";
 import { Button, Card, Chip, Input, ListBox, Modal, Select, Skeleton, Switch } from "@heroui/react";
 
-// ─── Inline SVG 图标（lucide 风格） ───
+// ─── 内联 SVG 图标（lucide 风格） ───
 const ic = {
   fill: "none",
   stroke: "currentColor",
@@ -43,7 +43,7 @@ function ServerIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-// ─── 类型 → Chip color 映射 ───
+// ─── 类型 → 标签颜色映射 ───
 function typeChipColor(type: string): "accent" | "default" {
   switch (type) {
     case "openai":
@@ -55,7 +55,7 @@ function typeChipColor(type: string): "accent" | "default" {
   }
 }
 
-// ─── 输入框 label 样式 ───
+// ─── 输入框标签样式 ───
 const labelClass = "block mb-1.5 text-[13px] font-medium text-text-regular";
 
 // ─── 复用 Switch 组件（HeroUI v3 复合组件） ───
@@ -79,7 +79,7 @@ function Toggle({
   );
 }
 
-// ─── Provider 表单 ───
+// ─── 提供商表单 ───
 function ProviderForm({
   initial,
   types,
@@ -187,7 +187,7 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
       const list = await llmApi.listModels(provider.id);
       setModels(list);
     } catch {
-      // ignore
+      // 忽略清理失败
     } finally {
       setLoading(false);
     }
@@ -488,7 +488,7 @@ export default function LlmProviders() {
         </div>
       )}
 
-      {/* 新增/编辑 Modal */}
+      {/* 新增/编辑对话框 */}
       <Modal isOpen={modalOpen} onOpenChange={setModalOpen}>
         <Modal.Backdrop>
           <Modal.Container>
@@ -510,7 +510,7 @@ export default function LlmProviders() {
         </Modal.Backdrop>
       </Modal>
 
-      {/* 模型管理 Modal */}
+      {/* 模型管理对话框 */}
       <Modal isOpen={!!modelProvider} onOpenChange={open => !open && setModelProvider(null)}>
         <Modal.Backdrop>
           <Modal.Container>

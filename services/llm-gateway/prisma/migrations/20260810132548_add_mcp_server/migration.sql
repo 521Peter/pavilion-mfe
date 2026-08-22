@@ -1,4 +1,4 @@
--- CreateTable
+-- 创建表
 CREATE TABLE "mcp_servers" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -21,5 +21,5 @@ CREATE TABLE "mcp_servers" (
     CONSTRAINT "mcp_servers_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
+-- 创建索引
 CREATE UNIQUE INDEX "mcp_servers_identifier_key" ON "mcp_servers"("identifier");

@@ -1,7 +1,7 @@
-/*This Lua script enforces rate limiting by managing a counter in Redis.
-- If the counter is below the limit, it allows the operation and increments the counter.
-- If the counter has reached the limit, it returns the remaining TTL to indicate when the limit will reset.
-- If the key does not exist, it initializes it with a count of 1 and sets an expiration time.
+/* 此 Lua 脚本通过管理 Redis 中的计数器执行限流。
+- 计数器低于限制时，允许操作并递增计数器。
+- 计数器达到限制时，返回剩余 TTL 以指示限制何时重置。
+- 键不存在时，将计数初始化为 1 并设置过期时间。
 */
 export const LUA_INCREASE_AND_GET_SCRIPT = `
 local key = KEYS[1]

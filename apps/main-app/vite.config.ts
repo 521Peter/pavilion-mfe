@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appCode = env.VITE_PAVILION_MFE_APP_CODE;
   const pavilionMfeEnv = env.VITE_PAVILION_MFE_ENV || "develop";
-  // 优先从 process.env 读取（CI 环境变量），fallback 到 .env 文件
+  // 优先从 process.env 读取（CI 环境变量），否则回退到 .env 文件
   const cdn = process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
   const apiBase = process.env.VITE_BASE_API_URL || env.VITE_BASE_API_URL || "";
   const deployBase = process.env.VITE_DEPLOY_BASE || env.VITE_DEPLOY_BASE || "/";
@@ -30,7 +30,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     if (isServe && app.devPort) {
       remotes[app.appCode] = `${app.appCode}@http://localhost:${app.devPort}/mf-manifest-main.json`;
     }
-    // build mode: preloadPlugin registers remotes at runtime
+    // 构建模式：由 preloadPlugin 在运行时注册远程模块
   });
 
   return {

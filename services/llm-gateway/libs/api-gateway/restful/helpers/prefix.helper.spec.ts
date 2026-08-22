@@ -1,7 +1,7 @@
 import { matchesPrefixSegment } from './prefix.helper';
 
 describe('matchesPrefixSegment', () => {
-    // Contract config-and-routing.md B4 (R7–R10)
+    // 契约 config-and-routing.md B4（R7–R10）
     it('matches a sub-path under the prefix (R7)', () => {
         expect(matchesPrefixSegment('/oauth/authorize', 'oauth')).toBe(true);
     });

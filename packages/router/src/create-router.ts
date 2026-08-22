@@ -2,12 +2,12 @@ import type { SubApp, RegisteredApp, RouterConfig, RouterHooks, HookContext } fr
 import { Sandbox, setRouteMatcher, pavilionMfeLog } from "@pavilion-mfe/sandbox";
 
 /**
- * Micro-frontend lifecycle router.
- * Extracted from chagee's routerManager.js.
+ * 微前端生命周期路由器。
+ * 提取自 chagee 的 routerManager.js。
  *
- * Manages loading → bootstrap → mount → unmount lifecycle
- * for multiple sub-apps based on URL path matching.
- * Attaches Sandbox isolation on mount, cleans up on unmount.
+ * 根据 URL 路径匹配管理多个子应用的
+ * 加载 → bootstrap → mount → unmount 生命周期。
+ * 挂载时启用沙箱隔离，卸载时清理。
  */
 export function createRouter(config?: RouterConfig) {
   const apps: RegisteredApp[] = [];
@@ -15,20 +15,20 @@ export function createRouter(config?: RouterConfig) {
   const maxCache = config?.maxCache ?? 5;
   const hooks: RouterHooks | undefined = config?.hooks;
 
-  // Track keep-alive preference and cache metadata per app
+  // 追踪各应用的 keep-alive 配置和缓存元数据
   const keepAliveMap = new Map<string, { keepAlive: boolean; cachedAt: number }>();
 
   /**
-   * Dispatch a PavilionMfe routing event.
-   * Events: pavilion-mfe:before-routing, pavilion-mfe:after-routing, pavilion-mfe:sub-app-switch,
-   *         pavilion-mfe:before-cache, pavilion-mfe:after-restore, pavilion-mfe:sub-app-error
+   * 分发 PavilionMfe 路由事件。
+   * 事件：pavilion-mfe:before-routing、pavilion-mfe:after-routing、pavilion-mfe:sub-app-switch、
+   *         pavilion-mfe:before-cache、pavilion-mfe:after-restore、pavilion-mfe:sub-app-error
    */
   function dispatch(name: string, detail: Record<string, unknown>): void {
     pavilionMfeLog("router", name.replace("pavilion-mfe:", ""), detail);
     window.dispatchEvent(new CustomEvent(name, { detail }));
   }
 
-  /** Build a HookContext for the current routing trigger */
+  /** 为当前路由触发动作构建 HookContext */
   let currentTrigger: HookContext["trigger"] = "init";
   let currentPath = "";
 
@@ -114,14 +114,13 @@ export function createRouter(config?: RouterConfig) {
   }
 
   /**
-   * Restore a CACHED app: re-show container + re-activate sandbox.
-   * Framework instance is still alive — skip mount().
+   * 恢复 CACHED 应用：重新显示容器并激活沙箱。
+   * 框架实例仍然存活，因此跳过 mount()。
    */
   async function restoreApp(app: RegisteredApp): Promise<void> {
     if (app.status !== "CACHED") return;
     hooks?.beforeMount?.(makeHookCtx(app));
-    // Sandbox was kept alive — popstate proxy will now pass events through
-    // since the sub-app's route is active again.
+    // 沙箱仍然存活；子应用路由重新激活后，popstate 代理会再次放行事件
     if (app.container) {
       app.container.style.display = "block";
     }
@@ -135,7 +134,7 @@ export function createRouter(config?: RouterConfig) {
     if (app.status !== "NOT_MOUNTED") return;
     app.status = "MOUNTING";
 
-    // Activate side-effect sandbox before mounting
+    // 挂载前激活副作用沙箱
     const sandbox = new Sandbox(app.name);
     sandbox.activate();
     app.sandbox = sandbox;
@@ -155,14 +154,14 @@ export function createRouter(config?: RouterConfig) {
   }
 
   /**
-   * Evict the oldest CACHED sub-app when cache is full (LRU).
-   * Called before caching a new sub-app.
+   * 缓存已满时淘汰最旧的 CACHED 子应用（LRU）。
+   * 在缓存新子应用前调用。
    */
   function evictLRU(): void {
     const cachedApps = apps.filter(a => a.status === "CACHED");
     if (cachedApps.length < maxCache) return;
 
-    // Find the oldest cached app by cachedAt
+    // 根据 cachedAt 查找最旧的缓存应用
     let oldest = cachedApps[0];
     let oldestTime = keepAliveMap.get(oldest.name)?.cachedAt ?? 0;
     for (const a of cachedApps) {
@@ -173,7 +172,7 @@ export function createRouter(config?: RouterConfig) {
       }
     }
 
-    // Full unmount the evicted app
+    // 完整卸载被淘汰的应用
     pavilionMfeLog("router", "sub-app-evict", { appCode: oldest.name, reason: "LRU" });
     oldest.sandbox?.deactivate();
     oldest.sandbox = null;
@@ -203,14 +202,13 @@ export function createRouter(config?: RouterConfig) {
     hooks?.beforeUnmount?.(makeHookCtx(app));
 
     if (useKeepAlive) {
-      // Global LRU eviction before caching
+      // 缓存前执行全局 LRU 淘汰
       evictLRU();
 
-      // Keep-alive: hide container, retain framework instance + DOM + sandbox.
-      // Do NOT deactivate sandbox — the popstate proxy will block events
-      // when the sub-app's route is inactive, and pass them through when
-      // the user navigates back. Deactivating would remove the popstate
-      // listener permanently, breaking the framework router on restore.
+      // Keep-alive：隐藏容器，保留框架实例、DOM 和沙箱。
+      // 不要停用沙箱；子应用路由未激活时 popstate 代理会拦截事件，
+      // 用户返回后则重新放行。停用沙箱会永久移除 popstate 监听器，
+      // 导致恢复时框架路由器失效。
       if (app.container) {
         app.container.style.display = "none";
       }
@@ -224,13 +222,13 @@ export function createRouter(config?: RouterConfig) {
       return;
     }
 
-    // Full unmount: deactivate sandbox (timers/listeners cleanup)
+    // 完整卸载：停用沙箱（清理定时器和监听器）
     app.sandbox?.deactivate();
     app.sandbox = null;
 
-    // Framework-level cleanup FIRST (React's root.unmount / Vue's app.unmount).
-    // The framework owns the DOM inside the container — it must detach before
-    // we wipe innerHTML, otherwise React's removeChild throws NotFoundError.
+    // 首先执行框架级清理（React 的 root.unmount / Vue 的 app.unmount）。
+    // 容器内的 DOM 归框架管理，必须先由框架解除挂载再清空 innerHTML，
+    // 否则 React 的 removeChild 会抛出 NotFoundError。
     if (app.cleanup) {
       app.cleanup();
       app.cleanup = null;
@@ -250,8 +248,8 @@ export function createRouter(config?: RouterConfig) {
   }
 
   /**
-   * Manually clear cached sub-apps.
-   * @param name - If provided, clears only the specified sub-app; otherwise clears all.
+   * 手动清除已缓存的子应用。
+   * @param name - 提供时仅清除指定子应用，否则清除全部。
    */
   function clearCache(name?: string): void {
     const cachedApps = apps.filter(a => a.status === "CACHED" && (!name || a.name === name));
@@ -277,14 +275,12 @@ export function createRouter(config?: RouterConfig) {
   }
 
   async function reroute(): Promise<void> {
-    // Loop until no more state transitions occur.
-    // loadApp transitions NOT_LOADED → NOT_MOUNTED, which must be
-    // picked up by a subsequent mountApp pass.  A single pass would
-    // snapshots appsToMount before loadApp runs, missing the transition
-    // and leaving the app stuck in NOT_MOUNTED (never rendered).
-    // On client-side navigation this was accidentally masked because
-    // navigateTo() fires both pushState and a synthetic popstate,
-    // giving two reroute() calls; page refresh only gets one.
+    // 持续循环，直到不再发生状态转换。
+    // loadApp 会将 NOT_LOADED 转为 NOT_MOUNTED，后续必须再执行一轮 mountApp 才能处理。
+    // 若只执行一轮，会在 loadApp 运行前生成 appsToMount 快照，从而遗漏状态转换，
+    // 使应用停留在 NOT_MOUNTED（永不渲染）。客户端导航时这一问题曾被意外掩盖，
+    // 因为 navigateTo() 会同时触发 pushState 和模拟的 popstate，产生两次 reroute()；
+    // 而页面刷新只会触发一次。
     //
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -309,7 +305,7 @@ export function createRouter(config?: RouterConfig) {
       await Promise.all(appsToRestore.map(restoreApp));
     }
 
-    // Detect sub-app switch after reroute completes
+    // reroute 完成后检测子应用切换
     const currentCodes = matchActiveApps()
       .map(a => a.name)
       .sort();
@@ -325,12 +321,12 @@ export function createRouter(config?: RouterConfig) {
     const originalReplaceState = window.history.replaceState.bind(window.history);
 
     function runReroute(trigger: HookContext["trigger"], url: string): void {
-      // Parse path from url for route-guard detail
+      // 从 URL 解析路径，写入路由守卫详情
       let path = url;
       try {
         path = new URL(url, location.origin).pathname;
       } catch {
-        /* url is already a path */
+        /* URL 已经是路径 */
       }
       currentTrigger = trigger;
       currentPath = path;
@@ -372,19 +368,18 @@ export function createRouter(config?: RouterConfig) {
   function start(): void {
     pavilionMfeLog("router", "router-start", { subApps: apps.length, maxCache });
 
-    // Mark the global environment so sub-apps can detect main-app mode
-    // via isPavilionMfeMainApp() without querying the DOM.
+    // 标记全局环境，使子应用无需查询 DOM 即可通过
+    // isPavilionMfeMainApp() 检测主应用模式。
     (globalThis as Record<string, unknown>).__PAVILION_MFE_ENV__ = true;
 
-    // Set up route isolation: sub-app popstate listeners only fire when
-    // the sub-app's route is active. This prevents inactive sub-apps from
-    // processing navigation events intended for other sub-apps.
+    // 设置路由隔离：仅当子应用路由激活时才触发其 popstate 监听器，
+    // 防止未激活的子应用处理发往其他子应用的导航事件。
     setRouteMatcher((appCode, path) => {
       return apps.some(app => app.name === appCode && app.activeWhen(path));
     });
 
     patchHistory();
-    // Initial route: dispatch events for the first load
+    // 初始路由：为首次加载分发事件
     const url = window.location.href;
     const initPath = window.location.pathname;
     currentTrigger = "init";

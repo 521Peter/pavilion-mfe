@@ -1,30 +1,30 @@
 /**
- * Remote dependency resolver.
- * Extracted from chagee's @xx/module-federation-vite.
+ * 远程依赖解析器。
+ * 提取自 chagee 的 @xx/module-federation-vite。
  *
- * Converts pkg@version notation to CDN manifest URLs.
- * Supports environment-aware resolution (dev → localhost, prod → CDN).
+ * 将 pkg@version 表示法转换为 CDN 清单 URL。
+ * 支持感知环境的解析（开发环境 → localhost，生产环境 → CDN）。
  */
 
 export interface RemoteConfig {
-  [name: string]: string; // "pkg@latest" or "pkg@1.2.3"
+  [name: string]: string; // "pkg@latest" 或 "pkg@1.2.3"
 }
 
 export interface ResolvedRemote {
-  [name: string]: string; // resolved manifest URL
+  [name: string]: string; // 已解析的清单 URL
 }
 
 export interface ResolveOptions {
-  /** CDN base URL. Empty string = dev mode (relative paths) */
+  /** CDN 基础 URL，空字符串表示开发模式（相对路径） */
   cdn?: string;
 }
 
 /**
- * Resolve a remote spec to a manifest URL.
+ * 将远程模块规格解析为清单 URL。
  *
- * Environment-aware:
- * - cdn empty (dev): relative path "/mfe/{pkg}/..." (served by dev server or proxy)
- * - cdn set (prod): "{cdn}/mfe/{pkg}/..." (CDN-hosted)
+ * 感知环境：
+ * - cdn 为空（开发）：相对路径 "/mfe/{pkg}/..."（由开发服务器或代理提供）
+ * - cdn 已设置（生产）："{cdn}/mfe/{pkg}/..."（由 CDN 托管）
  *
  * @latest    → /mfe/{pkg}/mf-manifest-main.json
  * @1.2.3     → /static/mfe/{pkg}/1.2.3/mf-manifest-main.json
@@ -53,14 +53,14 @@ export function resolveRemotes(remotes: RemoteConfig, options?: ResolveOptions):
 }
 
 /**
- * Build-time: generate the base URL for this sub-app's versioned output
+ * 构建时：生成此子应用版本化产物的基础 URL
  */
 export function resolveBuildBase(cdn: string, pkg: string, version: string): string {
   return `${cdn}/mfe/${pkg}/${version}/`;
 }
 
 /**
- * Dev-time: resolve to local dev server
+ * 开发时：解析到本地开发服务器
  */
 export function resolveDevBase(port: number, pkg: string): string {
   return `http://localhost:${port}/mfe/${pkg}/`;

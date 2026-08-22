@@ -1,5 +1,5 @@
 /**
- * HTTP Operation Type
+ * HTTP 操作类型
  */
 type OperationType = {
     operationId: string;
@@ -8,7 +8,7 @@ type OperationType = {
 };
 
 /**
- * Path Type
+ * 路径类型
  */
 type PathType = {
     [key in string]: {
@@ -17,7 +17,7 @@ type PathType = {
 };
 
 /**
- * Document type, use to define APIs' document in Swagger
+ * 文档类型，用于在 Swagger 中定义 API 文档
  */
 export type DocumentType = {
     openapi: string;

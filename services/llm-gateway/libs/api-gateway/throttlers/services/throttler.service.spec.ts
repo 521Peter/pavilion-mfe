@@ -58,7 +58,7 @@ const routerDetail: RouterDetail = {
     rateLimits: []
 };
 
-// Sensible defaults so individual tests can focus on one limit at a time.
+// 使用合理默认值，使各测试每次只关注一种限制。
 const HIGH_IP_LIMIT = { globalIpRateLimit: 1_000_000, globalIpRateLimitTTL: 60 } as const;
 const HIGH_CUSTOM_LIMIT = { globalCustomRateLimit: 1_000_000, globalCustomRateLimitTTL: 60 } as const;
 
@@ -150,7 +150,7 @@ describe('ThrottlerService keyResolver', () => {
             );
 
             await expect(service.checkLimitOfRequest(routerDetail, makeRequest())).rejects.toThrow('resolver-boom');
-            // IP limit ran (one evalsha) before resolver threw; custom limit must not have been touched.
+            // 解析器抛错前已执行 IP 限制（一次 evalsha）；自定义限制不应被访问。
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-10.0.0.1`)).toBeUndefined();
         });
     });
@@ -177,7 +177,7 @@ describe('ThrottlerService keyResolver', () => {
             for (let i = 0; i < 50; i++) {
                 await expect(service.checkLimitOfRequest(routerDetail, makeRequest())).resolves.toBeUndefined();
             }
-            // No custom bucket ever opened.
+            // 从未打开自定义桶。
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-10.0.0.1`)).toBeUndefined();
         });
 
@@ -256,7 +256,7 @@ describe('ThrottlerService keyResolver', () => {
             ).rejects.toBeInstanceOf(TooManyRequestException);
 
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-ip-5.5.5.5`)).toBe(2);
-            // skip-on-empty still applies to the custom bucket.
+            // skip-on-empty 仍适用于自定义桶。
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-5.5.5.5`)).toBeUndefined();
         });
 
@@ -282,7 +282,7 @@ describe('ThrottlerService keyResolver', () => {
                 makeRequest({ ip: '7.7.7.7', headers: { 'auth-user-id': 'b' } })
             );
 
-            // Both bumped the IP bucket, despite different resolved identities.
+            // 尽管解析出的身份不同，两者都会递增 IP 桶。
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-ip-7.7.7.7`)).toBe(2);
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-user:a`)).toBe(1);
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-user:b`)).toBe(1);
@@ -314,7 +314,7 @@ describe('ThrottlerService keyResolver', () => {
 
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-1.2.3.4`)).toBe(2);
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-custom-9.9.9.9`)).toBe(1);
-            // IP check runs before the custom check, so the rejected 3rd request still bumped the IP bucket.
+            // IP 检查先于自定义检查，因此被拒绝的第 3 个请求仍会递增 IP 桶。
             expect(redis.counts.get(`${RATE_LIMIT_KEY}-ip-1.2.3.4`)).toBe(3);
         });
 

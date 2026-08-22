@@ -22,7 +22,7 @@ export class LlmProviderController {
         return this.providerService.listAvailableModels();
     }
 
-    // ── Provider CRUD ──
+    // ── 提供商增删改查 ──
 
     @Get('providers')
     listProviders() {
@@ -53,7 +53,7 @@ export class LlmProviderController {
         return { success: true };
     }
 
-    // ── Model CRUD ──
+    // ── 模型增删改查 ──
 
     @Get('providers/:id/models')
     listModels(@Param('id') providerId: string) {

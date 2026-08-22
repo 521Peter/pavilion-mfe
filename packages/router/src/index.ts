@@ -14,6 +14,6 @@ export type {
   HookContext
 } from "./types.js";
 
-// Re-export logger from @pavilion-mfe/sandbox for convenience
+// 为方便使用，重新导出 @pavilion-mfe/sandbox 的日志器
 export { pavilionMfeLog, pavilionMfeError, configureLog, isLogEnabled } from "@pavilion-mfe/sandbox";
 export type { LogModule, PavilionMfeLogConfig } from "@pavilion-mfe/sandbox";

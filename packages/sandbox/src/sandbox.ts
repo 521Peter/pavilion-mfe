@@ -1,9 +1,8 @@
 /**
- * Side-effect tracker for micro-frontend segments.
+ * 微前端模块的副作用追踪器。
  *
- * Uses a module-level stack to support multiple concurrent sandboxes.
- * Globals are patched once; each side-effect is attributed to the
- * sandbox on top of the stack at creation time.
+ * 使用模块级栈支持多个并发沙箱。全局对象只修补一次；
+ * 每个副作用都归属于创建时位于栈顶的沙箱。
  */
 
 import { pavilionMfeLog } from "./logger.js";
@@ -15,7 +14,7 @@ interface TrackedListener {
   options?: any;
 }
 
-// ─── Module-level: original method references ───
+// ─── 模块级：原始方法引用 ───
 const origSetTimeout = globalThis.setTimeout.bind(globalThis);
 const origSetInterval = globalThis.setInterval.bind(globalThis);
 const origClearTimeout = globalThis.clearTimeout.bind(globalThis);
@@ -23,35 +22,35 @@ const origClearInterval = globalThis.clearInterval.bind(globalThis);
 const origAddEventListener = globalThis.addEventListener.bind(globalThis);
 const origRemoveEventListener = globalThis.removeEventListener.bind(globalThis);
 
-// ─── Module-level: active sandbox stack ───
+// ─── 模块级：活动沙箱栈 ───
 const activeStack: Sandbox[] = [];
 let globalsPatched = false;
 
 /**
- * Returns the sandbox currently on top of the active stack.
- * Used by the router to attribute popstate listeners to segments.
+ * 返回当前位于活动栈顶的沙箱。
+ * 路由器用它确定 popstate 监听器所属的模块。
  */
 export function getActiveSandbox(): Sandbox | undefined {
   return activeStack[activeStack.length - 1];
 }
 
-// ─── Route isolation: popstate listener proxying ───
+// ─── 路由隔离：代理 popstate 监听器 ───
 
 /**
- * Route matcher callback — set by the router.
- * Returns true if the given appCode owns the current route.
+ * 由路由器设置的路由匹配回调。
+ * 指定 appCode 拥有当前路由时返回 true。
  */
 let routeMatcher: ((appCode: string, path: string) => boolean) | null = null;
 
 /**
- * Maps original handler → proxy handler for popstate listeners.
- * Allows removeEventListener to translate original → proxy.
+ * 将 popstate 监听器的原始处理函数映射到代理处理函数，
+ * 使 removeEventListener 能将原始函数转换为代理函数。
  */
 const popstateProxyMap = new WeakMap<Function, Function>();
 
 /**
- * Set the route matcher used for popstate isolation.
- * Called by createRouter during start().
+ * 设置 popstate 隔离使用的路由匹配器。
+ * 由 createRouter 在 start() 期间调用。
  */
 export function setRouteMatcher(fn: (appCode: string, path: string) => boolean): void {
   routeMatcher = fn;
@@ -90,8 +89,8 @@ function patchGlobals(): void {
     if (handler) {
       const active = activeStack[activeStack.length - 1];
       if (active) {
-        // For popstate listeners with a route matcher, wrap with a proxy
-        // that only fires when the segment owning this listener is active.
+        // 对具备路由匹配器的 popstate 监听器添加代理，
+        // 仅在拥有该监听器的模块处于活动状态时触发
         if (type === "popstate" && routeMatcher) {
           const appCode = active.appCode;
           const proxyHandler = (event: Event) => {
@@ -113,7 +112,7 @@ function patchGlobals(): void {
   }) as any;
 
   globalThis.removeEventListener = ((type: any, handler: any, options?: any) => {
-    // For popstate, translate original handler → proxy if one was created
+    // 对 popstate，将原始处理函数转换为已创建的代理函数
     let effectiveHandler = handler;
     if (type === "popstate") {
       const proxy = popstateProxyMap.get(handler);
@@ -130,11 +129,11 @@ function patchGlobals(): void {
 }
 
 export class Sandbox {
-  /** @internal — tracked timeouts created while this sandbox was active */
+  /** @internal — 此沙箱活动期间创建并追踪的 timeout */
   _timeouts: Set<number> = new Set();
-  /** @internal — tracked intervals */
+  /** @internal — 已追踪的 interval */
   _intervals: Set<number> = new Set();
-  /** @internal — tracked event listeners */
+  /** @internal — 已追踪的事件监听器 */
   _listeners: TrackedListener[] = [];
 
   private globalKeys: Set<string> = new Set();
@@ -154,29 +153,29 @@ export class Sandbox {
     if (!this.activated) return;
     this.activated = false;
 
-    // Snapshot cleanup stats before clearing
+    // 清理前记录统计快照
     const timers = this._timeouts.size;
     const intervals = this._intervals.size;
     const listeners = this._listeners.length;
     const globals = this.globalKeys.size;
 
-    // Remove from active stack
+    // 从活动栈中移除
     const idx = activeStack.lastIndexOf(this);
     if (idx !== -1) activeStack.splice(idx, 1);
 
-    // Clean up tracked timers
+    // 清理已追踪的定时器
     this._timeouts.forEach(id => origClearTimeout(id));
     this._timeouts.clear();
     this._intervals.forEach(id => origClearInterval(id));
     this._intervals.clear();
 
-    // Clean up tracked listeners (use original to avoid re-entering the patched fn)
+    // 清理已追踪的监听器（使用原始方法，避免再次进入已修补函数）
     this._listeners.forEach(({ type, handler, options }) => {
       origRemoveEventListener(type, handler, options);
     });
     this._listeners = [];
 
-    // Clean up tracked global keys
+    // 清理已追踪的全局键
     this.globalKeys.forEach(key => {
       delete (globalThis as any)[key];
     });

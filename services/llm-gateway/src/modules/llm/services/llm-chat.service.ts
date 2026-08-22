@@ -25,7 +25,7 @@ export interface ChatResult {
 }
 
 /**
- * LLM Chat Service
+ * LLM 聊天服务
  *
  * 平台统一的 LLM 调用入口：
  *   - chat()        非流式调用，返回完整结果

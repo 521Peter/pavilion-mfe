@@ -1,7 +1,7 @@
--- Provider secrets are stored only in provider_credentials.
+-- 提供商密钥仅存储在 provider_credentials 中。
 ALTER TABLE "llm_providers" DROP COLUMN "apiKey";
 
--- Application is an LLM gateway caller, not a duplicate frontend registry.
+-- Application 表表示 LLM 网关调用方，不是重复的前端注册表。
 ALTER TABLE "applications"
     DROP COLUMN "frontend_entry",
     DROP COLUMN "routes",
@@ -11,7 +11,7 @@ ALTER TABLE "applications"
     DROP COLUMN "sort_order",
     DROP COLUMN "config";
 
--- Agent behavior belongs to immutable agent_versions.
+-- Agent 行为归属于不可变的 agent_versions。
 ALTER TABLE "agent_definitions"
     DROP COLUMN "system_prompt",
     DROP COLUMN "provider_id",
@@ -21,7 +21,7 @@ ALTER TABLE "agent_definitions"
     DROP COLUMN "mcp_server_ids",
     DROP COLUMN "config";
 
--- The migrated knowledge tables never had a runtime or API and are outside the gateway scope.
+-- 已迁移的知识库表从未提供运行时或 API，不属于网关范围。
 DROP TABLE "knowledge_chunks";
 DROP TABLE "knowledge_documents";
 DROP TABLE "knowledge_bases";

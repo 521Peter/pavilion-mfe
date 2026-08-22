@@ -1,18 +1,17 @@
 /**
- * PavilionMfe environment detection.
+ * PavilionMfe 环境检测。
  *
- * The main app's PavilionMfe router sets `window.__PAVILION_MFE_ENV__ = true` when
- * `start()` is called — before any sub-app is loaded. Sub-apps
- * can use `isPavilionMfeMainApp()` to detect whether they are running inside
- * the main app (micro-frontend mode) or standalone.
+ * 主应用的 PavilionMfe 路由器会在调用 `start()` 时、加载任何子应用前，
+ * 设置 `window.__PAVILION_MFE_ENV__ = true`。子应用可使用
+ * `isPavilionMfeMainApp()` 检测自身运行于主应用内（微前端模式）还是独立运行。
  *
  * @example
  * import { isPavilionMfeMainApp } from '@pavilion-mfe/router'
  *
  * if (isPavilionMfeMainApp()) {
- *   // Running inside the PavilionMfe main app
+ *   // 运行在 PavilionMfe 主应用内
  * } else {
- *   // Running standalone
+ *   // 独立运行
  * }
  */
 
@@ -23,10 +22,10 @@ declare global {
 }
 
 /**
- * Check if running inside a PavilionMfe main app (micro-frontend environment).
+ * 检查当前是否运行在 PavilionMfe 主应用内（微前端环境）。
  *
- * The global `window.__PAVILION_MFE_ENV__` is injected by the main app's
- * PavilionMfe router during `start()`, before sub-apps are loaded.
+ * 全局变量 `window.__PAVILION_MFE_ENV__` 由主应用的 PavilionMfe 路由器
+ * 在 `start()` 期间、子应用加载前注入。
  */
 export function isPavilionMfeMainApp(): boolean {
   return typeof window !== "undefined" && !!window.__PAVILION_MFE_ENV__;

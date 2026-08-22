@@ -1,7 +1,7 @@
-// Compiles the Electron main/preload TS with esbuild, waits for the Vite dev
-// server (the main-app on :6019) to be reachable, then launches Electron with
-// DEV_SERVER_URL pointing at it. The MF sub-apps are served by their own Vite
-// dev servers (6010/6020/6030/6040) and resolved at runtime.
+// 使用 esbuild 编译 Electron 主进程/preload TS，等待 Vite 开发服务器
+//（:6019 上的主应用）可访问后，使用指向该服务器的 DEV_SERVER_URL 启动 Electron。
+// MF 子应用由各自的 Vite 开发服务器（6010/6020/6030/6040）提供，
+// 并在运行时解析。
 import { build } from "esbuild";
 import { spawn } from "node:child_process";
 import waitOn from "wait-on";
@@ -20,7 +20,7 @@ function run(bin, args, opts = {}) {
   });
 }
 
-// bundle + minify Electron main/preload into CommonJS (Electron's main process)
+// 将 Electron 主进程/preload 打包并压缩为 CommonJS（供 Electron 主进程使用）
 function bundleMain() {
   return Promise.all([
     build({
@@ -63,6 +63,6 @@ try {
 }
 
 function validateStatus(status) {
-  // Vite dev server returns 200 for the root
+  // Vite 开发服务器对根路径返回 200
   return status === 200;
 }

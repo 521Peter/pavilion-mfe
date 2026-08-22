@@ -4,9 +4,9 @@ export interface SubApp {
   name: string;
   load: () => Promise<SubAppLifecycle>;
   activeWhen: (path: string) => boolean;
-  /** Route prefix passed to the sub-app as ctx.basename (e.g. '/react') */
+  /** 通过 ctx.basename 传给子应用的路由前缀（例如 '/react'） */
   basename?: string;
-  /** Keep this sub-app's framework instance alive when unmounted (display:none only) */
+  /** 卸载时保留此子应用的框架实例（仅设置 display:none） */
   keepAlive?: boolean;
 }
 
@@ -28,7 +28,7 @@ export interface MainAppConfig {
 }
 
 export type AppStatus =
-  "NOT_LOADED" | "LOADING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UNMOUNTING" | "UNMOUNTED" | "CACHED"; // keep-alive: framework instance retained, display:none
+  "NOT_LOADED" | "LOADING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UNMOUNTING" | "UNMOUNTED" | "CACHED"; // keep-alive：保留框架实例并设置 display:none
 
 export interface RegisteredApp {
   name: string;
@@ -47,9 +47,9 @@ export interface SubAppRouteConfig {
   routes: string[];
 }
 
-// ─── Router configuration ───
+// ─── 路由器配置 ───
 
-/** Hook context passed to router lifecycle hooks */
+/** 传给路由器生命周期钩子的上下文 */
 export interface HookContext {
   appCode: string;
   basename: string;
@@ -59,7 +59,7 @@ export interface HookContext {
   error?: unknown;
 }
 
-/** Lifecycle hooks for external APM / observability integration */
+/** 用于外部 APM / 可观测性集成的生命周期钩子 */
 export interface RouterHooks {
   beforeLoad?: (ctx: HookContext) => void;
   afterLoad?: (ctx: HookContext) => void;
@@ -72,11 +72,11 @@ export interface RouterHooks {
   onError?: (ctx: HookContext) => void;
 }
 
-/** Configuration for createRouter */
+/** createRouter 配置 */
 export interface RouterConfig {
   apps?: SubApp[];
-  /** Global max cached sub-apps (LRU eviction). Default: 5 */
+  /** 全局最多缓存的子应用数（LRU 淘汰），默认为 5 */
   maxCache?: number;
-  /** Lifecycle hooks for external monitoring */
+  /** 用于外部监控的生命周期钩子 */
   hooks?: RouterHooks;
 }

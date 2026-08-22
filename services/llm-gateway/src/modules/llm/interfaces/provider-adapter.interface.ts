@@ -6,7 +6,7 @@ export interface ProviderConfig {
     type: string;
     /** API 地址 */
     baseUrl?: string;
-    /** API Key */
+    /** API 密钥 */
     apiKey?: string;
     /** 扩展配置（headers、timeout、自定义参数等） */
     extra?: Record<string, unknown>;

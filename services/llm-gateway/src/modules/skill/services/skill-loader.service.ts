@@ -61,7 +61,7 @@ export class SkillLoaderService {
                     await stat(join(this.skillsRoot, e.name, 'SKILL.md'));
                     dirs.push(e.name);
                 } catch {
-                    /* skip */
+                    /* 跳过 */
                 }
             }
             return dirs;

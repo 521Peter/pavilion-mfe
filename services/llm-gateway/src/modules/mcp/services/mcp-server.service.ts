@@ -4,7 +4,7 @@ import { PrismaService } from '@/database/prisma.service';
 import { UrlSafetyService } from '@/common/security/url-safety.service';
 
 /**
- * MCP Server CRUD Service
+ * MCP 服务器增删改查服务
  *
  * 负责 MCP Server 的数据库增删改查，以及工具缓存同步。
  */

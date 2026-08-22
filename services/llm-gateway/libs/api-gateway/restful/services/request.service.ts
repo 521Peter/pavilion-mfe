@@ -45,9 +45,9 @@ export class RequestService implements OnModuleInit {
     }
 
     /**
-     * Check if the request is a static request
-     * @param {IncomingMessage} request The request
-     * @returns {boolean} True if the request is a static request
+     * 检查请求是否为静态资源请求。
+     * @param {IncomingMessage} request 请求
+     * @returns {boolean} 请求为静态资源请求时返回 true
      */
     isStaticRequest(request: IncomingMessage): boolean {
         for (const handler of this.proxyValidationHandler) {

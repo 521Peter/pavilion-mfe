@@ -3,10 +3,10 @@ import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { createStaticServer } from "./static-server";
 
-// Remote entry URL for the dev server (set by scripts/dev.mjs)
+// 开发服务器的远程入口 URL（由 scripts/dev.mjs 设置）
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
 
-// Whether we are running in packaged production mode
+// 当前是否运行在已打包的生产模式
 const isPackaged = !DEV_SERVER_URL;
 
 let mainWindow: BrowserWindow | null = null;
@@ -22,7 +22,7 @@ function createWindow(loadUrl: string): void {
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, "preload.js"),
-      // Allow the renderer to use Node-ish APIs exposed via preload only
+      // 仅允许渲染进程使用 preload 暴露的 Node 类 API
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false
@@ -31,7 +31,7 @@ function createWindow(loadUrl: string): void {
 
   mainWindow.once("ready-to-show", () => mainWindow?.show());
 
-  // Mirror renderer console into the terminal for debugging MF loading
+  // 将渲染进程控制台同步到终端，便于调试 MF 加载
   mainWindow.webContents.on("console-message", (_e, level, message) => {
     const tag = level >= 2 ? "renderer:error" : "renderer";
     console.log(`[${tag}]`, message);
@@ -41,7 +41,7 @@ function createWindow(loadUrl: string): void {
   );
   mainWindow.webContents.on("did-finish-load", () => console.log("[desktop] did-finish-load"));
 
-  // Open external links in the system browser, not inside the app
+  // 使用系统浏览器打开外部链接，不在应用内打开
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("http://") || url.startsWith("https://")) {
       shell.openExternal(url);
@@ -58,11 +58,10 @@ function createWindow(loadUrl: string): void {
 }
 
 async function boot(): Promise<void> {
-  // In packaged mode, serve the bundled renderer artifacts from a local HTTP
-  // server. Module Federation needs a real origin (not file://) to load remote
-  // manifests and ES modules reliably.
+  // 在打包模式下，通过本地 HTTP 服务器提供已打包的渲染进程产物。
+  // Module Federation 需要真实来源（而非 file://）才能可靠加载远程清单和 ES 模块。
   if (isPackaged) {
-    // Packaged: <resourcesPath>/renderer; unpackaged preview: dist/renderer
+    // 已打包：<resourcesPath>/renderer；未打包预览：dist/renderer
     const packagedDir = join(process.resourcesPath, "renderer");
     const rendererDir = existsSync(packagedDir) ? packagedDir : join(__dirname, "renderer");
     server = await createStaticServer(rendererDir);
@@ -71,7 +70,7 @@ async function boot(): Promise<void> {
   const targetUrl = DEV_SERVER_URL ? DEV_SERVER_URL : `http://localhost:${server!.port}/`;
 
   console.log(`[desktop] loading ${targetUrl}`);
-  // No application menu for a cleaner desktop look — rely on keyboard shortcuts
+  // 不显示应用菜单以保持桌面界面简洁，相关操作依赖键盘快捷键
   Menu.setApplicationMenu(null);
   createWindow(targetUrl);
 }

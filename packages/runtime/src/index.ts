@@ -1,11 +1,10 @@
 /**
- * @pavilion-mfe/runtime — Shared runtime kernel
+ * @pavilion-mfe/runtime — 共享运行时内核
  *
- * This package is designed to be exposed as a Module Federation remote.
- * Main app and sub-apps both import from it and share the same instance.
+ * 此包设计为通过 Module Federation 远程模块暴露。
+ * 主应用和子应用都从中导入并共享同一实例。
  *
- * It re-exports everything from the lower-level PavilionMfe packages
- * and adds orchestrator-level utilities.
+ * 它重新导出底层 PavilionMfe 包的全部内容，并添加编排层工具。
  */
 
 export { createRouter, matchAppByPath, navigateTo } from "@pavilion-mfe/router";
