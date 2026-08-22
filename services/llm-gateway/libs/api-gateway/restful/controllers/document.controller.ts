@@ -15,7 +15,7 @@ export class DocumentController {
     @ApiOperation({ description: 'Get the Swagger document.' })
     async getDocument(@Res() response): Promise<any> {
         return response.render(
-            this.apiGatewayOption.libraryPath + '/views/document.hbs',
+            this.apiGatewayOption.libraryPath + '/api-gateway/views/document.hbs',
             this.openApiService.getDocumentDetailsForUI()
         );
     }
