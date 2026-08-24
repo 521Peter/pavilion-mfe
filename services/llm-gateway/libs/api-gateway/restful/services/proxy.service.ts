@@ -251,6 +251,7 @@ export class ProxyService implements OnModuleInit {
         // 此检查会标记请求，因此下方的 checkLimitOfRequest 不会重复执行（避免重复计数）。
         await this.throttlerService.checkGlobalIpRequest(request);
 
+        // 准备附加给后端的请求头信息
         const proxyRequest = new ProxyRequest();
         if (!(await this.requestService.handle(routerDetail, request, proxyRequest))) {
             throw new ForbiddenException();

@@ -27,6 +27,7 @@ export class RequestService implements OnModuleInit {
     }
 
     async handle(routerDetail: RouterDetail, request: IncomingMessage, proxyRequest: ProxyRequest) {
+        // 移除敏感请求头
         this.removeHeaders(request, proxyRequest);
         for (const handler of this.headerHandlers) {
             if (!(await handler.handle(routerDetail, request, proxyRequest))) {

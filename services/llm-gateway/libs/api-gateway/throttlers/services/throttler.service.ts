@@ -39,10 +39,12 @@ export class ThrottlerService implements OnModuleInit {
     }
 
     async loadLuaScript(): Promise<void> {
+        // 把 Lua 脚本加载到 Redis，并返回脚本内容对应的 SHA1 标识
         this.luaSha = (await this.redis.script('LOAD', LUA_INCREASE_AND_GET_SCRIPT)) as string;
     }
 
     async getExpireAndIncreaseLimit(key: string, times: number, ttl: number): Promise<number> {
+        // 执行 lua 脚本，使用 Lua 的关键原因是原子性
         return this.redis.evalsha(this.luaSha, 1, key, String(times), String(Math.floor(ttl * 1000))) as any;
     }
 

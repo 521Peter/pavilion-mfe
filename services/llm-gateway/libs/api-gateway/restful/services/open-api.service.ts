@@ -95,6 +95,7 @@ export class OpenApiService {
             for (const method in doc.paths[router]) {
                 // camelcaseKeys 把对象（或数组）里的 key 从其他命名风格（通常是 snake_case）转换成 camelCase（小驼峰）
                 const apiDetail = camelcaseKeys(doc.paths[router][method]);
+                // 把一个路径规则编译成一个“匹配函数”，用来判断某个真实路径是否匹配，并提取其中的参数
                 const patchMatch = match(apiDetail.xRouterPath || this.convertToExpressPath(router), {
                     decode: decodeURIComponent
                 });
