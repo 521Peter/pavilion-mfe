@@ -1,7 +1,10 @@
-import { app, BrowserWindow, shell, Menu } from "electron";
+import { app, BrowserWindow, shell, Menu, dialog, ipcMain, type IpcMainInvokeEvent } from "electron";
 import { join } from "node:path";
 import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { createStaticServer } from "./static-server";
+import { DESKTOP_CHANNELS, type GitReportQuery, type SaveReportInput } from "./desktop-api";
+import { generateGitData, inspectRepository } from "./git-report";
 
 // 开发服务器的远程入口 URL（由 scripts/dev.mjs 设置）
 const DEV_SERVER_URL = process.env.DEV_SERVER_URL;
@@ -11,6 +14,49 @@ const isPackaged = !DEV_SERVER_URL;
 
 let mainWindow: BrowserWindow | null = null;
 let server: { port: number; close: () => void } | null = null;
+
+function assertTrustedSender(event: IpcMainInvokeEvent): void {
+  if (
+    !mainWindow ||
+    event.sender !== mainWindow.webContents ||
+    event.senderFrame !== mainWindow.webContents.mainFrame
+  ) {
+    throw new Error("拒绝未知页面调用本地能力");
+  }
+}
+
+function registerIpcHandlers(): void {
+  ipcMain.handle(DESKTOP_CHANNELS.pickRepository, async event => {
+    assertTrustedSender(event);
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      title: "选择 Git 仓库",
+      properties: ["openDirectory"]
+    });
+    if (result.canceled || !result.filePaths[0]) return null;
+    return inspectRepository(result.filePaths[0]);
+  });
+
+  ipcMain.handle(DESKTOP_CHANNELS.generateGitData, async (event, query: GitReportQuery) => {
+    assertTrustedSender(event);
+    return generateGitData(query);
+  });
+
+  ipcMain.handle(DESKTOP_CHANNELS.saveReport, async (event, input: SaveReportInput) => {
+    assertTrustedSender(event);
+    if (!input || typeof input.content !== "string" || typeof input.suggestedName !== "string") {
+      throw new Error("报告内容无效");
+    }
+    const suggestedName = input.suggestedName.replace(/[\\/:*?"<>|]/g, "-").slice(0, 120) || "git-report.md";
+    const result = await dialog.showSaveDialog(mainWindow!, {
+      title: "保存 Git 报告",
+      defaultPath: suggestedName,
+      filters: [{ name: "Markdown", extensions: ["md"] }]
+    });
+    if (result.canceled || !result.filePath) return { canceled: true };
+    await writeFile(result.filePath, input.content, "utf8");
+    return { canceled: false, filePath: result.filePath };
+  });
+}
 
 function createWindow(loadUrl: string): void {
   mainWindow = new BrowserWindow({
@@ -64,7 +110,7 @@ async function boot(): Promise<void> {
     // 已打包：<resourcesPath>/renderer；未打包预览：dist/renderer
     const packagedDir = join(process.resourcesPath, "renderer");
     const rendererDir = existsSync(packagedDir) ? packagedDir : join(__dirname, "renderer");
-    server = await createStaticServer(rendererDir);
+    server = await createStaticServer(rendererDir, process.env.DESKTOP_API_BASE_URL || "http://127.0.0.1:3000");
   }
 
   const targetUrl = DEV_SERVER_URL ? DEV_SERVER_URL : `http://localhost:${server!.port}/`;
@@ -75,7 +121,10 @@ async function boot(): Promise<void> {
   createWindow(targetUrl);
 }
 
-app.whenReady().then(boot);
+app.whenReady().then(async () => {
+  registerIpcHandlers();
+  await boot();
+});
 
 app.on("window-all-closed", () => {
   server?.close();

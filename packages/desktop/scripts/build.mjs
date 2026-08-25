@@ -5,17 +5,19 @@
 import { build } from "esbuild";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, join } from "node:path";
-import { cp, rm, mkdir } from "node:fs/promises";
+import { cp, rm, mkdir, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const appDir = resolve(__dirname, "..");
 const monorepoRoot = resolve(appDir, "../..");
 
-// appCode -> monorepo 应用目录名
+const mfeConfig = JSON.parse(await readFile(resolve(monorepoRoot, "apps/main-app/mfe.json"), "utf8"));
+
+// 主应用位于来源根目录；全部已注册子应用按统一的 MFE 路径聚合。
 const segments = [
   { dir: "main-app", isMain: true },
-  { dir: "git-report-generator", code: "git-report-generator" }
+  ...mfeConfig.apps.map(app => ({ dir: app.appCode, code: app.appCode }))
 ];
 
 function bundleMain() {

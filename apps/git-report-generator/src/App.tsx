@@ -1,12 +1,12 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Git from "./pages/Git";
 import "./App.css";
 
 function App() {
   return (
-    <div>
+    <div className="git-report-app">
       <Routes>
-        <Route path="/git" element={<Git />} />
+        <Route path="/git/*" element={<Git />} />
       </Routes>
     </div>
   );

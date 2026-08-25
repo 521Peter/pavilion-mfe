@@ -21,8 +21,8 @@ if (!window.__PAVILION_MFE_ENV__) {
   }
 }
 
-export default {
-  mount: async (ctx: any, el: HTMLElement) => {
+const lifecycle = {
+  mount: async (_ctx: any, el: HTMLElement) => {
     console.log("[PavilionMfe 微前端] mount", appCode);
 
     const root = createRoot(el);
@@ -40,3 +40,5 @@ export default {
     el.innerHTML = "";
   }
 };
+
+export default lifecycle;

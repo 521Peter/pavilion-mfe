@@ -1,4 +1,5 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { createServer, request as httpRequest, type IncomingMessage, type ServerResponse } from "node:http";
+import { request as httpsRequest } from "node:https";
 import { join, normalize, relative, extname } from "node:path";
 import { readFile, stat } from "node:fs/promises";
 
@@ -23,8 +24,27 @@ const MIME: Record<string, string> = {
  * Module Federation 远程模块基于来源解析，因此使用真实 HTTP 来源
  *（而非 file://）可确保远程清单和 ES 模块可靠加载。
  */
-export function createStaticServer(root: string) {
+function proxyApi(req: IncomingMessage, res: ServerResponse, apiBaseUrl: string): void {
+  const target = new URL(req.url ?? "/api", apiBaseUrl);
+  const request = target.protocol === "https:" ? httpsRequest : httpRequest;
+  const headers = { ...req.headers, host: target.host };
+  const proxyRequest = request(target, { method: req.method, headers }, proxyResponse => {
+    res.writeHead(proxyResponse.statusCode ?? 502, proxyResponse.headers);
+    proxyResponse.pipe(res);
+  });
+  proxyRequest.on("error", error => {
+    if (!res.headersSent) res.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify({ code: 502, data: null, msg: `无法连接 API 服务：${error.message}` }));
+  });
+  req.pipe(proxyRequest);
+}
+
+export function createStaticServer(root: string, apiBaseUrl = "http://127.0.0.1:3000") {
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+    if (req.url === "/api" || req.url?.startsWith("/api/")) {
+      proxyApi(req, res, apiBaseUrl);
+      return;
+    }
     try {
       const urlPath = decodeURIComponent((req.url ?? "/").split("?")[0]);
       // SPA 降级处理：非文件请求返回 index.html

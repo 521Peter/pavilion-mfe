@@ -1,4 +1,6 @@
+AKIA
 atrule
+baprs
 capi
 ccdn
 cenv
@@ -12,7 +14,11 @@ langchain
 langgraph
 linklocal
 lintstagedrc
+glpat
 modelcontextprotocol
+netrc
+nums
+numstat
 oauthtoken
 ollama
 onwarn
@@ -23,6 +29,8 @@ Qwen
 rspack
 shadcn
 Streamable
+pathspecs
+textconv
 ttft
 uniquelocal
 unmappable

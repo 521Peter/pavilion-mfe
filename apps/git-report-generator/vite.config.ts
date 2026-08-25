@@ -4,7 +4,7 @@ import type { ConfigEnv } from "vite";
 import chalk from "chalk";
 import { PavilionMfe } from "@pavilion-mfe/vite";
 
-export default defineConfig(({ command, mode }: ConfigEnv) => {
+export default defineConfig(({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appCode = env.VITE_PAVILION_MFE_APP_CODE;
   const pavilionMfeEnv = env.VITE_PAVILION_MFE_ENV || "develop";

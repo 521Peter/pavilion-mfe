@@ -1,6 +1,7 @@
 // Preload 在隔离上下文中运行，用于桥接主进程和渲染进程。
 // 保持最小暴露范围，只提供渲染进程确实需要的 Node 能力。
-import { contextBridge } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
+import { DESKTOP_CHANNELS, type GitReportQuery, type SaveReportInput } from "./desktop-api";
 
 contextBridge.exposeInMainWorld("desktop", {
   platform: process.platform,
@@ -8,5 +9,12 @@ contextBridge.exposeInMainWorld("desktop", {
     electron: process.versions.electron,
     chrome: process.versions.chrome,
     node: process.versions.node
+  },
+  git: {
+    pickRepository: () => ipcRenderer.invoke(DESKTOP_CHANNELS.pickRepository),
+    generateData: (query: GitReportQuery) => ipcRenderer.invoke(DESKTOP_CHANNELS.generateGitData, query)
+  },
+  report: {
+    save: (input: SaveReportInput) => ipcRenderer.invoke(DESKTOP_CHANNELS.saveReport, input)
   }
 });
