@@ -9,7 +9,7 @@
 - 创建、读取、重命名、归档和删除聊天会话；
 - 将 assistant-ui 消息保存到后端会话；
 - 嵌入主应用时复用同源 `sessionStorage.pavilion_token`；
-- 独立开发时尝试使用开发账号自动登录，失败不会阻塞页面渲染。
+- 独立运行时显示登录页，使用与主应用相同的账号认证；
 
 ## 启动与构建
 
@@ -25,16 +25,14 @@ pnpm --filter ai-chat preview
 
 ## 环境变量
 
-| 变量                         | 说明                           |
-| ---------------------------- | ------------------------------ |
-| `VITE_PAVILION_MFE_APP_CODE` | 必须为 `ai-chat`               |
-| `VITE_PAVILION_MFE_ENV`      | 构建环境标签                   |
-| `VITE_BASE_API_URL`          | 独立开发时的后端代理目标       |
-| `VITE_PAVILION_MFE_CDN`      | 子应用部署 CDN 前缀            |
-| `VITE_DEV_LOGIN_USERNAME`    | 仅开发模式使用的自动登录用户名 |
-| `VITE_DEV_LOGIN_PASSWORD`    | 仅开发模式使用的自动登录密码   |
+| 变量                         | 说明                     |
+| ---------------------------- | ------------------------ |
+| `VITE_PAVILION_MFE_APP_CODE` | 必须为 `ai-chat`         |
+| `VITE_PAVILION_MFE_ENV`      | 构建环境标签             |
+| `VITE_BASE_API_URL`          | 独立开发时的后端代理目标 |
+| `VITE_PAVILION_MFE_CDN`      | 子应用部署 CDN 前缀      |
 
-`VITE_` 变量会进入浏览器产物，开发账号不得使用生产凭据。生产构建会跳过自动登录。
+`VITE_` 变量会进入浏览器产物，不得用于传递账号、密码或其他凭据。
 
 ## 微前端入口
 

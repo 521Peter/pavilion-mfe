@@ -9,7 +9,6 @@ type Message = {
   id: string;
   role: "assistant" | "user";
   content: string;
-  meta?: string;
 };
 
 const welcomeMessage: Message = {
@@ -53,15 +52,7 @@ function CustomerService() {
     setMessages(current => [...current, { id: `user-${Date.now()}`, role: "user", content: text }]);
     try {
       const reply = await supportApi.sendMessage(text);
-      setMessages(current => [
-        ...current,
-        {
-          id: reply.id,
-          role: "assistant",
-          content: reply.content,
-          meta: `网关鉴权通过 · 用户 ${reply.gateway.forwardedUserId.slice(0, 8)}`
-        }
-      ]);
+      setMessages(current => [...current, { id: reply.id, role: "assistant", content: reply.content }]);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "消息发送失败，请稍后重试");
     } finally {
@@ -101,13 +92,13 @@ function CustomerService() {
           <ShieldCheck size={20} aria-hidden="true" />
           <div>
             <strong>网关安全链路</strong>
-            <span>{session ? "JWT 已校验，身份已透传" : "正在验证访问身份"}</span>
+            <span>{session ? "已建立安全连接" : "正在验证访问身份"}</span>
           </div>
         </section>
 
         <div className="panel-footnote">
           <CheckCircle2 size={16} aria-hidden="true" />
-          <span>请求仅通过 /api/customer-service 转发</span>
+          <span>会话内容受安全策略保护</span>
         </div>
       </aside>
 
@@ -132,12 +123,6 @@ function CustomerService() {
               </div>
               <div>
                 <div className="message-bubble">{message.content}</div>
-                {message.meta ? (
-                  <p className="message-meta">
-                    <ShieldCheck size={13} />
-                    {message.meta}
-                  </p>
-                ) : null}
               </div>
             </article>
           ))}
@@ -191,7 +176,7 @@ function CustomerService() {
               <Send size={19} aria-hidden="true" />
             </button>
           </form>
-          <p className="composer-hint">AI 回复仅用于网关功能演示，请勿提交敏感信息。</p>
+          <p className="composer-hint">AI 回复可能存在误差，请勿提交密码、验证码等敏感信息。</p>
         </footer>
       </main>
     </div>

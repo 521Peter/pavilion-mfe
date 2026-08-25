@@ -63,7 +63,7 @@ async function bootstrap(): Promise<void> {
 
     const swaggerConfig = new DocumentBuilder()
         .setTitle('API Gateway')
-        .setDescription('Sample API Gateway endpoints')
+        .setDescription('Pavilion API Gateway')
         .setVersion('1.0')
         .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
         .build();

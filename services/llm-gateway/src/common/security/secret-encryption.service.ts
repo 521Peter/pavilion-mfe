@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
 interface EncryptedPayload {
     version: 1;
@@ -15,17 +15,14 @@ export class SecretEncryptionService {
 
     constructor(config: ConfigService) {
         const configured = config.get<string>('app.credentialEncryptionKey');
-        if (configured) {
-            const decoded = Buffer.from(configured, 'base64');
-            if (decoded.length !== 32) {
-                throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a base64-encoded 32-byte key');
-            }
-            this.key = decoded;
-            return;
+        if (!configured) {
+            throw new Error('CREDENTIAL_ENCRYPTION_KEY is required');
         }
-
-        const localSeed = config.get<string>('app.jwtSecret') ?? 'pavilion-local-encryption-key';
-        this.key = createHash('sha256').update(localSeed).digest();
+        const decoded = Buffer.from(configured, 'base64');
+        if (decoded.length !== 32) {
+            throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a base64-encoded 32-byte key');
+        }
+        this.key = decoded;
     }
 
     encrypt(value: string): string {

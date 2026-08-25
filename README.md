@@ -1,6 +1,6 @@
 # PavilionMfe
 
-PavilionMfe 是一个基于 Vite 与 Module Federation 的微前端 monorepo。主应用负责布局、鉴权、菜单、多标签页、路由调度和远程模块加载；子应用通过统一的 `mount` / `unmount` 生命周期接入。仓库还包含 Electron 桌面壳、统一 LLM Gateway 和一个独立 AI 客服演示服务。
+PavilionMfe 是一个基于 Vite 与 Module Federation 的微前端 monorepo。主应用负责布局、鉴权、菜单、多标签页、路由调度和远程模块加载；子应用通过统一的 `mount` / `unmount` 生命周期接入。仓库还包含 Electron 桌面壳、统一 LLM Gateway 和独立 AI 客服服务。
 
 本文描述当前代码已经实现的能力。新增子应用的完整操作清单见 [`AGENTS.md`](./AGENTS.md)。
 
@@ -24,7 +24,7 @@ packages/
   desktop/                Electron 桌面壳
 services/
   llm-gateway/            NestJS 统一后端、LLM 数据面和代理网关
-  customer-service/       仅允许经网关访问的 AI 客服演示服务
+  customer-service/       仅允许经网关访问的 AI 客服服务
 ```
 
 当前应用及服务端口：

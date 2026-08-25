@@ -75,7 +75,7 @@ const pavilionMfeRouter = createPavilionMfeRouter({
     },
     activeWhen: (path: string) => {
       // 去掉部署前缀后再匹配子应用路由
-      // GitHub Pages 场景：path = '/pavilion-mfe/demo/list' → normalizedPath = '/demo/list'
+      // GitHub Pages 场景：path = '/pavilion-mfe/git' → normalizedPath = '/git'
       const normalizedPath =
         deployBasePath && path.startsWith(deployBasePath) ? path.slice(deployBasePath.length) || "/" : path;
       return createPathMatcher(app.routes)(normalizedPath);

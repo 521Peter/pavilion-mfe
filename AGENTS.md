@@ -8,7 +8,7 @@
 apps/
   main-app/               # 主应用：React + Module Federation 主入口
   git-report-generator/   # 已接入的子应用，作为新增子应用的参考实现
-  ai-chat/                # 已接入的 AI 聊天子应用（含独立开发自动登录鉴权层）
+  ai-chat/                # 已接入的 AI 聊天子应用
   ai-customer/            # 已接入的 AI 客服子应用（通过统一网关访问业务服务）
 packages/
   bridge/                 # 主应用-子应用事件通信（EventBus + StorageSync）
@@ -22,7 +22,7 @@ packages/
   desktop/                # Electron 桌面壳
 services/
   llm-gateway/            # NestJS 统一后端与 LLM Gateway
-  customer-service/       # 仅监听回环地址的 AI 客服演示服务
+  customer-service/       # 仅监听回环地址的 AI 客服服务
 ```
 
 ## 常用命令
@@ -101,7 +101,7 @@ mkdir apps/my-dashboard
 
 ### 3. 配置环境变量
 
-至少创建 `.env` 和 `.env.develop`。前端 `VITE_` 变量会进入浏览器产物，不能保存服务端密钥；若包含开发登录凭据，也只能使用本地测试账号：
+至少创建 `.env` 和 `.env.develop`。前端 `VITE_` 变量会进入浏览器产物，不能保存服务端密钥或登录凭据：
 
 ```bash
 # .env

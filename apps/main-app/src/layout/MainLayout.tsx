@@ -52,7 +52,7 @@ export default function MainLayout() {
   function syncRouteToTabs(fullUrl: string) {
     // 分离路径和查询参数，用路径去重
     const url = new URL(fullUrl, window.location.origin);
-    // 去掉部署前缀，统一为应用内路径（如 /demo/list），确保与菜单 URL 匹配
+    // 去掉部署前缀，统一为应用内路径，确保与菜单 URL 匹配
     const path = normalizePath(url.pathname);
     const search = url.search;
 

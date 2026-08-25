@@ -60,11 +60,10 @@ const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:6019')
     .map((origin) => origin.trim())
     .filter(Boolean);
 
-if (
-    process.env.NODE_ENV === 'production' &&
-    (!process.env.JWT_SECRET || !process.env.CREDENTIAL_ENCRYPTION_KEY || !process.env.APPLICATION_KEY_PEPPER)
-) {
-    throw new Error('JWT_SECRET, CREDENTIAL_ENCRYPTION_KEY and APPLICATION_KEY_PEPPER are required in production');
+const requiredSecrets = ['JWT_SECRET', 'CREDENTIAL_ENCRYPTION_KEY', 'APPLICATION_KEY_PEPPER'] as const;
+const missingSecrets = requiredSecrets.filter((name) => !process.env[name]?.trim());
+if (missingSecrets.length > 0) {
+    throw new Error(`Missing required environment variables: ${missingSecrets.join(', ')}`);
 }
 
 export const env = {

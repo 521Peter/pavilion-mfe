@@ -1,11 +1,11 @@
 # Pavilion AI 客服服务
 
-`@pavilion-mfe/customer-service` 是独立的 NestJS AI 客服演示服务。它默认只监听 `127.0.0.1:3100`，设计上不直接暴露给浏览器，而是由 `llm-gateway` 统一转发 `/api/customer-service/*`。
+`@pavilion-mfe/customer-service` 是独立的 NestJS AI 客服服务。它默认只监听 `127.0.0.1:3100`，设计上不直接暴露给浏览器，而是由 `llm-gateway` 统一转发 `/api/customer-service/*`。
 
 ## 接口
 
 - `GET /support/session`：创建或恢复当前用户的客服会话；
-- `POST /support/messages`：提交客服问题并返回规则化演示回复；
+- `POST /support/messages`：提交客服问题并返回客服回复；
 - `GET /openapi-json`：供网关发现路由与鉴权要求；
 - `GET /swagger`：本服务 Swagger UI。
 

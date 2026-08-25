@@ -5,6 +5,8 @@ coverage/
 .turbo/
 *.tsbuildinfo
 .DS_Store
+.env.local
+.env.*.local
 .claude/
 .mf/
 @mf-types/

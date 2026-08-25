@@ -54,7 +54,7 @@ export class SupportService {
     }
     return {
       category: "general",
-      content: `我收到你的问题：“${message}”。当前演示服务会完成鉴权、转发和身份透传；你也可以试试询问订单、退款或账户问题。`
+      content: `我收到你的问题：“${message}”。如果你需要查询订单、申请退款或修改账户信息，请告诉我具体需求。`
     };
   }
 }

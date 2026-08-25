@@ -24,8 +24,8 @@ pnpm --filter @pavilion-mfe/llm-gateway docker:up
 
 然后编辑 `services/llm-gateway/.env`：
 
-- 把 `DATABASE_URL` 中的 `USER:PASSWORD` 替换为本地 Compose 的 `pavilion:pavilion123`，或改成自己的数据库；
-- 为 `JWT_SECRET`、`SEED_ADMIN_PASSWORD` 和 `APPLICATION_KEY_PEPPER` 设置仅本地使用的随机值；
+- 为 `POSTGRES_USER`、`POSTGRES_PASSWORD` 和 `POSTGRES_DB` 设置部署环境专用值，并在 `DATABASE_URL` 中使用同一组配置；
+- 为 `JWT_SECRET`、`SEED_ADMIN_USERNAME`、`SEED_ADMIN_PASSWORD` 和 `APPLICATION_KEY_PEPPER` 设置部署环境专用值；
 - `CREDENTIAL_ENCRYPTION_KEY` 必须是 32 字节随机值的 Base64 编码，可用 `openssl rand -base64 32` 生成；
 - 不要提交 `.env`，也不要在日志或前端变量中暴露这些值。
 
@@ -48,14 +48,14 @@ Prisma 命令以 `services/llm-gateway` 为工作目录加载该目录的 `.env`
 | `PORT`                        | `3000`                  | HTTP 监听端口                                     |
 | `DATABASE_URL`                | 必填                    | PostgreSQL 连接串                                 |
 | `REDIS_HOST` / `REDIS_PORT`   | `REDIS_PORT=6379`       | Redis 连接；Compose 端口为 `6380`                 |
-| `JWT_SECRET`                  | 生产必填                | JWT 签名；开发未设置时存在代码回退值，仅用于本地  |
+| `JWT_SECRET`                  | 必填                    | JWT 签名                                          |
 | `JWT_EXPIRES_IN`              | `1d`                    | JWT 有效期                                        |
-| `SEED_ADMIN_USERNAME`         | `admin`                 | seed 管理员用户名                                 |
+| `SEED_ADMIN_USERNAME`         | seed 时必填             | seed 管理员用户名                                 |
 | `SEED_ADMIN_PASSWORD`         | seed 时必填             | seed 管理员密码                                   |
 | `CORS_ORIGIN`                 | `http://localhost:6019` | 逗号分隔的允许来源                                |
-| `API_SERVICES`                | 示例已注册 AI 客服      | 下游代理配置 JSON 数组；`host` 可从 `docUrl` 推导 |
-| `CREDENTIAL_ENCRYPTION_KEY`   | 生产必填                | Base64 编码的 32 字节 AES-256-GCM 密钥            |
-| `APPLICATION_KEY_PEPPER`      | 生产必填                | Application Key 哈希盐                            |
+| `API_SERVICES`                | 空数组                  | 下游代理配置 JSON 数组；`host` 可从 `docUrl` 推导 |
+| `CREDENTIAL_ENCRYPTION_KEY`   | 必填                    | Base64 编码的 32 字节 AES-256-GCM 密钥            |
+| `APPLICATION_KEY_PEPPER`      | 必填                    | Application Key 哈希盐                            |
 | `ALLOW_PRIVATE_PROVIDER_URLS` | 生产默认关闭            | 是否允许 Provider/MCP 指向私网地址                |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | 空                      | OTLP 导出地址；空值表示不导出                     |
 | `LLM_RATE_LIMIT_PER_MINUTE`   | `60`                    | LLM 数据面每分钟限流                              |
@@ -107,8 +107,8 @@ Model 路由、ordered fallback、运行记录、Provider Attempt 和 Usage；�
 | `/health/live`                 | 进程存活检查                         |
 | `/health/ready`                | PostgreSQL、Redis 和下游文档就绪检查 |
 
-`API_SERVICES` 控制普通 REST/WebSocket 下游代理。示例值使用 `prefix: "api/customer-service"` 和客服服务的
-`/openapi-json`，从而把 `/api/customer-service/*` 转发为下游的 `/*`。客户端提交的 `auth-user-id`、`auth-application-id`
+`API_SERVICES` 控制普通 REST/WebSocket 下游代理。接入客服服务时，应在部署环境中配置 `prefix: "api/customer-service"`
+和指向客服 `/openapi-json` 的 `docUrl`。客户端提交的 `auth-user-id`、`auth-application-id`
 等内部头会先被移除，认证通过后再由网关注入可信身份。代码不读取 `CUSTOMER_SERVICE_URL`，需要改地址时应修改
 `API_SERVICES[].docUrl`（或显式填写同源 `host`）。
 

@@ -7,8 +7,8 @@ import logoSvg from "../assets/pavilion-mfe-logo.svg";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -70,8 +70,6 @@ export default function Login() {
         <Button type="submit" variant="primary" fullWidth isDisabled={loading}>
           {loading ? "登录中..." : "登 录"}
         </Button>
-
-        <p className="mt-5 text-center text-xs text-[#475569]">默认账号: admin / admin123</p>
       </form>
     </div>
   );

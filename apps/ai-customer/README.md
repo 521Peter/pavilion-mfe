@@ -1,6 +1,6 @@
 # AI 客服子应用
 
-`ai-customer` 是 React 19 微前端子应用，开发端口为 `6030`，在主应用中的路由前缀为 `/customer-service`。它通过统一网关访问独立的 AI 客服演示服务。
+`ai-customer` 是 React 19 微前端子应用，开发端口为 `6030`，在主应用中的路由前缀为 `/customer-service`。它通过统一网关访问独立的 AI 客服服务。
 
 ## 请求链路
 
@@ -16,7 +16,7 @@ ai-customer
 当前使用的业务接口：
 
 - `GET /api/customer-service/support/session`：创建或恢复客服会话；
-- `POST /api/customer-service/support/messages`：发送问题并获取演示回复；
+- `POST /api/customer-service/support/messages`：发送问题并获取客服回复；
 - `POST /api/auth/login`：独立运行时登录。
 
 ## 启动与构建

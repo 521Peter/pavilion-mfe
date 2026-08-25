@@ -52,7 +52,11 @@ export default function Login({ onSuccess }: { onSuccess: () => void }) {
             <p className="login-subtitle">请使用与主应用相同的企业账号登录</p>
           </div>
 
-          {error ? <div className="login-error" role="alert">{error}</div> : null}
+          {error ? (
+            <div className="login-error" role="alert">
+              {error}
+            </div>
+          ) : null}
 
           <label>
             <span>账号</span>
@@ -79,7 +83,7 @@ export default function Login({ onSuccess }: { onSuccess: () => void }) {
           <button className="login-submit" type="submit" disabled={loading}>
             {loading ? "登录中…" : "登录并进入工作台"}
           </button>
-          <p className="login-tip">Access Token 仅保存在当前浏览器标签页中，有效期 1 天。</p>
+          <p className="login-tip">Access Token 仅保存在当前浏览器标签页中。</p>
         </form>
       </section>
     </main>

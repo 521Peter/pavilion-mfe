@@ -115,21 +115,6 @@ async function doFetchMenus(): Promise<MenuItem[]> {
         }
       ]
     },
-    // ─── 系统工具 ───
-    // {
-    //   menuCode: 'system',
-    //   menuName: '系统工具',
-    //   menuTp: '0',
-    //   parentCode: '',
-    //   orderNo: 99,
-    //   status: '1',
-    //   menuUrl: '',
-    //   menuIcon: 'Setting',
-    //   childrenMenuInfoList: [
-    //     { menuCode: 'system/test', menuName: '测试页', menuTp: '1', parentCode: 'system', orderNo: 1, status: '1', menuUrl: '/test', menuIcon: 'MostlyCloudy' },
-    //     { menuCode: 'system/env', menuName: '环境信息', menuTp: '1', parentCode: 'system', orderNo: 2, status: '1', menuUrl: '/env', menuIcon: 'Position' },
-    //   ],
-    // },
     // ─── 错误页面 ───
     {
       menuCode: "error-pages",
