@@ -10,7 +10,6 @@ coverage/
 .claude/
 .mf/
 @mf-types/
-docs/*
 vite.config.ts.timestamp-*
 release
 services/llm-gateway/generated
