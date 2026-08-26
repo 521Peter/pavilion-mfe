@@ -3,6 +3,7 @@ dist/
 dist-ghpages/
 coverage/
 .turbo/
+.worktrees/
 *.tsbuildinfo
 .DS_Store
 .env.local
