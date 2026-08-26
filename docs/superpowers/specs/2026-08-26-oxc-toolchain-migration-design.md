@@ -51,7 +51,7 @@ Oxc 官方 monorepo 在根目录集中维护 `oxlintrc.json` 和 `oxfmtrc.jsonc`
 - `node`
 - `promise`
 
-同时开启 `typeAware` 与 `typeCheck`，并安装 `oxlint-tsgolint`。全局明确启用 `no-plusplus: error`；关闭基础 `no-shadow`，改用 `typescript/no-shadow: error`，避免重复诊断。
+同时开启 `typeAware` 与 `typeCheck`，并安装 `oxlint-tsgolint`。全局明确启用 `no-plusplus: error` 和 `no-shadow: error`。Oxlint 直接使用原生 `no-shadow`、`no-unused-vars` 分析 TypeScript AST，不配置不存在的 `typescript/no-shadow` 或 `typescript/no-unused-vars` 别名。
 
 参考旧 ESLint 配置的意图，允许以下用法：
 
@@ -148,7 +148,7 @@ Husky 直接调用 `pnpm exec lint-staged`，不再通过 `npm run` 间接执行
 
 ### GitHub Actions
 
-部署工作流在构建前运行根 `check` 命令。格式不一致、lint warning/error 或类型检查失败都会阻止部署。
+部署工作流先构建类型感知检查所依赖的核心包声明产物，再在应用构建与部署前运行根 `check` 命令。格式不一致、lint warning/error 或类型检查失败都会阻止部署。
 
 ## 迁移顺序
 
