@@ -8,16 +8,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // GitHub Pages SPA 降级处理：404.html → sessionStorage → 恢复路径
-      (function () {
-        var redirect = sessionStorage.getItem("pavilion-redirect");
-        if (redirect) {
-          sessionStorage.removeItem("pavilion-redirect");
-          history.replaceState(null, "", redirect);
-        }
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

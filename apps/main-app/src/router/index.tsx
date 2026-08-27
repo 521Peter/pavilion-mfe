@@ -9,7 +9,6 @@ import MFPage from "./MFPage";
 import LlmProviders from "../pages/LlmProviders";
 import McpServers from "../pages/McpServers";
 import Skills from "../pages/Skills";
-import { deployBasePath } from "../utils/path";
 import { getToken } from "../api/http";
 
 /** 主应用自有路由 → 标题（用于 Tab / 菜单标题查找） */
@@ -36,31 +35,26 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Vite 的 base 配置自动注入为 import.meta.env.BASE_URL
-// 本地开发时为 "/"，GitHub Pages �署时为 "/<repo>/"
-export const router = createBrowserRouter(
-  [
-    {
-      path: "/login",
-      element: <Login />
-    },
-    {
-      element: (
-        <RequireAuth>
-          <MainLayout />
-        </RequireAuth>
-      ),
-      children: [
-        { path: "/", element: <Home /> },
-        { path: "/llm-providers", element: <LlmProviders /> },
-        { path: "/mcp-servers", element: <McpServers /> },
-        { path: "/skills", element: <Skills /> },
-        { path: "/403", element: <Forbidden /> },
-        { path: "/404", element: <NotFound /> },
-        { path: "/500", element: <ServerError /> },
-        { path: "*", element: <MFPage /> }
-      ]
-    }
-  ],
-  { basename: deployBasePath }
-);
+export const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />
+  },
+  {
+    element: (
+      <RequireAuth>
+        <MainLayout />
+      </RequireAuth>
+    ),
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/llm-providers", element: <LlmProviders /> },
+      { path: "/mcp-servers", element: <McpServers /> },
+      { path: "/skills", element: <Skills /> },
+      { path: "/403", element: <Forbidden /> },
+      { path: "/404", element: <NotFound /> },
+      { path: "/500", element: <ServerError /> },
+      { path: "*", element: <MFPage /> }
+    ]
+  }
+]);

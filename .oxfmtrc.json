@@ -19,7 +19,6 @@
   "sortPackageJson": false,
   "ignorePatterns": [
     "**/dist/**",
-    "dist-ghpages/**",
     "**/public/**",
     "**/.local/**",
     "**/node_modules/**",

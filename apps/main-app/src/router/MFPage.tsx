@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { isSubAppPath, normalizePath } from "../utils/path";
+import { isSubAppPath } from "../utils/path";
 
 /**
  * 全匹配：微前端子应用路由
@@ -9,8 +9,7 @@ import { isSubAppPath, normalizePath } from "../utils/path";
  */
 export default function MFPage() {
   const location = useLocation();
-  const path = normalizePath(location.pathname);
-  if (!isSubAppPath(path)) {
+  if (!isSubAppPath(location.pathname)) {
     return <Navigate to="/404" replace />;
   }
   return null;

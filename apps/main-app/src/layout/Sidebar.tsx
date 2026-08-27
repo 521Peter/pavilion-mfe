@@ -5,7 +5,6 @@ import { useTabs } from "@pavilion-mfe/tabs/react";
 import { navigateTo } from "@pavilion-mfe/router";
 import { useMenus, type MenuItem } from "../api/menu";
 import { Icon } from "../components/Icon";
-import { deployBasePath, normalizePath } from "../utils/path";
 import { isMainAppRoutePath, routeMeta } from "../router";
 import Logo from "./Logo";
 import { cn } from "@/lib/utils";
@@ -24,19 +23,19 @@ export default function Sidebar() {
 
   const [isCollapse, setIsCollapse] = useState(false);
   /** 当前路径（响应式，监听子应用内部导航） */
-  const [currentPath, setCurrentPath] = useState(normalizePath(window.location.pathname));
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
   /** 展开的子菜单 key（有子菜单的一级菜单） */
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const [popup, setPopup] = useState<PopupState | null>(null);
 
   // 监听 React Router 路由变化（主应用导航）
   useEffect(() => {
-    setCurrentPath(normalizePath(location.pathname));
+    setCurrentPath(location.pathname);
   }, [location.pathname]);
 
   // pavilion 路由事件：子应用通过 pushState 导航时触发；popstate：浏览器前进/后退
   useEffect(() => {
-    const sync = () => setCurrentPath(normalizePath(window.location.pathname));
+    const sync = () => setCurrentPath(window.location.pathname);
     window.addEventListener("pavilion-mfe:after-routing", sync);
     window.addEventListener("popstate", sync);
     return () => {
@@ -103,7 +102,7 @@ export default function Sidebar() {
     if (isMainAppRoutePath(index)) {
       navigate(index);
     } else {
-      navigateTo(deployBasePath + index);
+      navigateTo(index);
     }
   }
 

@@ -12,7 +12,6 @@ import {
 import mfeConfig from "../mfe.json";
 import { loadRemote } from "@module-federation/runtime";
 import { fetchMenus } from "./api/menu.ts";
-import { deployBasePath } from "./utils/path.ts";
 
 // ─── PavilionMfe 日志配置 ───
 // 可按模块切换：router | sandbox | preload | bridge
@@ -79,13 +78,7 @@ const pavilionMfeRouter = createPavilionMfeRouter({
         };
       }
     },
-    activeWhen: (path: string) => {
-      // 去掉部署前缀后再匹配子应用路由
-      // GitHub Pages 场景：path = '/pavilion-mfe/git' → normalizedPath = '/git'
-      const normalizedPath =
-        deployBasePath && path.startsWith(deployBasePath) ? path.slice(deployBasePath.length) || "/" : path;
-      return createPathMatcher(app.routes)(normalizedPath);
-    },
+    activeWhen: createPathMatcher(app.routes),
     basename: app.routes[0] ?? "",
     keepAlive: app.keepAlive ?? false
   }))

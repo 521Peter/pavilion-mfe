@@ -15,7 +15,6 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   // 优先从 process.env 读取（CI 环境变量），否则回退到 .env 文件
   const cdn = process.env.VITE_PAVILION_MFE_CDN || env.VITE_PAVILION_MFE_CDN || "";
   const apiBase = process.env.VITE_BASE_API_URL || env.VITE_BASE_API_URL || "";
-  const deployBase = process.env.VITE_DEPLOY_BASE || env.VITE_DEPLOY_BASE || "/";
 
   console.log(
     `${chalk.green.bold("[PavilionMfe 微前端]")} ${chalk.bold(appCode)}\n` +
@@ -51,10 +50,6 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         dts: false
       })
     ],
-    // GitHub Pages 部署时通过 VITE_DEPLOY_BASE 设置基础路径
-    // 用户页面 (username.github.io):     "/" 或不设置
-    // 项目页面 (username.github.io/repo): "/<repo>/"
-    base: deployBase,
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url))

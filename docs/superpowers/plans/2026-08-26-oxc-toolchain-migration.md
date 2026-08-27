@@ -150,7 +150,6 @@ Use this complete configuration:
   "sortPackageJson": false,
   "ignorePatterns": [
     "**/dist/**",
-    "dist-ghpages/**",
     "**/public/**",
     "**/.local/**",
     "**/node_modules/**",
@@ -232,7 +231,6 @@ Start with this complete root configuration:
   ],
   "ignorePatterns": [
     "**/dist/**",
-    "dist-ghpages/**",
     "**/public/**",
     "**/node_modules/**",
     "**/coverage/**",

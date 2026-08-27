@@ -217,18 +217,8 @@ Vite 会按 mode 读取各应用目录中的环境文件。前端可见变量必
 | `VITE_PAVILION_MFE_ENV`      | 环境标签，默认 `develop`                     |
 | `VITE_BASE_API_URL`          | 子应用独立开发时的 `/api` 代理目标           |
 | `VITE_PAVILION_MFE_CDN`      | 子应用产物的 CDN 前缀                        |
-| `VITE_DEPLOY_BASE`           | 主应用部署基础路径                           |
 
 服务端只提交 `.env.example`。本地 `.env` 应保存占位符替换后的私密值并保持不入库；生产环境应使用部署平台的 Secret 管理或加密环境文件。不要在日志、文档或前端变量中暴露 JWT、Provider Credential、Application Key Pepper 等密钥。
-
-## GitHub Pages
-
-现有 [部署工作流](./.github/workflows/deploy.yml) 在推送 `main` 后构建并发布主应用和 `git-report-generator`。它目前不会发布 `ai-chat` 或 `ai-customer`，因此线上只保证 `/git` 对应的 remote 存在；若要开放其他子应用，必须同步增加构建和 `dist-ghpages/mfe/<appCode>` 产物收集步骤。
-
-工作流使用：
-
-- `PAVILION_MFE_CDN`：默认 `/pavilion-mfe`；
-- `VITE_DEPLOY_BASE`：默认 `/pavilion-mfe/`。
 
 ## 相关文档
 

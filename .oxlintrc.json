@@ -157,7 +157,6 @@
   ],
   "ignorePatterns": [
     "**/dist/**",
-    "dist-ghpages/**",
     "**/public/**",
     "**/node_modules/**",
     "**/coverage/**",

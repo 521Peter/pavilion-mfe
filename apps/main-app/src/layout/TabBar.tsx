@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useTabs, type TabsAPI } from "@pavilion-mfe/tabs/react";
 import { navigateTo } from "@pavilion-mfe/router";
-import { deployBasePath, isSubAppPath } from "../utils/path";
+import { isSubAppPath } from "../utils/path";
 import { cn } from "@/lib/utils";
 
 type Tab = TabsAPI["tabs"][number];
@@ -85,8 +85,7 @@ export default function TabBar() {
     if (tab.id === activeTabId) return;
     const target = tab.fullPath || tab.path;
     if (isSubAppPath(tab.path)) {
-      // 子应用路由：navigateTo 使用 window.history.pushState，需手动加上部署前缀
-      navigateTo(deployBasePath + target);
+      navigateTo(target);
     } else {
       navigate(target);
     }
