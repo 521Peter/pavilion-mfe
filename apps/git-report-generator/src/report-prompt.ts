@@ -17,7 +17,7 @@ export function createReportPrompt(data: GitReportData, query: GitReportQuery): 
     filters: { author: query.author || null, includeMerges: query.includeMerges },
     totals: data.totals,
     diffCoverage: data.diffSummary,
-    contributors: [...contributors.entries()].map(([name, summary]) => ({ name, ...summary })),
+    contributors: [...contributors.entries()].map(([name, summary]) => Object.assign({ name }, summary)),
     commits: data.commits.slice(0, 200).map(commit => ({
       hash: commit.shortHash,
       author: commit.authorName,

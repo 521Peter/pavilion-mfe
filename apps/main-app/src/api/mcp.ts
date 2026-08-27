@@ -42,6 +42,8 @@ export interface McpTestResult {
   error?: string;
 }
 
+type McpTool = NonNullable<McpTestResult["tools"]>[number];
+
 export const mcpApi = {
   listServers: () => api.get<McpServer[]>("/mcp/servers"),
   getServer: (id: string) => api.get<McpServer>(`/mcp/servers/${id}`),
@@ -51,6 +53,6 @@ export const mcpApi = {
   deleteServer: (id: string) => http<{ success: boolean }>(`/mcp/servers/${id}`, { method: "DELETE" }),
   testConnection: (id: string) => api.post<McpTestResult>(`/mcp/servers/${id}/test`),
   syncTools: (id: string) =>
-    api.post<{ success: boolean; tools?: unknown[]; error?: string }>(`/mcp/servers/${id}/sync`),
+    api.post<{ success: boolean; tools?: McpTool[]; error?: string }>(`/mcp/servers/${id}/sync`),
   getCachedTools: (id: string) => api.get<unknown[]>(`/mcp/servers/${id}/tools`)
 };

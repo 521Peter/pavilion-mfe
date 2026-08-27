@@ -26,7 +26,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8.15.9
+          version: 11.4.0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build core packages
         run: |
@@ -45,6 +45,14 @@ jobs:
           pnpm --filter @pavilion-mfe/tabs build
           pnpm --filter @pavilion-mfe/runtime build
           pnpm --filter @pavilion-mfe/vite build
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @pavilion-mfe/llm-gateway prisma:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/pavilion_mfe?schema=public
+
+      - name: Quality check
+        run: pnpm check
 
       - name: Build sub-apps
         run: |

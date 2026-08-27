@@ -114,7 +114,7 @@ export function cssScopePlugin(options: CssScopeOptions): Plugin {
       // 为关键帧名称添加前缀
       if (atRule.name === "keyframes" || atRule.name === "-webkit-keyframes") {
         atRule.params = `${prefix}-${atRule.params}`;
-        scopedKeyframes++;
+        scopedKeyframes += 1;
       }
     },
 

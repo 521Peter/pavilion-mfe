@@ -90,13 +90,13 @@ function createWindow(loadUrl: string): void {
   // 使用系统浏览器打开外部链接，不在应用内打开
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("http://") || url.startsWith("https://")) {
-      shell.openExternal(url);
+      void shell.openExternal(url);
       return { action: "deny" };
     }
     return { action: "allow" };
   });
 
-  mainWindow.loadURL(loadUrl);
+  void mainWindow.loadURL(loadUrl);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -121,9 +121,10 @@ async function boot(): Promise<void> {
   createWindow(targetUrl);
 }
 
-app.whenReady().then(async () => {
+void app.whenReady().then(async () => {
   registerIpcHandlers();
   await boot();
+  return undefined;
 });
 
 app.on("window-all-closed", () => {
@@ -132,5 +133,5 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) boot();
+  if (BrowserWindow.getAllWindows().length === 0) void boot();
 });

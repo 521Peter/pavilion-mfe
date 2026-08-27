@@ -4,12 +4,12 @@
  * @returns {boolean} URL 是否有效
  */
 export function isValidUrl(string: any): boolean {
-    try {
-        new URL(string);
-        return true;
-    } catch {
-        return false;
-    }
+  try {
+    const parsed = new URL(string);
+    return parsed instanceof URL;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -18,11 +18,11 @@ export function isValidUrl(string: any): boolean {
  * @returns {string} 路径
  */
 export function getPathFromUrl(value: string): string {
-    if (isValidUrl(value)) {
-        return new URL(value).pathname;
-    }
+  if (isValidUrl(value)) {
+    return new URL(value).pathname;
+  }
 
-    return new URL(`http://localhost${value}`).pathname;
+  return new URL(`http://localhost${value}`).pathname;
 }
 
 /**
@@ -31,16 +31,16 @@ export function getPathFromUrl(value: string): string {
  * @returns {string} 描述字符串
  */
 export function ttlToHumanReadable(ttl: number): string {
-    const minutes = Math.floor(ttl / 60);
-    if (minutes < 1) {
-        return 'less than a minute';
-    } else if (minutes === 1) {
-        return 'the next one minute';
-    } else if (minutes < 60) {
-        return `the next ${minutes} minutes`;
-    } else if (minutes < 120) {
-        return 'the next one hour';
-    } else {
-        return `the next ${Math.floor(minutes / 60)} hours`;
-    }
+  const minutes = Math.floor(ttl / 60);
+  if (minutes < 1) {
+    return "less than a minute";
+  } else if (minutes === 1) {
+    return "the next one minute";
+  } else if (minutes < 60) {
+    return `the next ${minutes} minutes`;
+  } else if (minutes < 120) {
+    return "the next one hour";
+  } else {
+    return `the next ${Math.floor(minutes / 60)} hours`;
+  }
 }

@@ -1,2 +1,2 @@
 # 只检查暂存区的文件
-npm run pre-commit
+pnpm exec lint-staged

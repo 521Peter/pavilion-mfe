@@ -71,7 +71,7 @@ export default function Sidebar() {
   }
 
   function openPopup(e: React.MouseEvent, menu: MenuItem) {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     setPopup({ menu, top: rect.top });
   }
 

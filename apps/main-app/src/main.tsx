@@ -3,7 +3,12 @@ import { createRoot } from "react-dom/client";
 import { TabsProvider } from "@pavilion-mfe/tabs/react";
 import "./tailwind.css";
 import App from "./App.tsx";
-import { createRouter as createPavilionMfeRouter, configureLog, createPathMatcher } from "@pavilion-mfe/router";
+import {
+  createRouter as createPavilionMfeRouter,
+  configureLog,
+  createPathMatcher,
+  type SubAppLifecycle
+} from "@pavilion-mfe/router";
 import mfeConfig from "../mfe.json";
 import { loadRemote } from "@module-federation/runtime";
 import { fetchMenus } from "./api/menu.ts";
@@ -62,8 +67,9 @@ const pavilionMfeRouter = createPavilionMfeRouter({
     name: app.appCode,
     load: async () => {
       try {
-        const mod = (await loadRemote(`${app.appCode}/main`)) as any;
-        return (mod as any).default ?? mod;
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- MF remote registration guarantees the exposed main module implements the router lifecycle contract
+        const mod = (await loadRemote(`${app.appCode}/main`)) as SubAppLifecycle | { default: SubAppLifecycle };
+        return "default" in mod ? mod.default : mod;
       } catch (err) {
         console.error(`[PavilionMfe] Failed to load ${app.appCode}:`, err);
         return {
@@ -88,4 +94,4 @@ const pavilionMfeRouter = createPavilionMfeRouter({
 pavilionMfeRouter.start();
 
 // 获取菜单数据（仅用于侧边栏渲染，与微前端子应用配置解耦）
-fetchMenus();
+void fetchMenus();

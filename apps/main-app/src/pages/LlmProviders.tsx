@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { llmApi, type LlmProvider, type LlmModel, type CreateProviderInput } from "../api/llm";
 import { Button, Card, Chip, Input, ListBox, Modal, Select, Skeleton, Switch } from "@heroui/react";
 
+const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
+
 // ─── 内联 SVG 图标（lucide 风格） ───
 const ic = {
   fill: "none",
@@ -120,7 +122,7 @@ function ProviderForm({
       </div>
       <div className="mb-4">
         <label className={labelClass}>供应商类型</label>
-        <Select selectedKey={type} onSelectionChange={key => key && setType(key as string)} fullWidth>
+        <Select selectedKey={type} onSelectionChange={key => key && setType(String(key))} fullWidth>
           <Select.Trigger>
             <Select.Value />
             <Select.Indicator />
@@ -194,7 +196,7 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
   }, [provider.id]);
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   async function handleAdd(e: React.FormEvent) {
@@ -263,8 +265,8 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
       {/* 模型列表 */}
       {loading ? (
         <div className="flex flex-col gap-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full rounded-lg" />
+          {SKELETON_IDS.map(skeletonId => (
+            <Skeleton key={skeletonId} className="h-12 w-full rounded-lg" />
           ))}
         </div>
       ) : models.length === 0 ? (
@@ -333,7 +335,7 @@ export default function LlmProviders() {
   }, []);
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   function openCreate() {
@@ -401,11 +403,11 @@ export default function LlmProviders() {
         </div>
       ) : loading ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-[18px]">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} variant="default" className="p-5">
+          {SKELETON_IDS.map(cardId => (
+            <Card key={cardId} variant="default" className="p-5">
               <div className="flex flex-col gap-3">
-                {Array.from({ length: 3 }).map((_, j) => (
-                  <Skeleton key={j} className="h-4 w-full rounded" />
+                {SKELETON_IDS.map(lineId => (
+                  <Skeleton key={lineId} className="h-4 w-full rounded" />
                 ))}
               </div>
             </Card>

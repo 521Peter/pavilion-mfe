@@ -182,7 +182,7 @@ export function createRouter(config?: RouterConfig) {
     }
     const lifecycle = oldest.lifecycle!;
     if (lifecycle.unmount && oldest.container) {
-      lifecycle.unmount({ appCode: oldest.name, basename: "" }, oldest.container);
+      void lifecycle.unmount({ appCode: oldest.name, basename: "" }, oldest.container);
     }
     if (oldest.container) {
       oldest.container.style.display = "none";
@@ -262,7 +262,7 @@ export function createRouter(config?: RouterConfig) {
       }
       const lifecycle = app.lifecycle!;
       if (lifecycle.unmount && app.container) {
-        lifecycle.unmount({ appCode: app.name, basename: "" }, app.container);
+        void lifecycle.unmount({ appCode: app.name, basename: "" }, app.container);
       }
       if (app.container) {
         app.container.style.display = "none";
@@ -282,7 +282,6 @@ export function createRouter(config?: RouterConfig) {
     // 因为 navigateTo() 会同时触发 pushState 和模拟的 popstate，产生两次 reroute()；
     // 而页面刷新只会触发一次。
     //
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const activeApps = matchActiveApps();
       const appsToUnmount = apps.filter(app => !activeApps.includes(app) && app.status === "MOUNTED");
@@ -334,9 +333,7 @@ export function createRouter(config?: RouterConfig) {
       const appCode = activeApps.length > 0 ? activeApps[0].name : "";
       dispatch("pavilion-mfe:before-routing", { url, trigger, path, appCode });
       setTimeout(() => {
-        reroute().then(() => {
-          dispatch("pavilion-mfe:after-routing", { url, trigger, path, appCode });
-        });
+        void reroute().then(() => dispatch("pavilion-mfe:after-routing", { url, trigger, path, appCode }));
       }, 0);
     }
 
@@ -388,9 +385,9 @@ export function createRouter(config?: RouterConfig) {
     const initAppCode = initApps.length > 0 ? initApps[0].name : "";
     dispatch("pavilion-mfe:before-routing", { url, trigger: "init", path: initPath, appCode: initAppCode });
     setTimeout(() => {
-      reroute().then(() => {
-        dispatch("pavilion-mfe:after-routing", { url, trigger: "init", path: initPath, appCode: initAppCode });
-      });
+      void reroute().then(() =>
+        dispatch("pavilion-mfe:after-routing", { url, trigger: "init", path: initPath, appCode: initAppCode })
+      );
     }, 0);
   }
 

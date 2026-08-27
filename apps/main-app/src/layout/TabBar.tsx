@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useTabs, type TabsAPI } from "@pavilion-mfe/tabs/react";
@@ -30,14 +30,14 @@ export default function TabBar() {
   });
 
   /** 将滚动位置限制在可视范围内 */
-  function clampScroll(value: number): number {
+  const clampScroll = useCallback((value: number): number => {
     const el = tabListRef.current;
     if (!el) return value;
     const containerWidth = el.parentElement!.clientWidth;
     const scrollWidth = el.scrollWidth;
     const maxScroll = Math.min(0, containerWidth - scrollWidth);
     return Math.max(maxScroll, Math.min(0, value));
-  }
+  }, []);
 
   // 水平滚动：原生非 passive 监听，阻止页面随鼠标滚轮滚动
   useEffect(() => {
@@ -50,13 +50,14 @@ export default function TabBar() {
     };
     el.addEventListener("wheel", handler, { passive: false });
     return () => el.removeEventListener("wheel", handler);
-  }, []);
+  }, [clampScroll]);
 
   // 切换 Tab 时自动滚动到可见区域
   useEffect(() => {
+    if (tabs.length === 0) return;
     const el = tabListRef.current;
     if (!el) return;
-    const activeEl = el.querySelector('[data-active="true"]') as HTMLElement | null;
+    const activeEl = el.querySelector('[data-active="true"]');
     if (!activeEl) return;
     const listRect = el.getBoundingClientRect();
     const tabRect = activeEl.getBoundingClientRect();
@@ -65,7 +66,8 @@ export default function TabBar() {
     } else if (tabRect.right > listRect.right) {
       setScrollLeft(prev => clampScroll(prev - (tabRect.right - listRect.right)));
     }
-  }, [activeTabId, tabs]);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- full tab changes must remeasure title/order widths even when count and active id stay unchanged
+  }, [activeTabId, clampScroll, tabs]);
 
   function onContextMenu(e: React.MouseEvent, tab: Tab) {
     const menuWidth = 130;

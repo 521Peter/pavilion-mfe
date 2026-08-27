@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Bot, CheckCircle2, CircleUserRound, RefreshCw, Send, ShieldCheck, Sparkles } from "lucide-react";
 import { supportApi, type SupportSession } from "./api/support";
@@ -25,21 +25,22 @@ function CustomerService() {
   const [error, setError] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const loadSession = async () => {
+  const loadSession = useCallback(async () => {
     setError("");
     try {
       setSession(await supportApi.getSession());
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "客服服务暂时不可用");
     }
-  };
-
-  useEffect(() => {
-    void loadSession();
   }, []);
 
   useEffect(() => {
+    void loadSession();
+  }, [loadSession]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- message/loading transitions are the scroll triggers
   }, [messages, loading]);
 
   const send = async (content: string) => {

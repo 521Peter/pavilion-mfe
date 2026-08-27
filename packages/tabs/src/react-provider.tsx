@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useCallback, type ReactNode } from "react";
 import { TabsStateManager, type TabInfo } from "./state-manager.js";
 
 // ─── 公共 API ───
@@ -11,10 +11,10 @@ export interface TabsAPI {
   activeTabId: string | null;
   activeTab: TabInfo | null;
   /** 打开 Tab（已存在则切换）；id / fullPath 默认取 path */
-  openTab(tab: OpenTabInput): void;
-  closeTab(tabId: string): void;
-  closeOthers(tabId: string): void;
-  closeAll(): void;
+  openTab: (tab: OpenTabInput) => void;
+  closeTab: (tabId: string) => void;
+  closeOthers: (tabId: string) => void;
+  closeAll: () => void;
 }
 
 // ─── sessionStorage 持久化 ───
@@ -46,25 +46,19 @@ const TabsContext = createContext<TabsAPI | null>(null);
 // ─── 提供器 ───
 
 export function TabsProvider({ children }: { children: ReactNode }) {
-  const { current: manager } = React.useRef(new TabsStateManager());
-
-  const [tabs, setTabs] = useState<TabInfo[]>([]);
-  const [activeTabId, setActiveTabId] = useState<string | null>(null);
-
-  const activeTab = useMemo(() => tabs.find((t: TabInfo) => t.id === activeTabId) ?? null, [tabs, activeTabId]);
-
-  // 从 sessionStorage 恢复
-  useEffect(() => {
+  const [manager] = useState(() => {
+    const nextManager = new TabsStateManager();
     const saved = loadState();
     if (saved?.tabs.length) {
-      for (const tab of saved.tabs) {
-        manager.addTab(tab);
-      }
-      const state = manager.getState();
-      setTabs(state.tabs);
-      setActiveTabId(state.activeTabId);
+      for (const tab of saved.tabs) nextManager.addTab(tab);
     }
-  }, [manager]);
+    return nextManager;
+  });
+
+  const [tabs, setTabs] = useState<TabInfo[]>(() => manager.getState().tabs);
+  const [activeTabId, setActiveTabId] = useState<string | null>(() => manager.getState().activeTabId);
+
+  const activeTab = useMemo(() => tabs.find((t: TabInfo) => t.id === activeTabId) ?? null, [tabs, activeTabId]);
 
   const sync = useCallback(() => {
     const state = manager.getState();
@@ -77,7 +71,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
     (tab: OpenTabInput) => {
       const id = tab.id ?? tab.path;
       const fullPath = tab.fullPath ?? tab.path;
-      manager.addTab({ fullPath, ...tab, id } as TabInfo);
+      manager.addTab({ fullPath, ...tab, id });
       sync();
     },
     [manager, sync]

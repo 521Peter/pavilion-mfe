@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { mcpApi, type McpServer, type CreateMcpServerInput, type McpTestResult } from "../api/mcp";
 import { Button, Card, Chip, Input, Modal, Skeleton, Switch, TextArea } from "@heroui/react";
 
+const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
+
 // ─── 内联 SVG 图标 ───
 const ic = {
   fill: "none",
@@ -306,7 +308,7 @@ function ToolsPanel({ server, onClose }: { server: McpServer; onClose: () => voi
       const result = await mcpApi.syncTools(server.id);
       if (result.success && result.tools) {
         setTools(result.tools);
-        setTestResult({ success: true, tools: result.tools as McpTestResult["tools"] });
+        setTestResult({ success: true, tools: result.tools });
       } else {
         setTestResult({ success: false, error: result.error });
       }
@@ -337,8 +339,8 @@ function ToolsPanel({ server, onClose }: { server: McpServer; onClose: () => voi
 
       {Array.isArray(tools) && tools.length > 0 ? (
         <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto">
-          {tools.map((tool: any, i: number) => (
-            <div key={i} className="p-3 rounded-lg border border-border bg-background">
+          {tools.map((tool: any) => (
+            <div key={tool.name} className="p-3 rounded-lg border border-border bg-background">
               <div className="text-sm font-medium text-text-primary mb-1">{tool.name}</div>
               <div className="text-xs text-text-muted">{tool.description}</div>
             </div>
@@ -381,7 +383,7 @@ export default function McpServers() {
   }, []);
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   function openCreate() {
@@ -446,11 +448,11 @@ export default function McpServers() {
         </div>
       ) : loading ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-[18px]">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} variant="default" className="p-5">
+          {SKELETON_IDS.map(cardId => (
+            <Card key={cardId} variant="default" className="p-5">
               <div className="flex flex-col gap-3">
-                {Array.from({ length: 3 }).map((_, j) => (
-                  <Skeleton key={j} className="h-4 w-full rounded" />
+                {SKELETON_IDS.map(lineId => (
+                  <Skeleton key={lineId} className="h-4 w-full rounded" />
                 ))}
               </div>
             </Card>

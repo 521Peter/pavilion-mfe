@@ -66,9 +66,10 @@ function preload(apps: MfeApp[]): void {
 
   // ① 立即加载当前子应用
   if (currentApp) {
-    loadRemote(`${currentApp.appCode}/main`)
+    void loadRemote(`${currentApp.appCode}/main`)
       .then(() => {
         preloadLog("preload-current", { appCode: currentApp.appCode, status: "done" });
+        return undefined;
       })
       .catch(err => {
         preloadLog("preload-current", { appCode: currentApp.appCode, status: "failed" });
@@ -86,6 +87,7 @@ function preload(apps: MfeApp[]): void {
     )
       .then(() => {
         preloadLog("preload-others", { apps: otherApps.map(a => a.appCode).join(", "), status: "done" });
+        return undefined;
       })
       .catch(err => {
         preloadLog("preload-others", { status: "failed" });
@@ -104,11 +106,11 @@ export default function () {
      */
     beforeInit(args: any) {
       const apps = mfeConfig.apps as MfeApp[];
-      const globalCdn = (import.meta.env.VITE_PAVILION_MFE_CDN || "") as string;
+      const globalCdn = import.meta.env.VITE_PAVILION_MFE_CDN || "";
       args.options.remotes.push(
         ...apps.map(app => {
           const appCdn = app.cdn || globalCdn;
-          const base = appCdn ? `${appCdn}` : "";
+          const base = appCdn ? appCdn : "";
           return {
             name: app.appCode,
             entry: `${base}/mfe/${app.appCode}/mf-manifest-main.json`,
@@ -121,7 +123,7 @@ export default function () {
         apps: apps.map(a => a.appCode).join(", ")
       });
       // MF 运行时初始化后启动预加载
-      Promise.resolve().then(() => preload(apps));
+      void Promise.resolve().then(() => preload(apps));
       return args;
     }
   };

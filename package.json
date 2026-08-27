@@ -11,7 +11,11 @@
     "package:desktop": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package",
     "package:desktop:dir": "pnpm build:desktop && pnpm --filter @pavilion-mfe/desktop package:dir",
     "typecheck": "pnpm -r typecheck",
-    "lint:prettier": "prettier --write \"**/*.{js,ts,mjs,cjs,json,tsx,css,less,scss,vue,html,md}\"",
+    "lint": "oxlint -c .oxlintrc.json --disable-nested-config --deny-warnings --report-unused-disable-directives .",
+    "lint:fix": "oxlint -c .oxlintrc.json --disable-nested-config --fix --deny-warnings --report-unused-disable-directives .",
+    "format": "oxfmt -c .oxfmtrc.json --disable-nested-config --write .",
+    "format:check": "oxfmt -c .oxfmtrc.json --disable-nested-config --check .",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck",
     "lint:spellcheck": "cspell lint \"(packages|apps)/**/*.{js,ts,mjs,cjs,json,css,less,scss,vue,html,md}\"",
     "prepare": "husky",
     "pre-commit": "lint-staged"
@@ -25,7 +29,9 @@
     "cspell": "^10.0.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
-    "prettier": "^3.9.6",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.80.0",
+    "oxlint-tsgolint": "7.0.2001",
     "typescript": "^5.5.0"
   },
   "dependencies": {

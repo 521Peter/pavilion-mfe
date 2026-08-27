@@ -74,7 +74,7 @@ export function createStaticServer(root: string, apiBaseUrl = "http://127.0.0.1:
         "Cache-Control": "no-cache"
       });
       res.end(data);
-    } catch (err) {
+    } catch {
       res.writeHead(404);
       res.end("Not Found");
     }

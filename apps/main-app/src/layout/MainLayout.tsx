@@ -9,6 +9,15 @@ import TabBar from "./TabBar";
 import { Skeleton } from "@heroui/react";
 import { cn } from "@/lib/utils";
 
+const LOADING_LINE_IDS = [
+  "loading-line-1",
+  "loading-line-2",
+  "loading-line-3",
+  "loading-line-4",
+  "loading-line-5",
+  "loading-line-6"
+];
+
 export default function MainLayout() {
   const location = useLocation();
   const { tabs, openTab } = useTabs();
@@ -70,7 +79,7 @@ export default function MainLayout() {
   useEffect(() => {
     syncRouteToTabs(location.pathname + location.search);
     // 依赖仅在路径变化时触发；syncRouteToTabs 通过 ref 读取最新状态
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps -- route changes are the trigger; latest tabs and menus are read through refs
   }, [location.pathname, location.search]);
 
   // 菜单加载完成后，刷新已有 Tab 的标题
@@ -82,7 +91,7 @@ export default function MainLayout() {
         openTab({ ...tab, title });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps -- menu refresh is the trigger; latest tabs are read through a ref
   }, [menus]);
 
   // 监听子应用内部导航（pushState / popstate），同步 Tab 并隐藏 loading
@@ -97,7 +106,7 @@ export default function MainLayout() {
       window.removeEventListener("popstate", onUrlChange);
       window.removeEventListener("pavilion-mfe:after-routing", onUrlChange);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps -- listeners stay stable while their handler reads current state through refs
   }, []);
 
   return (
@@ -115,8 +124,8 @@ export default function MainLayout() {
             {isSubAppLoading && (
               <div className="absolute inset-0 z-10 py-7 px-8 bg-card-bg animate-fade-in">
                 <div className="flex flex-col gap-4">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <Skeleton key={i} className="h-4 w-full rounded" />
+                  {LOADING_LINE_IDS.map(lineId => (
+                    <Skeleton key={lineId} className="h-4 w-full rounded" />
                   ))}
                 </div>
               </div>

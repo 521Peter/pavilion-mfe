@@ -7,7 +7,7 @@ import {
   type ThreadMessage
 } from "@assistant-ui/react";
 import { PanelLeftOpen, SquarePen } from "lucide-react";
-import { type FC, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useState } from "react";
 import { createApiThreadListAdapter } from "@/lib/thread-list-adapter";
 import { getCurrentModel, useModelStore } from "@/lib/model-store";
 import { ThreadListSidebar } from "@/components/assistant-ui/thread-list";
@@ -41,6 +41,10 @@ const platformModel: ChatModelAdapter = {
   }
 };
 
+function usePlatformRuntime() {
+  return useLocalRuntime(platformModel);
+}
+
 function getThreadIdFromPath(pathname = window.location.pathname): string | undefined {
   const match = pathname.match(/\/chat\/([^/]+)\/?$/);
   if (!match?.[1]) return undefined;
@@ -58,22 +62,20 @@ function getThreadPath(threadId: string | undefined): string {
   return threadId ? `${prefix}/chat/${encodeURIComponent(threadId)}` : `${prefix}/chat`;
 }
 
-const RuntimeProvider: FC<{ children: ReactNode; onThreadNavigate: () => void }> = ({
-  children,
-  onThreadNavigate
-}) => {
-  const adapterRef = useRef<ReturnType<typeof createApiThreadListAdapter> | null>(null);
+const RuntimeProvider: FC<{ children: ReactNode; onThreadNavigate: () => void }> = ({ children, onThreadNavigate }) => {
+  const [adapter] = useState(createApiThreadListAdapter);
   const [threadId, setThreadId] = useState(getThreadIdFromPath);
-  if (!adapterRef.current) {
-    adapterRef.current = createApiThreadListAdapter();
-  }
 
   const handleThreadIdChange = useCallback(
     (nextThreadId: string | undefined) => {
       setThreadId(nextThreadId);
       const nextPath = getThreadPath(nextThreadId);
       if (window.location.pathname !== nextPath) {
-        window.history.pushState(window.history.state, "", `${nextPath}${window.location.search}${window.location.hash}`);
+        window.history.pushState(
+          window.history.state,
+          "",
+          `${nextPath}${window.location.search}${window.location.hash}`
+        );
       }
       onThreadNavigate();
     },
@@ -91,10 +93,9 @@ const RuntimeProvider: FC<{ children: ReactNode; onThreadNavigate: () => void }>
   }, []);
 
   const runtime = useRemoteThreadListRuntime({
-    runtimeHook: function RuntimeHook() {
-      return useLocalRuntime(platformModel);
-    },
-    adapter: adapterRef.current,
+    // oxlint-disable-next-line react/hooks -- assistant-ui requires a custom Hook reference as runtimeHook
+    runtimeHook: usePlatformRuntime,
+    adapter,
     threadId,
     onThreadIdChange: handleThreadIdChange
   });
@@ -193,10 +194,7 @@ function App() {
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full"
               }`}
             >
-              <ThreadListSidebar
-                onClose={() => setIsSidebarOpen(false)}
-                onNavigate={closeNarrowSidebar}
-              />
+              <ThreadListSidebar onClose={() => setIsSidebarOpen(false)} onNavigate={closeNarrowSidebar} />
             </aside>
           </>
         ) : isSidebarOpen ? (

@@ -1,4 +1,4 @@
-import type { PluginOption, ProxyOptions } from "vite";
+import type { ProxyOptions } from "vite";
 
 export interface FederationUserOptions {
   name?: string;

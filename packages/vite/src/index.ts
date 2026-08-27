@@ -107,6 +107,7 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
   // ─── 1b. 顶层 await（仅构建时） ───
   // 使用顶层 await 语法的 MF 共享模块需要此配置。
   // 仅在构建模式注入，避免干扰开发环境 ESM。
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Vite's PluginOption union cannot infer the nested top-level-await plugin returned by this build-only config hook
   plugins.push({
     name: "pavilion-mfe:top-await",
     apply: "build",
@@ -140,17 +141,15 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
   }
 
   if (options.exposes) mfOptions.exposes = options.exposes;
-  if (options.shared) mfOptions.shared = options.shared as ModuleFederationOptions["shared"];
+  if (options.shared) mfOptions.shared = options.shared;
   if (options.shareStrategy) mfOptions.shareStrategy = options.shareStrategy;
   if (options.runtimePlugins) mfOptions.runtimePlugins = options.runtimePlugins;
-  if (options.dts !== undefined) (mfOptions as any).dts = options.dts;
+  if (options.dts !== undefined) Reflect.set(mfOptions, "dts", options.dts);
 
   // 清单放在根层级（不设置 filePath），确保相对路径正确解析
   if (options.manifest !== false) {
     mfOptions.manifest =
-      typeof options.manifest === "object"
-        ? (options.manifest as ModuleFederationOptions["manifest"])
-        : { fileName: "mf-manifest-main.json" };
+      typeof options.manifest === "object" ? options.manifest : { fileName: "mf-manifest-main.json" };
   }
 
   plugins.push(mfFederation(mfOptions));
@@ -164,16 +163,20 @@ export function PavilionMfe(options: PavilionMfePluginOptions): PluginOption[] {
       enforce: "post",
       config: config => {
         const cssConfig = (config.css = config.css ?? {});
-        const postcss = ((cssConfig as Record<string, unknown>).postcss =
-          (cssConfig as Record<string, unknown>).postcss ?? {});
+        if (typeof cssConfig.postcss === "string") {
+          throw new TypeError("PavilionMfe CSS scoping requires inline PostCSS configuration");
+        }
+        const postcss = cssConfig.postcss ?? {};
+        cssConfig.postcss = postcss;
 
         const scopePlugin = cssScopePlugin({
           prefix: scopePrefix,
           exclude: options.cssExclude
         });
 
-        const existingPlugins = (postcss as { plugins?: unknown[] }).plugins ?? [];
-        (postcss as { plugins: unknown[] }).plugins = [...existingPlugins, scopePlugin];
+        const configuredPlugins = Reflect.get(postcss, "plugins");
+        const existingPlugins = Array.isArray(configuredPlugins) ? configuredPlugins : [];
+        Reflect.set(postcss, "plugins", [...existingPlugins, scopePlugin]);
       }
     } as PluginOption);
   }

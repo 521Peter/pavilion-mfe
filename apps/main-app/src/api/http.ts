@@ -24,8 +24,14 @@ export function clearToken(): void {
 
 function isTokenExpired(token: string): boolean {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: number };
-    return typeof payload.exp !== "number" || payload.exp * 1000 <= Date.now();
+    const payload: unknown = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return (
+      typeof payload !== "object" ||
+      payload === null ||
+      !("exp" in payload) ||
+      typeof payload.exp !== "number" ||
+      payload.exp * 1000 <= Date.now()
+    );
   } catch {
     return true;
   }
@@ -39,12 +45,10 @@ export interface ApiResponse<T = unknown> {
 
 export async function http<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> | undefined)
-  };
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const res = await fetch(`/api${path}`, {

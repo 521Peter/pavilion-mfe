@@ -29,6 +29,7 @@ const DEFAULT_CONFIG: PavilionMfeLogConfig = {
   enabled: true,
   modules: {}
 };
+const LOG_MODULES: LogModule[] = ["router", "sandbox", "preload", "bridge"];
 
 // ─── 用于 console.log %c 格式化的 CSS 样式 ───
 const STYLE_PREFIX = "color:#42b883;font-weight:bold";
@@ -40,12 +41,22 @@ const STYLE_ERROR = "color:#ef4444;font-weight:bold";
 // ─── 配置读取 ───
 
 function getConfig(): PavilionMfeLogConfig {
-  const g = globalThis as Record<string, unknown>;
-  const globalConfig = g.__PAVILION_MFE_LOG__ as Partial<PavilionMfeLogConfig> | undefined;
-  if (!globalConfig) return DEFAULT_CONFIG;
+  const globalConfig = Reflect.get(globalThis, "__PAVILION_MFE_LOG__");
+  if (typeof globalConfig !== "object" || globalConfig === null) return DEFAULT_CONFIG;
+  const rawModules = "modules" in globalConfig ? globalConfig.modules : undefined;
+  const modules: Partial<Record<LogModule, boolean>> = {};
+  if (typeof rawModules === "object" && rawModules !== null) {
+    for (const module of LOG_MODULES) {
+      const enabled = Reflect.get(rawModules, module);
+      if (typeof enabled === "boolean") modules[module] = enabled;
+    }
+  }
   return {
-    enabled: globalConfig.enabled ?? DEFAULT_CONFIG.enabled,
-    modules: { ...DEFAULT_CONFIG.modules, ...globalConfig.modules }
+    enabled:
+      "enabled" in globalConfig && typeof globalConfig.enabled === "boolean"
+        ? globalConfig.enabled
+        : DEFAULT_CONFIG.enabled,
+    modules
   };
 }
 
@@ -57,11 +68,10 @@ export function isLogEnabled(module: LogModule): boolean {
 
 export function configureLog(config: Partial<PavilionMfeLogConfig>): void {
   const current = getConfig();
-  const g = globalThis as Record<string, unknown>;
-  g.__PAVILION_MFE_LOG__ = {
+  Reflect.set(globalThis, "__PAVILION_MFE_LOG__", {
     enabled: config.enabled ?? current.enabled,
     modules: { ...current.modules, ...config.modules }
-  };
+  });
 }
 
 // ─── 格式化辅助函数 ───
@@ -88,8 +98,9 @@ export function pavilionMfeLog(module: LogModule, event: string, detail: Record<
 
   // sub-app-switch 使用特殊格式（使用 → 箭头）
   if (event === "sub-app-switch") {
-    const from = detail.from as string[] | undefined;
-    const to = detail.to as string[] | undefined;
+    const from =
+      Array.isArray(detail.from) && detail.from.every(item => typeof item === "string") ? detail.from : undefined;
+    const to = Array.isArray(detail.to) && detail.to.every(item => typeof item === "string") ? detail.to : undefined;
     console.log(
       "%c[PavilionMfe]%c %s%c %s%c %s → %s",
       STYLE_PREFIX,

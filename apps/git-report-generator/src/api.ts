@@ -1,19 +1,43 @@
 import type { AvailableModel } from "./types";
 
-interface ApiResponse<T> {
-  code: number;
-  data: T;
-  msg: string;
-}
 type StreamEvent = { type: "delta"; delta: string } | { type: "done" } | { type: "error"; message: string };
 
+function isAvailableModel(value: unknown): value is AvailableModel {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "id" in value &&
+    typeof value.id === "string" &&
+    "providerId" in value &&
+    typeof value.providerId === "string" &&
+    "providerName" in value &&
+    typeof value.providerName === "string" &&
+    "providerType" in value &&
+    typeof value.providerType === "string" &&
+    "modelName" in value &&
+    typeof value.modelName === "string" &&
+    "displayName" in value &&
+    typeof value.displayName === "string"
+  );
+}
+
+function readStreamEvent(value: unknown): StreamEvent | null {
+  if (typeof value !== "object" || value === null || !("type" in value) || typeof value.type !== "string") return null;
+  if (value.type === "done") return { type: "done" };
+  if (value.type === "delta" && "delta" in value && typeof value.delta === "string") {
+    return { type: "delta", delta: value.delta };
+  }
+  if (value.type === "error" && "message" in value && typeof value.message === "string") {
+    return { type: "error", message: value.message };
+  }
+  return null;
+}
+
 async function authorizedFetch(path: string, options: RequestInit = {}): Promise<Response> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> | undefined)
-  };
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   const token = sessionStorage.getItem("pavilion_token");
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(`/api${path}`, { ...options, headers });
   if (response.status === 401) {
     sessionStorage.removeItem("pavilion_token");
@@ -25,7 +49,20 @@ async function authorizedFetch(path: string, options: RequestInit = {}): Promise
 
 export async function listModels(): Promise<AvailableModel[]> {
   const response = await authorizedFetch("/llm/models");
-  const json = (await response.json()) as ApiResponse<AvailableModel[]>;
+  const json: unknown = await response.json();
+  if (
+    typeof json !== "object" ||
+    json === null ||
+    !("code" in json) ||
+    typeof json.code !== "number" ||
+    !("msg" in json) ||
+    typeof json.msg !== "string" ||
+    !("data" in json) ||
+    !Array.isArray(json.data) ||
+    !json.data.every(isAvailableModel)
+  ) {
+    throw new Error("获取模型列表返回了无效数据");
+  }
   if (!response.ok || json.code !== 0) throw new Error(json.msg || "获取模型列表失败");
   return json.data;
 }
@@ -60,7 +97,8 @@ export async function* generateAiReport(
         .find(line => line.startsWith("data: "))
         ?.slice(6);
       if (!raw) continue;
-      const event = JSON.parse(raw) as StreamEvent;
+      const event = readStreamEvent(JSON.parse(raw));
+      if (!event) throw new Error("AI 报告流返回了无效事件");
       if (event.type === "delta") yield event.delta;
       if (event.type === "error") throw new Error(event.message);
     }

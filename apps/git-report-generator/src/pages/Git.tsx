@@ -19,7 +19,7 @@ function initialDates(): Pick<GitReportQuery, "since" | "until"> {
 
 function Git() {
   const desktopAvailable = Boolean(window.desktop?.git);
-  const dates = useMemo(initialDates, []);
+  const dates = useMemo(() => initialDates(), []);
   const abortRef = useRef<AbortController | null>(null);
   const [repository, setRepository] = useState<GitRepositoryInfo | null>(null);
   const [models, setModels] = useState<AvailableModel[]>([]);
@@ -43,9 +43,10 @@ function Git() {
     let active = true;
     listModels()
       .then(items => {
-        if (!active) return;
+        if (!active) return undefined;
         setModels(items);
         setModelId(items[0]?.id ?? "");
+        return undefined;
       })
       .catch(reason => active && setError(reason instanceof Error ? reason.message : "获取模型列表失败"));
     return () => {

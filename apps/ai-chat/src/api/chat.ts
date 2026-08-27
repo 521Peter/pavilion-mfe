@@ -30,6 +30,18 @@ export type ChatRequest = {
 
 type StreamEvent = { type: "delta"; delta: string } | { type: "done" } | { type: "error"; message: string };
 
+function readStreamEvent(value: unknown): StreamEvent | null {
+  if (typeof value !== "object" || value === null || !("type" in value) || typeof value.type !== "string") return null;
+  if (value.type === "done") return { type: "done" };
+  if (value.type === "delta" && "delta" in value && typeof value.delta === "string") {
+    return { type: "delta", delta: value.delta };
+  }
+  if (value.type === "error" && "message" in value && typeof value.message === "string") {
+    return { type: "error", message: value.message };
+  }
+  return null;
+}
+
 export async function* streamChat(body: ChatRequest, signal: AbortSignal): AsyncGenerator<string> {
   const response = await authorizedFetch("/llm/chat/stream", {
     method: "POST",
@@ -54,7 +66,8 @@ export async function* streamChat(body: ChatRequest, signal: AbortSignal): Async
         .find(line => line.startsWith("data: "))
         ?.slice(6);
       if (!data) continue;
-      const event = JSON.parse(data) as StreamEvent;
+      const event = readStreamEvent(JSON.parse(data));
+      if (!event) throw new Error("聊天流返回了无效事件");
       if (event.type === "delta") yield event.delta;
       if (event.type === "error") throw new Error(event.message);
     }

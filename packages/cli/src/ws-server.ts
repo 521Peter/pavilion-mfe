@@ -20,6 +20,12 @@ interface PortEntry {
 const portList = new Map<number, PortEntry>();
 const browserClients = new Set<WebSocket>();
 
+function rawMessageText(raw: import("ws").RawData): string {
+  if (Array.isArray(raw)) return Buffer.concat(raw).toString();
+  if (raw instanceof ArrayBuffer) return Buffer.from(raw).toString();
+  return raw.toString();
+}
+
 function broadcastPortList(): void {
   const ports = Array.from(portList.values());
   const message = JSON.stringify({ action: "portList", ports });
@@ -48,7 +54,7 @@ export function startWsServer(): void {
 
     ws.on("message", raw => {
       try {
-        const msg = JSON.parse(raw.toString());
+        const msg = JSON.parse(rawMessageText(raw));
 
         if (msg.action === "add" && msg.port) {
           portList.set(msg.port, { port: msg.port, name: msg.name });

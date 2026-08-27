@@ -1,0 +1,173 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "oxc", "import", "node", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "env": {
+    "builtin": true
+  },
+  "rules": {
+    "no-plusplus": "error",
+    "no-await-in-loop": "error",
+    "no-console": "off",
+    "no-empty": "off",
+    "no-shadow": "error",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "__PAVILION_AI_CHAT_ROOT__",
+          "__PAVILION_MFE_ENV__",
+          "__PAVILION_MFE_LOG__",
+          "__dirname",
+          "_intervals",
+          "_listeners",
+          "_max",
+          "_timeouts"
+        ]
+      }
+    ],
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "reflect-metadata", "dotenv/config", "./tracing", "../providers"]
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "typescript/ban-ts-comment": "off",
+    "typescript/consistent-return": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-extraneous-class": ["error", { "allowStaticOnly": true, "allowWithDecorator": true }],
+    "typescript/no-non-null-assertion": "off",
+    "typescript/no-unsafe-type-assertion": "error"
+  },
+  "overrides": [
+    {
+      "files": ["apps/**/*.{js,jsx,ts,tsx}"],
+      "env": { "browser": true }
+    },
+    {
+      "files": ["apps/**/*.tsx", "packages/tabs/src/**/*.tsx"],
+      "rules": {
+        "react/rules-of-hooks": "error",
+        "react/only-export-components": ["error", { "allowConstantExport": true }]
+      }
+    },
+    {
+      "files": ["**/*.{ts,tsx,mts,cts}"],
+      "rules": {
+        "no-undef": "off",
+        "no-unused-vars": ["error", { "args": "none" }]
+      }
+    },
+    {
+      "files": [
+        "services/**/*.{js,ts,mjs,cjs}",
+        "packages/desktop/**/*.{js,ts,mjs,cjs}",
+        "**/*.config.{js,ts,mjs,cjs}",
+        "**/vite.config.ts"
+      ],
+      "env": { "node": true }
+    },
+    {
+      "files": ["services/**/*.spec.ts", "services/**/test/**/*.ts"],
+      "env": { "jest": true, "node": true }
+    },
+    {
+      "files": ["services/llm-gateway/libs/api-gateway/restful/helpers/provider.helper.spec.ts"],
+      "rules": {
+        "typescript/no-extraneous-class": ["error", { "allowEmpty": true }]
+      }
+    },
+    {
+      "files": [
+        "apps/ai-chat/src/lib/thread-list-adapter.tsx",
+        "apps/ai-chat/src/main.tsx",
+        "apps/ai-customer/src/main.tsx",
+        "apps/main-app/src/router/index.tsx",
+        "packages/tabs/src/react-provider.tsx"
+      ],
+      "rules": {
+        "react/only-export-components": "off"
+      }
+    },
+    {
+      "files": [
+        "apps/ai-customer/src/App.tsx",
+        "apps/main-app/src/layout/Sidebar.tsx",
+        "apps/main-app/src/pages/LlmProviders.tsx",
+        "apps/main-app/src/pages/McpServers.tsx",
+        "apps/main-app/src/pages/Skills.tsx"
+      ],
+      "rules": {
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
+      "files": [
+        "apps/ai-chat/src/api/chat.ts",
+        "apps/git-report-generator/src/api.ts",
+        "packages/desktop/electron/git-report.ts",
+        "packages/desktop/scripts/build.mjs",
+        "packages/router/src/create-router.ts",
+        "services/llm-gateway/libs/api-gateway/mcp/services/mcp-server.service.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/request.service.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/ws-request.service.ts",
+        "services/llm-gateway/libs/api-gateway/throttlers/services/throttler.service.router-limit.spec.ts",
+        "services/llm-gateway/libs/api-gateway/throttlers/services/throttler.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/throttlers/services/throttler.service.ts",
+        "services/llm-gateway/src/modules/inference/inference.service.ts",
+        "services/llm-gateway/src/modules/skill/services/skill-loader.service.ts",
+        "services/llm-gateway/src/modules/skill/services/skill.service.ts"
+      ],
+      "rules": {
+        "no-await-in-loop": "off"
+      }
+    },
+    {
+      "files": [
+        "services/llm-gateway/libs/api-gateway/mcp/services/mcp-tool-executor.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/mcp/services/mcp-tool-registry.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/proxy/proxy-server.spec.ts",
+        "services/llm-gateway/libs/api-gateway/proxy/proxy-socket.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/helpers/provider.helper.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/helpers/raw-body-buffer.helper.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/open-api.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/proxy.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/request.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/restful/services/ws-request.service.spec.ts",
+        "services/llm-gateway/libs/api-gateway/throttlers/services/throttler.service.router-limit.spec.ts",
+        "services/llm-gateway/libs/api-gateway/throttlers/services/throttler.service.spec.ts",
+        "services/llm-gateway/src/middleware/authentication.middleware.spec.ts",
+        "services/llm-gateway/src/modules/llm/services/skill-selector.service.spec.ts"
+      ],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    },
+    {
+      "files": ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/dist/**",
+    "dist-ghpages/**",
+    "**/public/**",
+    "**/node_modules/**",
+    "**/coverage/**",
+    "**/.turbo/**",
+    "**/generated/**",
+    "**/.mf/**",
+    "**/@mf-types/**"
+  ],
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  }
+}

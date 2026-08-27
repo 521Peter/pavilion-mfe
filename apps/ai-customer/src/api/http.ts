@@ -1,16 +1,29 @@
 import { clearToken, getToken, isEmbedded, notifyAuthRequired } from "./token";
 
-type ApiResponse<T> = { code: number; data: T; msg: string };
+function readApiEnvelope(value: unknown): { code: number; data: unknown; msg: string } | null {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("code" in value) ||
+    typeof value.code !== "number" ||
+    !("data" in value) ||
+    !("msg" in value) ||
+    typeof value.msg !== "string"
+  ) {
+    return null;
+  }
+  return { code: value.code, data: value.data, msg: value.msg };
+}
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
+  const headers = new Headers();
+  headers.set("Content-Type", "application/json");
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  new Headers(options.headers).forEach((value, key) => headers.set(key, value));
   const response = await fetch(`/api/customer-service${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers ?? {})
-    }
+    headers
   });
 
   if (response.status === 401 || response.status === 403) {
@@ -23,9 +36,10 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
     throw new Error("登录状态已失效，请重新登录");
   }
 
-  const result = (await response.json()) as ApiResponse<T>;
-  if (!response.ok || result.code !== 0) {
-    throw new Error(result.msg || `请求失败（${response.status}）`);
+  const result = readApiEnvelope(await response.json());
+  if (!result || !response.ok || result.code !== 0) {
+    throw new Error(result?.msg || `请求失败（${response.status}）`);
   }
-  return result.data;
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- endpoint caller supplies T; the shared layer validates only the transport envelope
+  return result.data as T;
 }

@@ -109,8 +109,8 @@ export function Icon({
       style={style}
       aria-hidden="true"
     >
-      {paths.map((d, i) => (
-        <path key={i} fill="currentColor" d={d} />
+      {paths.map(d => (
+        <path key={d} fill="currentColor" d={d} />
       ))}
     </svg>
   );

@@ -65,7 +65,7 @@ export const tabsPlugin = {
     function openTab(tab: OpenTabInput) {
       const id = tab.id ?? tab.path;
       const fullPath = tab.fullPath ?? tab.path;
-      manager.addTab({ fullPath, ...tab, id } as TabInfo);
+      manager.addTab({ fullPath, ...tab, id });
       sync();
     }
 

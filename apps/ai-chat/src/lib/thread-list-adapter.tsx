@@ -24,7 +24,7 @@ function deriveTitle(messages: readonly ThreadMessage[]): string {
 function hydrateItem(item: ExportedMessageRepositoryItem): ExportedMessageRepositoryItem {
   return {
     ...item,
-    message: { ...item.message, createdAt: new Date(item.message.createdAt) } as ThreadMessage
+    message: { ...item.message, createdAt: new Date(item.message.createdAt) }
   };
 }
 

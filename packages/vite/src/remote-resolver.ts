@@ -32,7 +32,7 @@ export interface ResolveOptions {
 export function resolveRemotes(remotes: RemoteConfig, options?: ResolveOptions): ResolvedRemote {
   const resolved: ResolvedRemote = {};
   const cdn = options?.cdn ?? "";
-  const base = cdn ? `${cdn}` : "";
+  const base = cdn ? cdn : "";
 
   for (const [key, value] of Object.entries(remotes)) {
     const match = value.match(/(.+)@(.+)/);

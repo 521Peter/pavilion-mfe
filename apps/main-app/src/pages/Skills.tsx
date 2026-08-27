@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { skillApi, type SkillSummary, type SkillDetail, type FileNode, type RemoteSkillInfo } from "../api/skill";
 import { Button, Card, Chip, Input, Modal, Skeleton, Switch } from "@heroui/react";
 
+const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
+
 // ─── 图标 ───
 const ic = {
   fill: "none",
@@ -140,6 +142,7 @@ function SkillDetailPanel({ skill, onClose }: { skill: SkillDetail; onClose: () 
 
   useEffect(() => {
     setSelectedPath("SKILL.md");
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- changing skills intentionally resets the selected file
   }, [skill.name]);
 
   useEffect(() => {
@@ -154,6 +157,7 @@ function SkillDetailPanel({ skill, onClose }: { skill: SkillDetail; onClose: () 
           setEditContent(res.content);
           setLoading(false);
         }
+        return undefined;
       })
       .catch(() => {
         if (!cancelled) setLoading(false);
@@ -335,7 +339,7 @@ function RemoteInstallPanel({ onClose, onInstalled }: { onClose: () => void; onI
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && !loading) handleSearch();
+    if (e.key === "Enter" && !loading) void handleSearch();
   }
 
   async function handleInstall(skill: RemoteSkillInfo) {
@@ -470,7 +474,7 @@ export default function Skills() {
   }, []);
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   async function openDetail(name: string) {
@@ -541,11 +545,11 @@ export default function Skills() {
         </div>
       ) : loading ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-[18px]">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} variant="default" className="p-5">
+          {SKELETON_IDS.map(cardId => (
+            <Card key={cardId} variant="default" className="p-5">
               <div className="flex flex-col gap-3">
-                {Array.from({ length: 3 }).map((_, j) => (
-                  <Skeleton key={j} className="h-4 w-full rounded" />
+                {SKELETON_IDS.map(lineId => (
+                  <Skeleton key={lineId} className="h-4 w-full rounded" />
                 ))}
               </div>
             </Card>

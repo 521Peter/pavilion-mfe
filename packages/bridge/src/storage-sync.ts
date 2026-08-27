@@ -26,16 +26,18 @@ export class StorageSync {
     return StorageSync.instance;
   }
 
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- JSON storage reads use the caller's declared value contract
   get<T = unknown>(key: string): T | null {
     try {
       const raw = localStorage.getItem(key);
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- caller-owned storage keys define T; malformed JSON is caught and runtime schema validation belongs to the caller
       return raw ? (JSON.parse(raw) as T) : null;
     } catch {
       return null;
     }
   }
 
-  set<T = unknown>(key: string, value: T): void {
+  set(key: string, value: unknown): void {
     try {
       localStorage.setItem(key, JSON.stringify(value));
       this.publish(key, value);
@@ -51,6 +53,7 @@ export class StorageSync {
 
   subscribe<T = unknown>(key: string, callback: ObserverCallback<T>): () => void {
     const currentValue = this.get<T>(key);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- callbacks are stored by key and invoked with the same subscription shape independent of the caller's T
     const unsubscribe = () => this.unsubscribe(key, callback as ObserverCallback<unknown>);
 
     const subscription: SubscriptionValue<T> = {
@@ -61,7 +64,9 @@ export class StorageSync {
     if (!this.observers[key]) {
       this.observers[key] = [];
     }
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- identity comparison erases T without invoking the callback
     if (!this.observers[key].includes(callback as ObserverCallback<unknown>)) {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- storage keeps the callback identity; publish supplies the key's corresponding value contract
       this.observers[key].push(callback as ObserverCallback<unknown>);
     }
 

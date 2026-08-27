@@ -61,30 +61,35 @@ function patchGlobals(): void {
   globalsPatched = true;
   pavilionMfeLog("sandbox", "globals-patch");
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper delegates the native timer arguments and preserves the overloaded global setTimeout signature
   globalThis.setTimeout = ((handler: any, timeout?: any, ...args: any[]) => {
-    const id = origSetTimeout(handler, timeout, ...args) as number;
+    const id = origSetTimeout(handler, timeout, ...args);
     const active = activeStack[activeStack.length - 1];
     if (active) active._timeouts.add(id);
     return id;
   }) as any;
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper delegates the native timer arguments and preserves the overloaded global setInterval signature
   globalThis.setInterval = ((handler: any, timeout?: any, ...args: any[]) => {
-    const id = origSetInterval(handler, timeout, ...args) as number;
+    const id = origSetInterval(handler, timeout, ...args);
     const active = activeStack[activeStack.length - 1];
     if (active) active._intervals.add(id);
     return id;
   }) as any;
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper accepts the platform-specific timer handle used by the native clearTimeout overload
   globalThis.clearTimeout = ((id: any) => {
     for (const s of activeStack) s._timeouts.delete(id);
     origClearTimeout(id);
   }) as any;
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper accepts the platform-specific timer handle used by the native clearInterval overload
   globalThis.clearInterval = ((id: any) => {
     for (const s of activeStack) s._intervals.delete(id);
     origClearInterval(id);
   }) as any;
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper forwards the overloaded global event listener signature after recording the same handler and options
   globalThis.addEventListener = ((type: any, handler: any, options?: any) => {
     if (handler) {
       const active = activeStack[activeStack.length - 1];
@@ -111,6 +116,7 @@ function patchGlobals(): void {
     origAddEventListener(type, handler, options);
   }) as any;
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- wrapper forwards the overloaded global removal signature after resolving the tracked proxy handler
   globalThis.removeEventListener = ((type: any, handler: any, options?: any) => {
     // 对 popstate，将原始处理函数转换为已创建的代理函数
     let effectiveHandler = handler;
@@ -177,7 +183,7 @@ export class Sandbox {
 
     // 清理已追踪的全局键
     this.globalKeys.forEach(key => {
-      delete (globalThis as any)[key];
+      Reflect.deleteProperty(globalThis, key);
     });
     this.globalKeys.clear();
 
