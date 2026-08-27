@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
 export interface McpAuthenticationMiddlewareHandler {
-    authenticate(request: Request, response: Response): Promise<boolean> | boolean;
+  authenticate(request: Request, response: Response): Promise<boolean> | boolean;
 }

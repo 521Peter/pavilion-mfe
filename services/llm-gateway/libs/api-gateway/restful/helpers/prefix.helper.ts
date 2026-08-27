@@ -9,16 +9,16 @@
  * @returns {boolean} URL 是否位于此前缀的路径命名空间内
  */
 export function matchesPrefixSegment(url: string, prefix: string): boolean {
-    for (const base of [prefix, `/${prefix}`]) {
-        if (url === base) {
-            return true;
-        }
-        if (url.startsWith(base)) {
-            const next = url.charAt(base.length);
-            if (next === '/' || next === '?' || next === '#') {
-                return true;
-            }
-        }
+  for (const base of [prefix, `/${prefix}`]) {
+    if (url === base) {
+      return true;
     }
-    return false;
+    if (url.startsWith(base)) {
+      const next = url.charAt(base.length);
+      if (next === "/" || next === "?" || next === "#") {
+        return true;
+      }
+    }
+  }
+  return false;
 }

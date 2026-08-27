@@ -1,1 +1,1 @@
-export const WHITELIST_PATHS = ['/user-services/oidc'];
+export const WHITELIST_PATHS = ["/user-services/oidc"];

@@ -1,31 +1,31 @@
-import { IsIn, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsIn, IsObject, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class CreateChatThreadDto {
-    @IsString()
-    @MaxLength(100)
-    id!: string;
+  @IsString()
+  @MaxLength(100)
+  id!: string;
 }
 
 export class UpdateChatThreadDto {
-    @IsOptional()
-    @IsString()
-    @MaxLength(100)
-    title?: string;
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  title?: string;
 
-    @IsOptional()
-    @IsIn(['regular', 'archived'])
-    status?: 'regular' | 'archived';
+  @IsOptional()
+  @IsIn(["regular", "archived"])
+  status?: "regular" | "archived";
 }
 
 export class SaveChatMessageDto {
-    @IsObject()
-    message!: Record<string, unknown>;
+  @IsObject()
+  message!: Record<string, unknown>;
 
-    @IsOptional()
-    @IsString()
-    parentId?: string | null;
+  @IsOptional()
+  @IsString()
+  parentId?: string | null;
 
-    @IsOptional()
-    @IsObject()
-    runConfig?: Record<string, unknown>;
+  @IsOptional()
+  @IsObject()
+  runConfig?: Record<string, unknown>;
 }

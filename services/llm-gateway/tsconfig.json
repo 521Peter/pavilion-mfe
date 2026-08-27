@@ -1,43 +1,26 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "declaration": true,
-        "removeComments": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "target": "es2022",
-        "lib": [
-            "es2022"
-        ],
-        "sourceMap": true,
-        "outDir": "./dist",
-        "incremental": true,
-        "resolveJsonModule": true,
-        "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-            "~*": [
-                "./src/*"
-            ],
-            "@hodfords/api-gateway": [
-                "./libs/api-gateway"
-            ]
-        },
-        "skipLibCheck": true,
-        "types": [
-            "jest"
-        ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "es2022",
+    "lib": ["es2022"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "~*": ["./src/*"],
+      "@hodfords/api-gateway": ["./libs/api-gateway"]
     },
-    "include": [
-        "libs",
-        "src",
-        "test"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ]
+    "skipLibCheck": true,
+    "types": ["jest"]
+  },
+  "include": ["libs", "src", "test"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,5 +1,5 @@
 export type OpenTelemetryOptions = {
-    otlpUrl: string;
-    serviceName: string;
-    minDuration: number;
+  otlpUrl: string;
+  serviceName: string;
+  minDuration: number;
 };

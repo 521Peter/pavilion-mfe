@@ -1,4 +1,4 @@
-import type { ProviderAdapterBuilder } from '../interfaces/provider-adapter.interface';
+import type { ProviderAdapterBuilder } from "../interfaces/provider-adapter.interface";
 
 /**
  * Provider 注册表（Registry 模式）
@@ -11,20 +11,20 @@ import type { ProviderAdapterBuilder } from '../interfaces/provider-adapter.inte
 const builderMap = new Map<string, ProviderAdapterBuilder>();
 
 export function registerProviderBuilder(builder: ProviderAdapterBuilder): void {
-    if (builderMap.has(builder.type)) {
-        throw new Error(`Provider builder for type "${builder.type}" already registered`);
-    }
-    builderMap.set(builder.type, builder);
+  if (builderMap.has(builder.type)) {
+    throw new Error(`Provider builder for type "${builder.type}" already registered`);
+  }
+  builderMap.set(builder.type, builder);
 }
 
 export function getProviderBuilder(type: string): ProviderAdapterBuilder {
-    const builder = builderMap.get(type);
-    if (!builder) {
-        throw new Error(`Unsupported provider type: ${type}`);
-    }
-    return builder;
+  const builder = builderMap.get(type);
+  if (!builder) {
+    throw new Error(`Unsupported provider type: ${type}`);
+  }
+  return builder;
 }
 
 export function getSupportedProviderTypes(): string[] {
-    return Array.from(builderMap.keys());
+  return Array.from(builderMap.keys());
 }

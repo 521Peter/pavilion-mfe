@@ -1,8 +1,8 @@
-import { Injectable, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import type { JwtPayload } from '../decorators/current-user.decorator';
+import { Injectable, ExecutionContext, ForbiddenException } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { ROLES_KEY } from "../decorators/roles.decorator";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
+import type { JwtPayload } from "../decorators/current-user.decorator";
 
 /**
  * 角色守卫
@@ -15,34 +15,34 @@ import type { JwtPayload } from '../decorators/current-user.decorator';
  */
 @Injectable()
 export class RolesGuard {
-    constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 
-    canActivate(context: ExecutionContext) {
-        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-            context.getHandler(),
-            context.getClass()
-        ]);
-        if (isPublic) return true;
+  canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ]);
+    if (isPublic) return true;
 
-        const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-            context.getHandler(),
-            context.getClass()
-        ]);
-        if (!requiredRoles || requiredRoles.length === 0) return true;
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ]);
+    if (!requiredRoles || requiredRoles.length === 0) return true;
 
-        const request = context.switchToHttp().getRequest<{
-            user?: JwtPayload;
-        }>();
-        const user = request.user;
-        if (!user || !user.roles) {
-            throw new ForbiddenException('无权限访问该资源');
-        }
-
-        const hasRole = user.roles.some((role) => requiredRoles.includes(role));
-        if (!hasRole) {
-            throw new ForbiddenException('无权限访问该资源');
-        }
-
-        return true;
+    const request = context.switchToHttp().getRequest<{
+      user?: JwtPayload;
+    }>();
+    const user = request.user;
+    if (!user || !user.roles) {
+      throw new ForbiddenException("无权限访问该资源");
     }
+
+    const hasRole = user.roles.some(role => requiredRoles.includes(role));
+    if (!hasRole) {
+      throw new ForbiddenException("无权限访问该资源");
+    }
+
+    return true;
+  }
 }

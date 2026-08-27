@@ -1,4 +1,4 @@
 export type RestfulOption = {
-    isEnableDocument: boolean;
-    hideDocumentIds?: string[];
+  isEnableDocument: boolean;
+  hideDocumentIds?: string[];
 };

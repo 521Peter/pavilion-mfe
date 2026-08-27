@@ -28,7 +28,14 @@ export interface MainAppConfig {
 }
 
 export type AppStatus =
-  "NOT_LOADED" | "LOADING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UNMOUNTING" | "UNMOUNTED" | "CACHED"; // keep-alive：保留框架实例并设置 display:none
+  | "NOT_LOADED"
+  | "LOADING"
+  | "NOT_MOUNTED"
+  | "MOUNTING"
+  | "MOUNTED"
+  | "UNMOUNTING"
+  | "UNMOUNTED"
+  | "CACHED"; // keep-alive：保留框架实例并设置 display:none
 
 export interface RegisteredApp {
   name: string;

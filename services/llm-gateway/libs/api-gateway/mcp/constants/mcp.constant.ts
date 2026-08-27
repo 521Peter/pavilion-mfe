@@ -1,4 +1,4 @@
-export const MCP_OPTION = 'MCP_OPTION';
+export const MCP_OPTION = "MCP_OPTION";
 
 /**
  * MCP 工具名称的建议最大长度。超过此长度的名称仍会被接受，但会记录警告，

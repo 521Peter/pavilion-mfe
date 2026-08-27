@@ -2,10 +2,7 @@ import { ThreadListItemPrimitive, ThreadListPrimitive } from "@assistant-ui/reac
 import { MessageSquare, PanelLeftClose, Sparkles, SquarePen, Trash2 } from "lucide-react";
 import { type FC } from "react";
 
-export const ThreadListSidebar: FC<{ onClose: () => void; onNavigate: () => void }> = ({
-  onClose,
-  onNavigate
-}) => {
+export const ThreadListSidebar: FC<{ onClose: () => void; onNavigate: () => void }> = ({ onClose, onNavigate }) => {
   return (
     <ThreadListPrimitive.Root className="flex h-full w-full flex-col bg-[#f7f7f8] text-gray-900">
       <div className="flex h-14 items-center justify-between px-3">

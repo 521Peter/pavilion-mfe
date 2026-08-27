@@ -96,9 +96,7 @@ button:disabled {
   min-height: 100%;
   place-items: center;
   padding: 40px;
-  background:
-    radial-gradient(circle at 85% 10%, #f1edff 0, transparent 24%),
-    #fbfaff;
+  background: radial-gradient(circle at 85% 10%, #f1edff 0, transparent 24%), #fbfaff;
 }
 .login-form {
   display: flex;
@@ -147,7 +145,9 @@ button:disabled {
   color: #172033;
   background: #fff;
   font-size: 16px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .login-form input:focus {
   border-color: #6d4aff;
@@ -164,7 +164,9 @@ button:disabled {
   background: #6d4aff;
   box-shadow: 0 10px 24px rgba(109, 74, 255, 0.24);
   font-weight: 750;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 .login-submit:hover:not(:disabled) {
   background: #5535df;

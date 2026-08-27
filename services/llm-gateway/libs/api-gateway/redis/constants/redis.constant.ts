@@ -1,1 +1,1 @@
-export const REDIS_OPTION = 'REDIS_OPTION';
+export const REDIS_OPTION = "REDIS_OPTION";

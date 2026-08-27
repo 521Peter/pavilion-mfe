@@ -21,13 +21,8 @@
       "sourceMapPathOverrides": {
         "webpack://@pavilion-mfe/llm-gateway/*": "${workspaceFolder}/services/llm-gateway/*"
       },
-      "outFiles": [
-        "${workspaceFolder}/services/llm-gateway/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/**/node_modules/**"
-      ]
+      "outFiles": ["${workspaceFolder}/services/llm-gateway/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/**/node_modules/**"]
     },
     {
       "type": "node",
@@ -49,22 +44,14 @@
       "sourceMapPathOverrides": {
         "webpack://@pavilion-mfe/customer-service/*": "${workspaceFolder}/services/customer-service/*"
       },
-      "outFiles": [
-        "${workspaceFolder}/services/customer-service/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/**/node_modules/**"
-      ]
+      "outFiles": ["${workspaceFolder}/services/customer-service/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/**/node_modules/**"]
     }
   ],
   "compounds": [
     {
       "name": "Debug All Services",
-      "configurations": [
-        "Debug LLM Gateway",
-        "Debug AI Customer Service"
-      ],
+      "configurations": ["Debug LLM Gateway", "Debug AI Customer Service"],
       "stopAll": true
     }
   ]
