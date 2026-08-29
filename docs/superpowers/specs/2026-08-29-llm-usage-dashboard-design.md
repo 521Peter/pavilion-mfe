@@ -216,7 +216,8 @@ UsageRecord 表达一次正常完成的模型用量，保存：
 
 ## 管理员统计 API
 
-所有接口沿用 `@PlatformApi()` 与 `@Roles("ADMIN")`，普通用户和 Application Key 均无权访问。
+所有接口沿用 `@PlatformApi()` 与 `@Roles("ADMIN")`，普通用户和 Application Key 均无权访问。普通用户通过 JWT
+认证后因角色不足返回 403；Application Key 不是 Platform API 凭据，返回 401。
 
 ### `GET /api/usage/overview`
 
@@ -288,7 +289,7 @@ UTC，页面按浏览器本地时区展示。明细默认每页 20 条、最多 
 - `/v1` 非流式、流式、失败、取消、重试和 fallback 的 Run/UsageRecord；
 - UsageRecord 幂等写入与失败补录；
 - overview、timeseries、breakdown、runs 的时间、筛选、分组、分页和统计口径；
-- ADMIN 可访问，普通用户和 Application Key 返回 403；
+- ADMIN 可访问，普通用户返回 403，Application Key 返回 401；
 - 统计响应不包含输入消息、模型输出和 Credential；
 - OpenAI/Ollama Adapter、ProviderFactory 和 Registry 的既有行为保持通过。
 
