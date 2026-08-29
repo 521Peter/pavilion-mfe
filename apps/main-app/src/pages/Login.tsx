@@ -7,8 +7,8 @@ import logoSvg from "../assets/pavilion-mfe-logo.svg";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("replace-with-a-local-admin-password");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
