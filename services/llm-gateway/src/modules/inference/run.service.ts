@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "../../../generated/prisma/client";
 import { PrismaService } from "@/database/prisma.service";
 import { toPrismaJson } from "@/database/prisma-json";
+import type { UsageSnapshot } from "@/modules/usage/usage.types";
 import type { InferencePrincipal, NormalizedLlmRequest } from "./inference.types";
 
 @Injectable()
@@ -29,11 +30,16 @@ export class RunService {
     return { run, controller };
   }
 
-  async finish(id: string, output: Prisma.InputJsonValue): Promise<void> {
+  async finish(id: string, output: Prisma.InputJsonValue, usageSnapshot?: UsageSnapshot): Promise<void> {
     this.controllers.delete(id);
     const updated = await this.prisma.run.updateMany({
       where: { id, status: { in: ["queued", "running"] } },
-      data: { status: "completed", output, completedAt: new Date() }
+      data: {
+        status: "completed",
+        output,
+        usageSnapshot: usageSnapshot ? toPrismaJson(usageSnapshot) : undefined,
+        completedAt: new Date()
+      }
     });
     if (updated.count > 0) {
       await this.prisma.runEvent.upsert({
