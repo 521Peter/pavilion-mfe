@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, Menu, dialog, ipcMain, type IpcMainInvokeEvent } from "electron";
+import { app, BrowserWindow, shell, dialog, ipcMain, type IpcMainInvokeEvent } from "electron";
 import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
@@ -116,8 +116,6 @@ async function boot(): Promise<void> {
   const targetUrl = DEV_SERVER_URL ? DEV_SERVER_URL : `http://localhost:${server!.port}/`;
 
   console.log(`[desktop] loading ${targetUrl}`);
-  // 不显示应用菜单以保持桌面界面简洁，相关操作依赖键盘快捷键
-  Menu.setApplicationMenu(null);
   createWindow(targetUrl);
 }
 
