@@ -69,7 +69,9 @@ export class RunService {
     const run = await this.prisma.run.findFirst({
       where: {
         id,
-        ...(principal.type === "user" ? { userId: principal.userId } : { applicationId: principal.applicationId })
+        ...(principal.authenticationType === "user"
+          ? { userId: principal.userId }
+          : { applicationId: principal.applicationId })
       },
       include: {
         steps: { orderBy: { sequence: "asc" } },
@@ -86,7 +88,9 @@ export class RunService {
     const run = await this.prisma.run.findFirst({
       where: {
         id,
-        ...(principal.type === "user" ? { userId: principal.userId } : { applicationId: principal.applicationId })
+        ...(principal.authenticationType === "user"
+          ? { userId: principal.userId }
+          : { applicationId: principal.applicationId })
       }
     });
     if (!run) throw new NotFoundException("Run 不存在");

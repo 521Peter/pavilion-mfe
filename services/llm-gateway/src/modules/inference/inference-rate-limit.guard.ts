@@ -36,9 +36,10 @@ export class InferenceRateLimitGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<DataPlaneRequest>();
     const response = context.switchToHttp().getResponse<Response>();
-    const subject = request.principal.applicationId
-      ? `app:${request.principal.applicationId}`
-      : `user:${request.principal.userId}`;
+    const subject =
+      request.principal.authenticationType === "application"
+        ? `app:${request.principal.applicationId}`
+        : `user:${request.principal.userId}`;
     const model = typeof request.body?.model === "string" ? request.body.model : "none";
     const rateKey = `pavilion:llm:rate:${subject}:${model}`;
     const concurrencyKey = `pavilion:llm:concurrency:${subject}:${model}`;

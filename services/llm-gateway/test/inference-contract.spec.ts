@@ -37,7 +37,7 @@ describe("OpenAI-compatible data plane contracts", () => {
     });
     builder.overrideGuard(DataPlaneAuthGuard).useValue({
       canActivate: (context: any) => {
-        context.switchToHttp().getRequest().principal = { type: "application", applicationId: "app-1" };
+        context.switchToHttp().getRequest().principal = { authenticationType: "application", applicationId: "app-1" };
         return true;
       }
     });

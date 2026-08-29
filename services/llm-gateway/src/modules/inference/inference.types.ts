@@ -1,7 +1,7 @@
 export interface InferencePrincipal {
-  type: "user" | "application";
+  authenticationType: "user" | "application";
   userId?: string;
-  applicationId?: string;
+  applicationId: string;
   allowedModels?: string[];
 }
 
