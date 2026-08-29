@@ -1,5 +1,7 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import request from "supertest";
 import { AuditInterceptor } from "@/modules/audit/audit.interceptor";
 import { JwtAuthGuard } from "@/common/guards/jwt-auth.guard";
@@ -92,5 +94,15 @@ describe("Pavilion /api compatibility contracts", () => {
     expect(response.headers["content-type"]).toContain("text/event-stream");
     expect(response.text).toContain('"type":"delta"');
     expect(response.text).toContain('"type":"done"');
+  });
+
+  it("declares recoverable and idempotent usage storage", () => {
+    const schema = readFileSync(join(process.cwd(), "prisma/schema.prisma"), "utf8");
+    const seed = readFileSync(join(process.cwd(), "prisma/seed.ts"), "utf8");
+    expect(schema).toContain("usageSnapshot Json?");
+    expect(schema).toContain("idempotencyKey String?");
+    expect(schema).toContain("@@index([status, createdAt])");
+    expect(schema).toContain("@@index([deploymentId, createdAt])");
+    expect(seed).toContain('code: "git-report-generator"');
   });
 });
