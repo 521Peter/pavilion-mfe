@@ -33,9 +33,9 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "code-inspector-plugin": "^2.0.8",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
-    "vite": "^8.2.0",
-    "vite-plugin-react-click-to-component": "^4.2.3"
+    "vite": "^8.2.0"
   }
 }

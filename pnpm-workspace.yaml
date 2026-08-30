@@ -12,6 +12,7 @@ allowBuilds:
   bcrypt: true
   electron: true
   esbuild: true
+  node-pty: set this to true or false
   prisma: true
   protobufjs: true
   unrs-resolver: true

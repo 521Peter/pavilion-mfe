@@ -235,6 +235,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.0.4
         version: 6.0.5(vite@8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.1)(yaml@2.9.0))
+      code-inspector-plugin:
+        specifier: ^2.0.8
+        version: 2.0.8
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -244,9 +247,6 @@ importers:
       vite:
         specifier: ^8.2.0
         version: 8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.1)(yaml@2.9.0)
-      vite-plugin-react-click-to-component:
-        specifier: ^4.2.3
-        version: 4.2.3(react@19.2.8)(vite@8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.1)(yaml@2.9.0))
 
   packages/bridge: {}
 
@@ -861,6 +861,35 @@ packages:
 
   '@cfworker/json-schema@4.1.1':
     resolution: {integrity: sha512-gAmrUZSGtKc3AiBL71iNWxDsyUC5uMaKKGdvzYsBoTW/xi42JQHl7eKV2OYzCUqvc+D2RCcf7EXY2iCyFIk6og==}
+
+  '@code-inspector/core@2.0.8':
+    resolution: {integrity: sha512-RIGPzE5YGRThjFWvW9coAsg2H02ByJWI1yviOm/mJ6qQVFRliTG9rLwSU4gRzLsMu5V8VF+8hypMp6xSOFH5uQ==}
+    peerDependencies:
+      '@anthropic-ai/claude-agent-sdk': ^0.2.29
+      '@openai/codex-sdk': ^0.106.0
+      '@opencode-ai/sdk': ^1.2.24
+    peerDependenciesMeta:
+      '@anthropic-ai/claude-agent-sdk':
+        optional: true
+      '@openai/codex-sdk':
+        optional: true
+      '@opencode-ai/sdk':
+        optional: true
+
+  '@code-inspector/esbuild@2.0.8':
+    resolution: {integrity: sha512-xnfpBiBKrIOGN0j9IZ+k2p6aGq8TOIeHndGY+W8mxeODhO5KbM9rym0FSgVe3tEm6JcUk3kHP9h/EG61mnqDuw==}
+
+  '@code-inspector/mako@2.0.8':
+    resolution: {integrity: sha512-l243SWfGr4sUACVOCd5NbkjuFRobACnmpWXA2IyDFkedYFeGbYYpjZUwP88lxrVHt1PHZyB81HMiScE24P0ONw==}
+
+  '@code-inspector/turbopack@2.0.8':
+    resolution: {integrity: sha512-iLbGsojN6MwcqClTUQrqTHZHKUgbHBXSyDc4CAicmPytr5EcSYCCyICPrAY238ny+CdmzxGLaobZTA/YpScNiA==}
+
+  '@code-inspector/vite@2.0.8':
+    resolution: {integrity: sha512-qj8lOiA6Q1cZ8iJI2zGSdEd85yok/8EFa0G2KiSrY1PaD3pLZquayRgzWMCLTC2pmLSWGM4L1UbTyDM2c8joDg==}
+
+  '@code-inspector/webpack@2.0.8':
+    resolution: {integrity: sha512-lz6LvkugtibrKbA+t/jFBkdSThveFEcLe1zutr4MUUOJh4XXWo1MYAjFHkUKnSy/+KqMC9MfBnDDtObYICBUmA==}
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -5306,6 +5335,10 @@ packages:
     resolution: {integrity: sha512-2bxTP2yUH7AJj/VAXfcA+4IcWGdQ87HwBANLt5XxGTeomo8yG0y95N1um9i5StvhT/Bl0/2cARA5v1PpPXUxUA==}
     engines: {node: '>=14.16'}
 
+  chalk@4.1.1:
+    resolution: {integrity: sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==}
+    engines: {node: '>=10'}
+
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
@@ -5422,6 +5455,9 @@ packages:
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
+
+  code-inspector-plugin@2.0.8:
+    resolution: {integrity: sha512-Ig7pHNGdlVprf6zRFLhSFI28D4PrKG72YkqNQ0uxYZHEomvKvD6FwK1DrYypbthz+N7c7g9v/uvAFM7tJn3ntw==}
 
   collect-v8-coverage@1.0.3:
     resolution: {integrity: sha512-1L5aqIkwPfiodaMgQunkF1zRhNqifHBmtbbbxcr6yVxxBnliw4TDOW6NxpO8DJLgJ16OT+Y4ztZqP6p/FtXnAw==}
@@ -6850,6 +6886,9 @@ packages:
       ws:
         optional: true
 
+  launch-ide@1.4.9:
+    resolution: {integrity: sha512-M67fqPmkMQQuiFnMtsgtMvHuB2a+8KLxEwH9ccftpy0f3CJQNoRCebZvKSn/ujxR42cMDOIBstuC/KXR/IgXeQ==}
+
   lazy-val@1.0.5:
     resolution: {integrity: sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==}
 
@@ -7400,6 +7439,10 @@ packages:
   node-addon-api@1.6.3:
     resolution: {integrity: sha512-FXWH6mqjWgU8ewuahp4spec8LkroFZK2NicOv6bNwZC3kcwZUI8LeZdG80UzTSLLhK4T7MsgNwlYDVRlDdfTDg==}
 
+  node-addon-api@7.1.0:
+    resolution: {integrity: sha512-mNcltoe1R8o7STTegSOHdnJNN7s5EUvhoS7ShnTHDyOSd+8H+UdWODq6qSv67PjC8Zc5JRT8+oLAMCr0SIXw7g==}
+    engines: {node: ^16 || ^18 || >= 20}
+
   node-addon-api@8.9.1:
     resolution: {integrity: sha512-4eUQWVPCUUUiBjLnHS3cXWeC6ryoPUc0U3rP7IuzapoGbzMqd/r6KKO0clr0b+snQhsrueFEhCZDdK+LK7hxKg==}
     engines: {node: ^18 || ^20 || >= 21}
@@ -7422,6 +7465,9 @@ packages:
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
+
+  node-pty@1.1.0:
+    resolution: {integrity: sha512-20JqtutY6JPXTUnL0ij1uad7Qe1baT46lyolh2sSENDd4sTzKZ4nmAFkeAARDKwmlLjPx6XKRlwRUxwjOy+lUg==}
 
   node-releases@2.0.50:
     resolution: {integrity: sha512-J6l92tKHX6w8Jy5nO1Vuc01NoIiRGi/d6qBKVxh+IQ8Cr3b6HbVNfKiF8ZpFKufTwpwxMmce2W3iQZ861ZRyTg==}
@@ -7735,6 +7781,10 @@ packages:
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
+
+  portfinder@1.0.38:
+    resolution: {integrity: sha512-rEwq/ZHlJIKw++XtLAO8PPuOQA/zaPJOZJ37BVuN97nLpMJeuDVLVGRwbFoBgLudgdTMP2hdRJP++H+8QOA3vg==}
+    engines: {node: '>= 10.12'}
 
   postcss-selector-parser@6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -8797,12 +8847,6 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite-plugin-react-click-to-component@4.2.3:
-    resolution: {integrity: sha512-i35OnXmszYHQqrpyFIoEUf1Frpb/mh4lfJUN1U6+U9+4PbPI2Y0c/NRaAgYhgzLUpuq4zxE8GeTP8xGcpgZUJg==}
-    peerDependencies:
-      react: ^18.3.1 || ^19.0.0
-      vite: ^7 || ^8
-
   vite-plugin-top-level-await@1.6.0:
     resolution: {integrity: sha512-bNhUreLamTIkoulCR9aDXbTbhLk6n1YE8NJUTTxl5RYskNRtzOR0ASzSjBVRtNdjIfngDXo11qOsybGLNsrdww==}
     peerDependencies:
@@ -9399,6 +9443,77 @@ snapshots:
   '@borewit/text-codec@0.2.2': {}
 
   '@cfworker/json-schema@4.1.1': {}
+
+  '@code-inspector/core@2.0.8':
+    dependencies:
+      '@vue/compiler-dom': 3.5.39
+      chalk: 4.1.2
+      launch-ide: 1.4.9
+      portfinder: 1.0.38
+      ws: 8.21.0
+    optionalDependencies:
+      node-pty: 1.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/esbuild@2.0.8':
+    dependencies:
+      '@code-inspector/core': 2.0.8
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/mako@2.0.8':
+    dependencies:
+      '@code-inspector/core': 2.0.8
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/turbopack@2.0.8':
+    dependencies:
+      '@code-inspector/core': 2.0.8
+      '@code-inspector/webpack': 2.0.8
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/vite@2.0.8':
+    dependencies:
+      '@code-inspector/core': 2.0.8
+      chalk: 4.1.1
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/webpack@2.0.8':
+    dependencies:
+      '@code-inspector/core': 2.0.8
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@colors/colors@1.5.0':
     optional: true
@@ -14111,6 +14226,11 @@ snapshots:
     dependencies:
       chalk: 5.6.2
 
+  chalk@4.1.1:
+    dependencies:
+      ansi-styles: 4.1.0
+      supports-color: 7.1.0
+
   chalk@4.1.2:
     dependencies:
       ansi-styles: 4.1.0
@@ -14205,6 +14325,23 @@ snapshots:
   cluster-key-slot@1.1.2: {}
 
   co@4.6.0: {}
+
+  code-inspector-plugin@2.0.8:
+    dependencies:
+      '@code-inspector/core': 2.0.8
+      '@code-inspector/esbuild': 2.0.8
+      '@code-inspector/mako': 2.0.8
+      '@code-inspector/turbopack': 2.0.8
+      '@code-inspector/vite': 2.0.8
+      '@code-inspector/webpack': 2.0.8
+      chalk: 4.1.1
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   collect-v8-coverage@1.0.3: {}
 
@@ -15976,6 +16113,11 @@ snapshots:
       openai: 6.49.0(ws@8.21.0)(zod@4.4.3)
       ws: 8.21.0
 
+  launch-ide@1.4.9:
+    dependencies:
+      chalk: 4.1.2
+      dotenv: 16.4.5
+
   lazy-val@1.0.5: {}
 
   lazystream@1.0.1:
@@ -16538,6 +16680,9 @@ snapshots:
   node-addon-api@1.6.3:
     optional: true
 
+  node-addon-api@7.1.0:
+    optional: true
+
   node-addon-api@8.9.1: {}
 
   node-domexception@1.0.0: {}
@@ -16555,6 +16700,11 @@ snapshots:
   node-gyp-build@4.8.4: {}
 
   node-int64@0.4.0: {}
+
+  node-pty@1.1.0:
+    dependencies:
+      node-addon-api: 7.1.0
+    optional: true
 
   node-releases@2.0.50: {}
 
@@ -16859,6 +17009,13 @@ snapshots:
       xmlbuilder: 15.1.1
 
   pluralize@8.0.0: {}
+
+  portfinder@1.0.38:
+    dependencies:
+      async: 3.2.6
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
 
   postcss-selector-parser@6.0.10:
     dependencies:
@@ -18045,11 +18202,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
-
-  vite-plugin-react-click-to-component@4.2.3(react@19.2.8)(vite@8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.1)(yaml@2.9.0)):
-    dependencies:
-      react: 19.2.8
-      vite: 8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.1)(yaml@2.9.0)
 
   vite-plugin-top-level-await@1.6.0(@swc/helpers@0.5.23)(rollup@4.62.2)(vite@5.4.21(@types/node@25.3.5)(lightningcss@1.33.0)(terser@5.49.1)):
     dependencies:
