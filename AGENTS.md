@@ -59,6 +59,7 @@ pnpm --filter git-report-generator build:dev
 - 子应用运行时不得引入 `@pavilion-mfe/*` 代码，只能把 `@pavilion-mfe/vite` 作为 devDependency；独立运行和微前端运行共用同一份 `main.tsx`。
 - 子应用通过 `window.__PAVILION_MFE_ENV__` 区分运行环境，该变量由主应用路由 `start()` 注入。
 - 主应用 `PavilionMfe({ shared: [] })`，子应用同样使用 `shared: []`，框架依赖各自携带，避免版本错配。
+- 子应用不得直连 Provider 或业务子服务；模型调用统一使用 llm-gateway `/v1/*`。
 - 修改核心包后按实际依赖顺序构建：先构建 `sandbox` / `bridge` / `tabs` / `vite`，再构建依赖 `sandbox` 的 `router`，最后构建聚合 `router` / `bridge` / `sandbox` 的 `runtime`。
 - `packages/cli` 当前只是早期骨架：`dev` 仅启动端口发现进程，`build` 仅输出参数；开发与构建以根 `package.json` 的 pnpm workspace 脚本为准。
 
