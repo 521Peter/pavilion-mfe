@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { SkillService } from "@/modules/skill/services/skill.service";
-import type { ChatMessage } from "./llm-chat.service";
+import type { ChatMessage } from "./llm-agent.service";
 
 const MAX_SELECTED_SKILLS = 3;
 const MAX_CONVERSATION_MESSAGES = 8;

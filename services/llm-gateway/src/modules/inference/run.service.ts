@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "../../../generated/prisma/client";
 import { PrismaService } from "@/database/prisma.service";
 import { toPrismaJson } from "@/database/prisma-json";
+import type { UsageSnapshot } from "@/modules/usage/usage.types";
 import type { InferencePrincipal, NormalizedLlmRequest } from "./inference.types";
 
 @Injectable()
@@ -29,11 +30,16 @@ export class RunService {
     return { run, controller };
   }
 
-  async finish(id: string, output: Prisma.InputJsonValue): Promise<void> {
+  async finish(id: string, output: Prisma.InputJsonValue, usageSnapshot?: UsageSnapshot): Promise<boolean> {
     this.controllers.delete(id);
     const updated = await this.prisma.run.updateMany({
       where: { id, status: { in: ["queued", "running"] } },
-      data: { status: "completed", output, completedAt: new Date() }
+      data: {
+        status: "completed",
+        output,
+        usageSnapshot: usageSnapshot ? toPrismaJson(usageSnapshot) : undefined,
+        completedAt: new Date()
+      }
     });
     if (updated.count > 0) {
       await this.prisma.runEvent.upsert({
@@ -42,6 +48,7 @@ export class RunService {
         update: { type: "run.completed", data: {} }
       });
     }
+    return updated.count > 0;
   }
 
   async fail(id: string, error: unknown, cancelled = false): Promise<void> {
@@ -69,7 +76,9 @@ export class RunService {
     const run = await this.prisma.run.findFirst({
       where: {
         id,
-        ...(principal.type === "user" ? { userId: principal.userId } : { applicationId: principal.applicationId })
+        ...(principal.authenticationType === "user"
+          ? { userId: principal.userId }
+          : { applicationId: principal.applicationId })
       },
       include: {
         steps: { orderBy: { sequence: "asc" } },
@@ -86,7 +95,9 @@ export class RunService {
     const run = await this.prisma.run.findFirst({
       where: {
         id,
-        ...(principal.type === "user" ? { userId: principal.userId } : { applicationId: principal.applicationId })
+        ...(principal.authenticationType === "user"
+          ? { userId: principal.userId }
+          : { applicationId: principal.applicationId })
       }
     });
     if (!run) throw new NotFoundException("Run 不存在");

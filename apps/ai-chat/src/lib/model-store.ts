@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import type { AvailableModel } from "@/api/chat";
+import type { VirtualModelOption } from "@/api/chat";
 
-export type ModelOption = AvailableModel;
+export type ModelOption = VirtualModelOption;
 
 type ModelState = {
   models: ModelOption[];

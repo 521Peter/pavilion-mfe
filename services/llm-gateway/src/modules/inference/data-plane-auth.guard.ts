@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import type { Request } from "express";
 import { PrismaService } from "@/database/prisma.service";
@@ -26,21 +26,38 @@ export class DataPlaneAuthGuard implements CanActivate {
     if (apiKey) {
       const key = await this.applicationKeys.authenticate(apiKey);
       request.principal = {
-        type: "application",
+        authenticationType: "application",
         applicationId: key.applicationId,
         allowedModels: key.application.allowedModels
       };
       return true;
     }
-    if (!bearer) throw new UnauthorizedException("缺少 Bearer Token 或 Application Key");
+
+    if (!bearer) throw new BadRequestException("缺少或无效的 Bearer Token");
+    const appCodeHeader = request.headers["x-pavilion-app-code"];
+    if (
+      typeof appCodeHeader !== "string" ||
+      appCodeHeader.length > 64 ||
+      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(appCodeHeader)
+    ) {
+      throw new BadRequestException("缺少或无效的 X-Pavilion-App-Code");
+    }
+
     try {
       const payload = await this.jwt.verifyAsync<{ sub: string }>(bearer);
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user || user.status !== "ACTIVE") throw new Error("inactive");
-      request.principal = { type: "user", userId: user.id };
+      const application = await this.prisma.application.findUnique({ where: { code: appCodeHeader } });
+      if (!application?.isActive) throw new BadRequestException("来源应用不存在或已停用");
+      request.principal = {
+        authenticationType: "user",
+        userId: user.id,
+        applicationId: application.id
+      };
       return true;
-    } catch {
-      throw new UnauthorizedException("认证凭据无效");
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      throw new BadRequestException("认证凭据无效");
     }
   }
 }

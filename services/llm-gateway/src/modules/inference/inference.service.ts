@@ -1,10 +1,11 @@
-import { BadGatewayException, Injectable, RequestTimeoutException } from "@nestjs/common";
+import { BadGatewayException, Injectable, Logger, RequestTimeoutException } from "@nestjs/common";
 import { AIMessage, HumanMessage, SystemMessage, type BaseMessage } from "@langchain/core/messages";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { PrismaService } from "@/database/prisma.service";
 import { LlmProviderService } from "@/modules/llm/services/llm-provider.service";
 import { ModelRoutingService } from "@/modules/model-routing/model-routing.service";
 import { UsageService } from "@/modules/usage/usage.service";
+import type { UsageSnapshot } from "@/modules/usage/usage.types";
 import { InferenceHooksService } from "./inference-hooks.service";
 import { RunService } from "./run.service";
 import { toPrismaJson } from "@/database/prisma-json";
@@ -82,6 +83,8 @@ function isRetryable(error: unknown): boolean {
 
 @Injectable()
 export class InferenceService {
+  private readonly logger = new Logger(InferenceService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly providers: LlmProviderService,
@@ -95,10 +98,10 @@ export class InferenceService {
     request: NormalizedLlmRequest,
     executor?: (model: BaseChatModel, signal: AbortSignal) => Promise<{ content: string; usage?: TokenUsage }>
   ): Promise<InferenceResult> {
+    const started = Date.now();
     this.hooks.onRequest(request.requestId);
     const resolved = await this.routing.resolve(request.model, request.principal.allowedModels);
     const { run, controller } = await this.runs.create(request, resolved.virtualModel.id);
-    const started = Date.now();
     let ordinal = 0;
     let lastError: unknown;
     try {
@@ -148,7 +151,8 @@ export class InferenceService {
               data: { status: "completed", output: { content }, completedAt: new Date() }
             });
             this.routing.recordSuccess(target.deploymentId);
-            await this.usage.record({
+            const snapshot: UsageSnapshot = {
+              occurredAt: new Date(started).toISOString(),
               requestId: request.requestId,
               runId: run.id,
               userId: request.principal.userId,
@@ -160,7 +164,7 @@ export class InferenceService {
               outputPricePerM: Number(target.deployment.outputPricePerM),
               latencyMs: Date.now() - started,
               fallbackCount: Math.max(0, ordinal - 1)
-            });
+            };
             const result = {
               id: run.id,
               requestId: request.requestId,
@@ -169,7 +173,8 @@ export class InferenceService {
               usage: tokenUsage,
               deploymentId: target.deploymentId
             };
-            await this.runs.finish(run.id, toPrismaJson(result));
+            const completed = await this.runs.finish(run.id, toPrismaJson(result), snapshot);
+            if (completed) await this.recordUsage(snapshot);
             this.hooks.afterAttempt(request.requestId, target.deploymentId, "success");
             this.hooks.onResponse(request.requestId);
             return result;
@@ -208,11 +213,11 @@ export class InferenceService {
   }
 
   async *stream(request: NormalizedLlmRequest): AsyncGenerator<InferenceStreamEvent> {
+    const started = Date.now();
     this.hooks.onRequest(request.requestId);
     const resolved = await this.routing.resolve(request.model, request.principal.allowedModels);
     const { run, controller } = await this.runs.create(request, resolved.virtualModel.id);
     yield { type: "start", id: run.id, requestId: request.requestId, model: request.model };
-    const started = Date.now();
     let ordinal = 0;
     let lastError: unknown;
     try {
@@ -277,7 +282,8 @@ export class InferenceService {
               data: { status: "completed", output: { content: output }, completedAt: new Date() }
             });
             this.routing.recordSuccess(target.deploymentId);
-            await this.usage.record({
+            const snapshot: UsageSnapshot = {
+              occurredAt: new Date(started).toISOString(),
               requestId: request.requestId,
               runId: run.id,
               userId: request.principal.userId,
@@ -289,8 +295,9 @@ export class InferenceService {
               outputPricePerM: Number(target.deployment.outputPricePerM),
               latencyMs: Date.now() - started,
               fallbackCount: Math.max(0, ordinal - 1)
-            });
-            await this.runs.finish(run.id, { content: output });
+            };
+            const completed = await this.runs.finish(run.id, { content: output }, snapshot);
+            if (completed) await this.recordUsage(snapshot);
             this.hooks.afterAttempt(request.requestId, target.deploymentId, "success");
             this.hooks.onResponse(request.requestId);
             yield { type: "done", usage: tokenUsage, deploymentId: target.deploymentId };
@@ -344,5 +351,18 @@ export class InferenceService {
         errorType: error instanceof Error ? error.name : undefined
       }
     });
+  }
+
+  private async recordUsage(snapshot: UsageSnapshot): Promise<void> {
+    try {
+      await this.usage.record(snapshot);
+    } catch (error) {
+      this.logger.error({
+        event: "usage.record.deferred",
+        requestId: snapshot.requestId,
+        runId: snapshot.runId,
+        errorType: error instanceof Error ? error.name : "UnknownError"
+      });
+    }
   }
 }

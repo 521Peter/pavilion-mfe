@@ -54,7 +54,8 @@ export class InferenceController {
           id: model.name,
           object: "model",
           created: Math.floor(model.createdAt.getTime() / 1000),
-          owned_by: "pavilion"
+          owned_by: "pavilion",
+          display_name: model.displayName ?? model.name
         }))
     };
   }

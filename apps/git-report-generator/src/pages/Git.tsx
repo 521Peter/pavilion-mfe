@@ -95,8 +95,7 @@ function Git() {
       let generated = "";
       for await (const chunk of generateAiReport(
         {
-          providerId: selectedModel.providerId,
-          modelId: selectedModel.id,
+          model: selectedModel.id,
           temperature: 0.2,
           maxTokens: 3000,
           messages: [
@@ -250,7 +249,7 @@ function Git() {
               {!models.length ? <option value="">暂无可用模型</option> : null}
               {models.map(model => (
                 <option key={model.id} value={model.id}>
-                  {model.providerName} · {model.displayName}
+                  {model.displayName} · {model.id}
                 </option>
               ))}
             </select>

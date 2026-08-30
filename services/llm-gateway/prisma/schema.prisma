@@ -404,6 +404,7 @@ model Run {
   input          Json              @default("{}")
   output         Json?
   error          Json?
+  usageSnapshot Json? @map("usage_snapshot")
   startedAt      DateTime?         @map("started_at")
   completedAt    DateTime?         @map("completed_at")
   cancelledAt    DateTime?         @map("cancelled_at")
@@ -415,6 +416,9 @@ model Run {
 
   @@index([userId, createdAt])
   @@index([applicationId, createdAt])
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([virtualModelId, createdAt])
   @@map("runs")
 }
 
@@ -466,6 +470,7 @@ model ProviderAttempt {
   createdAt    DateTime        @default(now()) @map("created_at")
 
   @@index([requestId, attempt])
+  @@index([runId, deploymentId])
   @@map("provider_attempts")
 }
 
@@ -482,6 +487,7 @@ model UsageRecord {
   virtualModel    VirtualModel?    @relation(fields: [virtualModelId], references: [id], onDelete: SetNull)
   deploymentId    String?          @map("deployment_id")
   deployment      ModelDeployment? @relation(fields: [deploymentId], references: [id], onDelete: SetNull)
+  idempotencyKey String? @unique @map("idempotency_key")
   inputTokens     Int              @default(0) @map("input_tokens")
   outputTokens    Int              @default(0) @map("output_tokens")
   cachedTokens    Int              @default(0) @map("cached_tokens")
@@ -494,6 +500,7 @@ model UsageRecord {
   @@index([createdAt])
   @@index([applicationId, createdAt])
   @@index([virtualModelId, createdAt])
+  @@index([deploymentId, createdAt])
   @@map("usage_records")
 }
 

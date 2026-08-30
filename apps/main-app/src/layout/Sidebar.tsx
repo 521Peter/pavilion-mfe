@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTabs } from "@pavilion-mfe/tabs/react";
 import { navigateTo } from "@pavilion-mfe/router";
 import { useMenus, type MenuItem } from "../api/menu";
+import { useProfile } from "../hooks/useProfile";
 import { Icon } from "../components/Icon";
 import { isMainAppRoutePath, routeMeta } from "../router";
 import Logo from "./Logo";
@@ -18,7 +19,19 @@ interface PopupState {
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const menuList = useMenus();
+  const allMenus = useMenus();
+  const profileResource = useProfile();
+  const isAdmin = profileResource.status === "ready" && profileResource.profile.roles.includes("ADMIN");
+  const menuList = useMemo(
+    () =>
+      isAdmin
+        ? allMenus
+        : allMenus.map(menu => ({
+            ...menu,
+            childrenMenuInfoList: menu.childrenMenuInfoList?.filter(child => child.menuUrl !== "/usage")
+          })),
+    [allMenus, isAdmin]
+  );
   const { openTab } = useTabs();
 
   const [isCollapse, setIsCollapse] = useState(false);

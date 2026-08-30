@@ -31,10 +31,7 @@ const platformModel: ChatModelAdapter = {
       .filter(message => message.role === "system" || message.role === "user" || message.role === "assistant")
       .map(message => ({ role: message.role, content: messageText(message) }));
 
-    for await (const chunk of streamChat(
-      { providerId: model.providerId, modelId: model.id, messages: requestMessages },
-      abortSignal
-    )) {
+    for await (const chunk of streamChat({ model: model.id, messages: requestMessages }, abortSignal)) {
       accumulated += chunk;
       yield { content: [{ type: "text", text: accumulated }] };
     }

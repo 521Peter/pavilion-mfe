@@ -41,6 +41,11 @@ async function main() {
       where: { code: "ai-chat" },
       update: {},
       create: { code: "ai-chat", name: "Pavilion AI Chat", allowedModels: [] }
+    }),
+    prisma.application.upsert({
+      where: { code: "git-report-generator" },
+      update: {},
+      create: { code: "git-report-generator", name: "Pavilion Git Report Generator", allowedModels: [] }
     })
   ]);
 

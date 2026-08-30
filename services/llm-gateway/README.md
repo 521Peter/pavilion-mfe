@@ -75,7 +75,7 @@ Redis TLS 还支持 `REDIS_TLS`、`REDIS_TLS_CA_FILE`、`REDIS_TLS_CERT_FILE`、
 | `/api/auth/*`                                       | 登录、注册和当前用户                       |
 | `/api/llm/providers*`、`/api/llm/models*`           | Provider 与模型管理                        |
 | `/api/llm/deployments*`、`/api/llm/virtual-models*` | 模型部署和 Virtual Model                   |
-| `/api/llm/chat*`                                    | 兼容聊天、SSE 与会话消息                   |
+| `/api/llm/chat/threads*`                            | 平台会话与消息管理                         |
 | `/api/applications*`                                | Application 与一次性返回的 Application Key |
 | `/api/agents*`                                      | Agent 定义和版本发布                       |
 | `/api/tools*`                                       | Tool 定义                                  |
@@ -94,8 +94,20 @@ Redis TLS 还支持 `REDIS_TLS`、`REDIS_TLS_CA_FILE`、`REDIS_TLS_CERT_FILE`、
 | `GET /v1/runs/:id`              | 查询运行状态                      |
 | `POST /v1/runs/:id/cancel`      | 取消运行                          |
 
-数据面接受用户 JWT，或 `Authorization: Bearer pav_...` / `x-api-key` 形式的 Application Key。推理管线实现 Virtual
+浏览器调用数据面时必须同时发送 `Authorization: Bearer <JWT>` 和 `X-Pavilion-App-Code`。后端服务使用
+`x-api-key: pav_...`（也兼容 `Authorization: Bearer pav_...`）进行应用认证。模型执行只通过 `/v1/models`、
+`/v1/chat/completions` 与 `/v1/responses`；`/api/llm/chat/threads*` 只管理平台会话和消息。推理管线实现 Virtual
 Model 路由、ordered fallback、运行记录、Provider Attempt 和 Usage；流式响应已经发出首个块后不会再透明 fallback。
+
+模型调用约定如下：
+
+- 浏览器子应用模型调用：`/v1/*` + JWT + `X-Pavilion-App-Code`；
+- 后端服务模型调用：`/v1/*` + `x-api-key`；
+- Provider 只由 llm-gateway Adapter 连接；
+- 旧 `/api/llm/chat` 与 `/api/llm/chat/stream` 模型执行路由已移除；
+- 用量统计页面是主应用 `/usage`，统计 API 仅允许 ADMIN；
+- `X-Pavilion-App-Code` 只用于统计来源标注，不是安全凭证；
+- 生产反向代理必须把 `/api/*` 和 `/v1/*` 都转发到 llm-gateway。
 
 ### 网关与运维入口
 

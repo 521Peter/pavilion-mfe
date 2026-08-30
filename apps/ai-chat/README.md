@@ -4,8 +4,8 @@
 
 ## 功能
 
-- 从 `/api/llm/models` 加载可用 Provider 与模型；
-- 通过 `/api/llm/chat/stream` 接收 SSE 流式回复；
+- 从 llm-gateway `/v1/models` 加载可访问的 Virtual Model；
+- 通过 OpenAI 兼容的 `/v1/chat/completions` 接收 SSE 流式回复；
 - 创建、读取、重命名、归档和删除聊天会话；
 - 将 assistant-ui 消息保存到后端会话；
 - 嵌入主应用时复用同源 `sessionStorage.pavilion_token`；
@@ -22,6 +22,19 @@ pnpm --filter ai-chat preview
 ```
 
 独立开发地址是 `http://localhost:6020`。Vite 将 `/api` 代理到 `VITE_BASE_API_URL`，未设置时使用 `http://localhost:3000`。
+同时，Vite 也将 `/v1` 代理到同一网关。
+
+## 模型调用约定
+
+模型列表和聊天补全统一调用 llm-gateway 数据面：
+
+```text
+GET  /v1/models
+POST /v1/chat/completions
+```
+
+浏览器请求携带登录 JWT，并附加 `X-Pavilion-App-Code: ai-chat` 作为统计来源标签。该请求头不是授权凭证。
+聊天会话管理仍使用平台控制面 `/api/llm/chat/threads*`；子应用不直接连接 Provider。
 
 ## 环境变量
 

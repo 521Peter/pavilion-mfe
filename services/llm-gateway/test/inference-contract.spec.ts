@@ -30,14 +30,18 @@ describe("OpenAI-compatible data plane contracts", () => {
         },
         {
           provide: ModelRoutingService,
-          useValue: { listVirtualModels: () => [{ name: "pavilion-default", createdAt: new Date(0) }] }
+          useValue: {
+            listVirtualModels: () => [
+              { name: "pavilion-default", displayName: "Pavilion Default", createdAt: new Date(0) }
+            ]
+          }
         },
         { provide: RunService, useValue: { get: () => ({ id: "run-1" }), cancel: () => undefined } }
       ]
     });
     builder.overrideGuard(DataPlaneAuthGuard).useValue({
       canActivate: (context: any) => {
-        context.switchToHttp().getRequest().principal = { type: "application", applicationId: "app-1" };
+        context.switchToHttp().getRequest().principal = { authenticationType: "application", applicationId: "app-1" };
         return true;
       }
     });
@@ -55,7 +59,12 @@ describe("OpenAI-compatible data plane contracts", () => {
       .get("/v1/models")
       .set("Authorization", "Bearer test")
       .expect(200);
-    expect(response.body).toMatchObject({ object: "list", data: [{ id: "pavilion-default", object: "model" }] });
+    expect(response.body.data[0]).toMatchObject({
+      id: "pavilion-default",
+      object: "model",
+      owned_by: "pavilion",
+      display_name: "Pavilion Default"
+    });
   });
 
   it("returns Chat Completions-compatible output", async () => {

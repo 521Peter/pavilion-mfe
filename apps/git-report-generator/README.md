@@ -23,3 +23,15 @@ pnpm --filter git-report-generator preview
 构建产物包含根目录的 `mf-manifest-main.json` 和 `static/` 资源。生产部署路径为 `<cdn>/mfe/git-report-generator/`。
 
 详细接入规范见仓库根目录 [`AGENTS.md`](../../AGENTS.md)。
+
+## 模型调用约定
+
+AI 报告使用 llm-gateway 的 OpenAI 兼容数据面：
+
+```text
+GET  /v1/models
+POST /v1/chat/completions
+```
+
+浏览器请求携带登录 JWT，并附加 `X-Pavilion-App-Code: git-report-generator` 作为统计来源标签。该请求头不是授权凭证。
+子应用不直接连接 Provider 或其他业务子服务。

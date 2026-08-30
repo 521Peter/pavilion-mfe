@@ -25,16 +25,32 @@ export async function authorizedFetch(path: string, options: RequestInit = {}): 
     headers
   });
 
-  if (res.status === 401) {
-    clearToken();
-    if (isEmbedded()) {
-      window.location.href = "/login";
-    } else {
-      notifyAuthRequired();
-    }
-  }
+  handleUnauthorized(res);
 
   return res;
+}
+
+function handleUnauthorized(response: Response) {
+  if (response.status !== 401) return;
+
+  clearToken();
+  if (isEmbedded()) {
+    window.location.href = "/login";
+  } else {
+    notifyAuthRequired();
+  }
+}
+
+export async function dataPlaneFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(options.headers);
+  headers.set("Content-Type", "application/json");
+  headers.set("X-Pavilion-App-Code", import.meta.env.VITE_PAVILION_MFE_APP_CODE);
+  const token = getToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const response = await fetch(path, { ...options, headers });
+  handleUnauthorized(response);
+  return response;
 }
 
 export async function http<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {

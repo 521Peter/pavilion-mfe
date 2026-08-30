@@ -115,6 +115,16 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           status: "1",
           menuUrl: "/skills",
           menuIcon: "LibraryBig"
+        },
+        {
+          menuCode: "ai-center/usage",
+          menuName: "用量统计",
+          menuTp: "1",
+          parentCode: "ai-center",
+          orderNo: 4,
+          status: "1",
+          menuUrl: "/usage",
+          menuIcon: "ChartBar"
         }
       ]
     },

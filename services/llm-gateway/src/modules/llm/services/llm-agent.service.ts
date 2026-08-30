@@ -12,11 +12,23 @@ import {
 import type { Runnable } from "@langchain/core/runnables";
 import type { StructuredToolInterface } from "@langchain/core/tools";
 import { END, MessagesAnnotation, START, StateGraph } from "@langchain/langgraph";
-import type { ChatMessage, ChatParams } from "./llm-chat.service";
 import { AgentToolService } from "./agent-tool.service";
 import { SkillSelectorService, type SelectedSkill } from "./skill-selector.service";
 
 const GRAPH_RECURSION_LIMIT = 20;
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+export interface ChatParams {
+  providerId: string;
+  modelId: string;
+  messages: ChatMessage[];
+  temperature?: number;
+  maxTokens?: number;
+}
 
 export interface AgentExecutionConfig {
   systemPrompt?: string;

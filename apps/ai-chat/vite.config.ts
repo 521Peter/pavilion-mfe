@@ -52,6 +52,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         "/api": {
           target: apiBase || "http://localhost:3000",
           changeOrigin: true
+        },
+        "/v1": {
+          target: apiBase || "http://localhost:3000",
+          changeOrigin: true
         }
       }
     },
