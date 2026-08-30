@@ -29,6 +29,7 @@
     "**/generated/**",
     "**/.mf/**",
     "**/@mf-types/**",
-    "services/llm-gateway/libs/api-gateway/views/document.hbs"
+    "services/llm-gateway/libs/api-gateway/views/document.hbs",
+    "**/.codex/**"
   ]
 }

@@ -26,6 +26,7 @@
     ".gitignore",
     "cspell.json",
     "commitlint.config.js",
-    ".cspell"
+    ".cspell",
+    "**/.codex/**"
   ]
 }

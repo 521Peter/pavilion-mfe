@@ -40,27 +40,45 @@
     "typescript/ban-ts-comment": "off",
     "typescript/consistent-return": "off",
     "typescript/no-explicit-any": "off",
-    "typescript/no-extraneous-class": ["error", { "allowStaticOnly": true, "allowWithDecorator": true }],
+    "typescript/no-extraneous-class": [
+      "error",
+      {
+        "allowStaticOnly": true,
+        "allowWithDecorator": true
+      }
+    ],
     "typescript/no-non-null-assertion": "off",
     "typescript/no-unsafe-type-assertion": "error"
   },
   "overrides": [
     {
       "files": ["apps/**/*.{js,jsx,ts,tsx}"],
-      "env": { "browser": true }
+      "env": {
+        "browser": true
+      }
     },
     {
       "files": ["apps/**/*.tsx", "packages/tabs/src/**/*.tsx"],
       "rules": {
         "react/rules-of-hooks": "error",
-        "react/only-export-components": ["error", { "allowConstantExport": true }]
+        "react/only-export-components": [
+          "error",
+          {
+            "allowConstantExport": true
+          }
+        ]
       }
     },
     {
       "files": ["**/*.{ts,tsx,mts,cts}"],
       "rules": {
         "no-undef": "off",
-        "no-unused-vars": ["error", { "args": "none" }]
+        "no-unused-vars": [
+          "error",
+          {
+            "args": "none"
+          }
+        ]
       }
     },
     {
@@ -70,16 +88,26 @@
         "**/*.config.{js,ts,mjs,cjs}",
         "**/vite.config.ts"
       ],
-      "env": { "node": true }
+      "env": {
+        "node": true
+      }
     },
     {
       "files": ["services/**/*.spec.ts", "services/**/test/**/*.ts"],
-      "env": { "jest": true, "node": true }
+      "env": {
+        "jest": true,
+        "node": true
+      }
     },
     {
       "files": ["services/llm-gateway/libs/api-gateway/restful/helpers/provider.helper.spec.ts"],
       "rules": {
-        "typescript/no-extraneous-class": ["error", { "allowEmpty": true }]
+        "typescript/no-extraneous-class": [
+          "error",
+          {
+            "allowEmpty": true
+          }
+        ]
       }
     },
     {
@@ -163,7 +191,8 @@
     "**/.turbo/**",
     "**/generated/**",
     "**/.mf/**",
-    "**/@mf-types/**"
+    "**/@mf-types/**",
+    "**/.codex/**"
   ],
   "options": {
     "typeAware": true,
