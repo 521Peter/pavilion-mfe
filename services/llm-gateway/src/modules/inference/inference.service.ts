@@ -98,10 +98,10 @@ export class InferenceService {
     request: NormalizedLlmRequest,
     executor?: (model: BaseChatModel, signal: AbortSignal) => Promise<{ content: string; usage?: TokenUsage }>
   ): Promise<InferenceResult> {
+    const started = Date.now();
     this.hooks.onRequest(request.requestId);
     const resolved = await this.routing.resolve(request.model, request.principal.allowedModels);
     const { run, controller } = await this.runs.create(request, resolved.virtualModel.id);
-    const started = Date.now();
     let ordinal = 0;
     let lastError: unknown;
     try {
@@ -213,11 +213,11 @@ export class InferenceService {
   }
 
   async *stream(request: NormalizedLlmRequest): AsyncGenerator<InferenceStreamEvent> {
+    const started = Date.now();
     this.hooks.onRequest(request.requestId);
     const resolved = await this.routing.resolve(request.model, request.principal.allowedModels);
     const { run, controller } = await this.runs.create(request, resolved.virtualModel.id);
     yield { type: "start", id: run.id, requestId: request.requestId, model: request.model };
-    const started = Date.now();
     let ordinal = 0;
     let lastError: unknown;
     try {

@@ -22,16 +22,20 @@ function createService() {
     runStep: { create: jest.fn().mockResolvedValue({}), update: jest.fn().mockResolvedValue({}) }
   };
   const providers = { getDeploymentModel: jest.fn() };
+  const resolved = {
+    virtualModel: { id: "virtual-model-1" },
+    targets: [
+      {
+        deploymentId: "deployment-1",
+        deployment: { inputPricePerM: "2", outputPricePerM: "3" }
+      }
+    ],
+    policy: { maxRetries: 0, requestTimeout: 60_000, circuitFailures: 3, circuitCooldown: 30_000 }
+  };
   const routing = {
-    resolve: jest.fn().mockResolvedValue({
-      virtualModel: { id: "virtual-model-1" },
-      targets: [
-        {
-          deploymentId: "deployment-1",
-          deployment: { inputPricePerM: "2", outputPricePerM: "3" }
-        }
-      ],
-      policy: { maxRetries: 0, requestTimeout: 60_000, circuitFailures: 3, circuitCooldown: 30_000 }
+    resolve: jest.fn(async () => {
+      Date.now();
+      return resolved;
     }),
     recordSuccess: jest.fn(),
     recordFailure: jest.fn()
@@ -46,7 +50,10 @@ function createService() {
     onStreamChunk: jest.fn()
   };
   const runs = {
-    create: jest.fn().mockResolvedValue({ run: { id: "run-1" }, controller: new AbortController() }),
+    create: jest.fn(async () => {
+      Date.now();
+      return { run: { id: "run-1" }, controller: new AbortController() };
+    }),
     finish: jest.fn().mockResolvedValue(undefined),
     fail: jest.fn().mockResolvedValue(undefined)
   };
@@ -58,10 +65,29 @@ function createService() {
     hooks as unknown as InferenceHooksService,
     runs as unknown as RunService
   );
-  return { service, providers, usage, runs };
+  return { service, providers, routing, usage, runs };
 }
 
 describe("InferenceService", () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it("在路由解析和 Run 创建前捕获非流式请求开始时间", async () => {
+    const { service, runs } = createService();
+    let elapsed = 0;
+    jest.spyOn(Date, "now").mockImplementation(() => (elapsed += 100));
+
+    await service.execute(request, async () => ({
+      content: "ok",
+      usage: { inputTokens: 3, outputTokens: 5, cachedTokens: 0, reasoningTokens: 0 }
+    }));
+
+    expect(runs.finish).toHaveBeenCalledWith(
+      "run-1",
+      expect.anything(),
+      expect.objectContaining({ occurredAt: "1970-01-01T00:00:00.100Z", latencyMs: 500 })
+    );
+  });
+
   it("用量写入失败时仍完成 Run 并返回非流式成功结果", async () => {
     const { service, usage, runs } = createService();
     usage.record.mockRejectedValue(new Error("usage unavailable"));
@@ -105,6 +131,27 @@ describe("InferenceService", () => {
       "run-1",
       expect.anything(),
       expect.objectContaining({ runId: "run-1", deploymentId: "deployment-1", occurredAt: expect.any(String) })
+    );
+  });
+
+  it("在首次流式 start 前捕获请求开始时间", async () => {
+    const { service, providers, runs } = createService();
+    let elapsed = 0;
+    jest.spyOn(Date, "now").mockImplementation(() => (elapsed += 100));
+    providers.getDeploymentModel.mockResolvedValue({
+      stream: async function* () {
+        yield { content: "ok", usage_metadata: { input_tokens: 3, output_tokens: 5 } };
+      }
+    });
+
+    const events = [];
+    for await (const event of service.stream(request)) events.push(event);
+
+    expect(events).toHaveLength(3);
+    expect(runs.finish).toHaveBeenCalledWith(
+      "run-1",
+      expect.anything(),
+      expect.objectContaining({ occurredAt: "1970-01-01T00:00:00.100Z", latencyMs: 600 })
     );
   });
 });
