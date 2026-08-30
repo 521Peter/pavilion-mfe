@@ -37,6 +37,24 @@ void test("reads frames split across SSE chunks", async () => {
   assert.deepEqual(events, [{ type: "delta", delta: "report" }, { type: "done" }]);
 });
 
+void test("reads CRLF frames split across SSE chunks", async () => {
+  const encoder = new TextEncoder();
+  const response = new Response(
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode('data: {"choices":[{"delta":{"content":"report"}}]}\r'));
+        controller.enqueue(encoder.encode("\n\r\ndata: [DONE]\r\n\r\n"));
+        controller.close();
+      }
+    })
+  );
+  const abortController = new AbortController();
+  const events = [];
+  for await (const event of readOpenAiStream(response, abortController.signal)) events.push(event);
+
+  assert.deepEqual(events, [{ type: "delta", delta: "report" }, { type: "done" }]);
+});
+
 void test("ignores valid role-only and finish-only OpenAI frames", async () => {
   const response = new Response(
     'data: {"choices":[{"delta":{"role":"assistant"},"finish_reason":null}]}\n\ndata: {"choices":[{"delta":{"content":"report"},"finish_reason":null}]}\n\ndata: {"choices":[{"delta":{},"finish_reason":"stop"}]}\n\n'

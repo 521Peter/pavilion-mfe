@@ -48,6 +48,11 @@ function eventData(eventText: string): string | undefined {
   return dataLines.map(line => line.slice(5).trimStart()).join("\n");
 }
 
+function normalizeLineEndings(value: string, finalChunk: boolean): string {
+  const normalized = value.replace(/\r\n/g, "\n");
+  return finalChunk ? normalized.replace(/\r/g, "\n") : normalized.replace(/\r(?=.)/g, "\n");
+}
+
 export async function* readOpenAiStream(response: Response, signal: AbortSignal): AsyncGenerator<ChatCompletionEvent> {
   if (!response.body) throw new Error("AI 报告流未返回响应体");
 
@@ -67,6 +72,7 @@ export async function* readOpenAiStream(response: Response, signal: AbortSignal)
       const { done, value } = await reader.read();
       if (signal.aborted) return;
       buffer += decoder.decode(value, { stream: !done });
+      buffer = normalizeLineEndings(buffer, done);
       const events = buffer.split("\n\n");
       buffer = events.pop() ?? "";
 
