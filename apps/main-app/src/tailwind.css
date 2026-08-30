@@ -202,15 +202,3 @@ body {
     background-color: #635bff;
   }
 }
-
-/* ─── 宽对话框 ─── */
-@utility modal-wide {
-  width: 900px;
-  max-width: calc(100vw - 48px);
-}
-
-/* ─── 中等宽度对话框 ─── */
-@utility modal-medium {
-  width: 600px;
-  max-width: calc(100vw - 48px);
-}

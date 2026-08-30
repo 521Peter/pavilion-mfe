@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { mcpApi, type McpServer, type CreateMcpServerInput, type McpTestResult } from "../api/mcp";
-import { Button, Card, Chip, Input, Modal, Skeleton, Switch, TextArea } from "@heroui/react";
+import { Button, Card, Chip, Input, Skeleton, Switch, TextArea } from "@heroui/react";
+import AiCenterModal from "../components/AiCenterModal";
 
 const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
@@ -101,17 +102,7 @@ function transportColor(t: string): "accent" | "success" | "warning" {
 }
 
 // ─── 服务器表单 ───
-function ServerForm({
-  initial,
-  onSubmit,
-  onCancel,
-  submitting
-}: {
-  initial?: McpServer;
-  onSubmit: (data: CreateMcpServerInput) => void;
-  onCancel: () => void;
-  submitting: boolean;
-}) {
+function ServerForm({ initial, onSubmit }: { initial?: McpServer; onSubmit: (data: CreateMcpServerInput) => void }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [identifier, setIdentifier] = useState(initial?.identifier ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
@@ -164,7 +155,7 @@ function ServerForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form id="mcp-server-form" onSubmit={handleSubmit}>
       <div className="mb-4">
         <label className={labelClass}>名称</label>
         <Input
@@ -279,24 +270,16 @@ function ServerForm({
         </>
       )}
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <label className="text-[13px] font-medium text-text-regular">启用</label>
         <Toggle isSelected={isActive} onChange={setIsActive} />
-      </div>
-      <div className="flex justify-end gap-2.5">
-        <Button variant="outline" onPress={onCancel}>
-          取消
-        </Button>
-        <Button type="submit" variant="primary" isDisabled={submitting || !name || !identifier}>
-          {submitting ? "保存中..." : "确定"}
-        </Button>
       </div>
     </form>
   );
 }
 
 // ─── 工具列表展示 ───
-function ToolsPanel({ server, onClose }: { server: McpServer; onClose: () => void }) {
+function ToolsPanel({ server }: { server: McpServer }) {
   const [tools, setTools] = useState<unknown[]>(server.cachedTools ?? []);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<McpTestResult | null>(null);
@@ -349,12 +332,6 @@ function ToolsPanel({ server, onClose }: { server: McpServer; onClose: () => voi
       ) : (
         <div className="py-10 text-center text-sm text-text-muted">暂无工具，点击「同步工具」从 MCP Server 获取</div>
       )}
-
-      <div className="flex justify-end mt-6">
-        <Button variant="outline" onPress={onClose}>
-          关闭
-        </Button>
-      </div>
     </div>
   );
 }
@@ -526,44 +503,38 @@ export default function McpServers() {
         </div>
       )}
 
-      <Modal isOpen={modalOpen} onOpenChange={setModalOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="modal-medium">
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">
-                  {editing ? "编辑 MCP Server" : "新增 MCP Server"}
-                </h3>
-              </Modal.Header>
-              <Modal.Body>
-                <ServerForm
-                  initial={editing ?? undefined}
-                  onSubmit={handleSubmit}
-                  onCancel={() => setModalOpen(false)}
-                  submitting={submitting}
-                />
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={modalOpen}
+        onOpenChange={setModalOpen}
+        title={editing ? "编辑 MCP Server" : "新增 MCP Server"}
+        size="md"
+        footer={
+          <>
+            <Button variant="tertiary" onPress={() => setModalOpen(false)}>
+              取消
+            </Button>
+            <Button type="submit" form="mcp-server-form" variant="primary" isDisabled={submitting}>
+              {submitting ? "保存中..." : "确定"}
+            </Button>
+          </>
+        }
+      >
+        <ServerForm initial={editing ?? undefined} onSubmit={handleSubmit} />
+      </AiCenterModal>
 
-      <Modal isOpen={!!toolsServer} onOpenChange={open => !open && setToolsServer(null)}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="modal-medium">
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">
-                  工具列表{toolsServer ? " - " + toolsServer.name : ""}
-                </h3>
-              </Modal.Header>
-              <Modal.Body>
-                {toolsServer && <ToolsPanel server={toolsServer} onClose={() => setToolsServer(null)} />}
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={!!toolsServer}
+        onOpenChange={open => !open && setToolsServer(null)}
+        title={`工具列表${toolsServer ? ` - ${toolsServer.name}` : ""}`}
+        size="md"
+        footer={
+          <Button variant="tertiary" onPress={() => setToolsServer(null)}>
+            关闭
+          </Button>
+        }
+      >
+        {toolsServer && <ToolsPanel server={toolsServer} />}
+      </AiCenterModal>
     </div>
   );
 }

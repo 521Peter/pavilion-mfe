@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { llmApi, type LlmProvider, type LlmModel, type CreateProviderInput } from "../api/llm";
-import { Button, Card, Chip, Input, ListBox, Modal, Select, Skeleton, Switch } from "@heroui/react";
+import { Button, Card, Chip, Input, ListBox, Select, Skeleton, Switch } from "@heroui/react";
+import AiCenterModal from "../components/AiCenterModal";
 
 const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
@@ -85,15 +86,11 @@ function Toggle({
 function ProviderForm({
   initial,
   types,
-  onSubmit,
-  onCancel,
-  submitting
+  onSubmit
 }: {
   initial?: LlmProvider;
   types: string[];
   onSubmit: (data: CreateProviderInput) => void;
-  onCancel: () => void;
-  submitting: boolean;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [type, setType] = useState(initial?.type ?? types[0] ?? "openai");
@@ -107,7 +104,7 @@ function ProviderForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form id="provider-form" onSubmit={handleSubmit}>
       <div className="mb-4">
         <label className={labelClass}>名称</label>
         <Input
@@ -159,17 +156,9 @@ function ProviderForm({
           fullWidth
         />
       </div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <label className="text-[13px] font-medium text-text-regular">启用</label>
         <Toggle isSelected={isActive} onChange={setIsActive} />
-      </div>
-      <div className="flex justify-end gap-2.5">
-        <Button variant="outline" onPress={onCancel}>
-          取消
-        </Button>
-        <Button type="submit" variant="primary" isDisabled={submitting || !name}>
-          {submitting ? "保存中..." : "确定"}
-        </Button>
       </div>
     </form>
   );
@@ -178,12 +167,10 @@ function ProviderForm({
 // ─── 模型管理 ───
 function ModelManager({
   provider,
-  onModelsChange,
-  onClose
+  onModelsChange
 }: {
   provider: LlmProvider;
   onModelsChange: (models: LlmModel[]) => void;
-  onClose: () => void;
 }) {
   const models = provider.models;
   const [newModelName, setNewModelName] = useState("");
@@ -284,12 +271,6 @@ function ModelManager({
           ))}
         </div>
       )}
-
-      <div className="flex justify-end mt-6">
-        <Button variant="outline" onPress={onClose}>
-          关闭
-        </Button>
-      </div>
     </div>
   );
 }
@@ -476,50 +457,44 @@ export default function LlmProviders() {
       )}
 
       {/* 新增/编辑对话框 */}
-      <Modal isOpen={modalOpen} onOpenChange={setModalOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog>
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">{editing ? "编辑提供商" : "新增提供商"}</h3>
-              </Modal.Header>
-              <Modal.Body>
-                <ProviderForm
-                  initial={editing ?? undefined}
-                  types={types}
-                  onSubmit={handleSubmit}
-                  onCancel={() => setModalOpen(false)}
-                  submitting={submitting}
-                />
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={modalOpen}
+        onOpenChange={setModalOpen}
+        title={editing ? "编辑提供商" : "新增提供商"}
+        size="md"
+        footer={
+          <>
+            <Button variant="tertiary" onPress={() => setModalOpen(false)}>
+              取消
+            </Button>
+            <Button type="submit" form="provider-form" variant="primary" isDisabled={submitting}>
+              {submitting ? "保存中..." : "确定"}
+            </Button>
+          </>
+        }
+      >
+        <ProviderForm initial={editing ?? undefined} types={types} onSubmit={handleSubmit} />
+      </AiCenterModal>
 
       {/* 模型管理对话框 */}
-      <Modal isOpen={!!modelProvider} onOpenChange={open => !open && setModelProvider(null)}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog>
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">
-                  管理模型{modelProvider ? " - " + modelProvider.name : ""}
-                </h3>
-              </Modal.Header>
-              <Modal.Body>
-                {modelProvider && (
-                  <ModelManager
-                    provider={modelProvider}
-                    onModelsChange={models => handleModelsChange(modelProvider.id, models)}
-                    onClose={() => setModelProvider(null)}
-                  />
-                )}
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={!!modelProvider}
+        onOpenChange={open => !open && setModelProvider(null)}
+        title={`管理模型${modelProvider ? ` - ${modelProvider.name}` : ""}`}
+        size="md"
+        footer={
+          <Button variant="tertiary" onPress={() => setModelProvider(null)}>
+            关闭
+          </Button>
+        }
+      >
+        {modelProvider && (
+          <ModelManager
+            provider={modelProvider}
+            onModelsChange={models => handleModelsChange(modelProvider.id, models)}
+          />
+        )}
+      </AiCenterModal>
     </div>
   );
 }

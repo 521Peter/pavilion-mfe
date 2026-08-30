@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { skillApi, type SkillSummary, type SkillDetail, type FileNode, type RemoteSkillInfo } from "../api/skill";
-import { Button, Card, Chip, Input, Modal, Skeleton, Switch } from "@heroui/react";
+import { Button, Card, Chip, Input, Skeleton, Switch } from "@heroui/react";
+import AiCenterModal from "../components/AiCenterModal";
 
 const SKELETON_IDS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
@@ -132,7 +133,7 @@ function TreeItem({
 }
 
 // ─── Skill 详情面板 ───
-function SkillDetailPanel({ skill, onClose }: { skill: SkillDetail; onClose: () => void }) {
+function SkillDetailPanel({ skill }: { skill: SkillDetail }) {
   const [selectedPath, setSelectedPath] = useState("SKILL.md");
   const [fileContent, setFileContent] = useState("");
   const [editing, setEditing] = useState(false);
@@ -239,11 +240,6 @@ function SkillDetailPanel({ skill, onClose }: { skill: SkillDetail; onClose: () 
               {fileContent}
             </pre>
           )}
-        </div>
-        <div className="flex justify-end px-4 py-3 border-t border-border">
-          <Button variant="outline" onPress={onClose}>
-            关闭
-          </Button>
         </div>
       </div>
     </div>
@@ -437,12 +433,6 @@ function RemoteInstallPanel({ onClose, onInstalled }: { onClose: () => void; onI
           )}
         </div>
       )}
-
-      <div className="flex justify-end mt-3">
-        <Button variant="outline" onPress={onClose}>
-          关闭
-        </Button>
-      </div>
     </div>
   );
 }
@@ -618,86 +608,80 @@ export default function Skills() {
       )}
 
       {/* 详情对话框 */}
-      <Modal isOpen={detailOpen} onOpenChange={setDetailOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="modal-wide">
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">{detailSkill?.name ?? ""}</h3>
-              </Modal.Header>
-              <Modal.Body>
-                {detailSkill && <SkillDetailPanel skill={detailSkill} onClose={() => setDetailOpen(false)} />}
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={detailOpen}
+        onOpenChange={setDetailOpen}
+        title={detailSkill?.name ?? "Skill 详情"}
+        size="md"
+        footer={
+          <Button variant="tertiary" onPress={() => setDetailOpen(false)}>
+            关闭
+          </Button>
+        }
+      >
+        {detailSkill && <SkillDetailPanel skill={detailSkill} />}
+      </AiCenterModal>
 
       {/* 新建对话框 */}
-      <Modal isOpen={createOpen} onOpenChange={setCreateOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog>
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">新建 Skill</h3>
-              </Modal.Header>
-              <Modal.Body>
-                <form onSubmit={handleCreate}>
-                  <div className="mb-4">
-                    <label className={labelClass}>名称（目录名）</label>
-                    <Input
-                      variant="primary"
-                      value={createName}
-                      onChange={e => setCreateName(e.target.value)}
-                      placeholder="如：my-skill"
-                      autoFocus
-                      required
-                      fullWidth
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className={labelClass}>描述</label>
-                    <Input
-                      variant="primary"
-                      value={createDesc}
-                      onChange={e => setCreateDesc(e.target.value)}
-                      placeholder="简短描述"
-                      fullWidth
-                    />
-                  </div>
-                  <p className="text-xs text-text-muted mb-6">
-                    创建后会生成 <code>{"{name}/SKILL.md"}</code> 目录结构，可在详情页编辑文件和添加 references 等子目录
-                  </p>
-                  <div className="flex justify-end gap-2.5">
-                    <Button variant="outline" onPress={() => setCreateOpen(false)}>
-                      取消
-                    </Button>
-                    <Button type="submit" variant="primary" isDisabled={submitting || !createName}>
-                      {submitting ? "创建中..." : "创建"}
-                    </Button>
-                  </div>
-                </form>
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={createOpen}
+        onOpenChange={setCreateOpen}
+        title="新建 Skill"
+        size="md"
+        footer={
+          <>
+            <Button variant="tertiary" onPress={() => setCreateOpen(false)}>
+              取消
+            </Button>
+            <Button type="submit" form="create-skill-form" variant="primary" isDisabled={submitting || !createName}>
+              {submitting ? "创建中..." : "创建"}
+            </Button>
+          </>
+        }
+      >
+        <form id="create-skill-form" onSubmit={handleCreate}>
+          <div className="mb-4">
+            <label className={labelClass}>名称（目录名）</label>
+            <Input
+              variant="primary"
+              value={createName}
+              onChange={e => setCreateName(e.target.value)}
+              placeholder="如：my-skill"
+              autoFocus
+              required
+              fullWidth
+            />
+          </div>
+          <div className="mb-4">
+            <label className={labelClass}>描述</label>
+            <Input
+              variant="primary"
+              value={createDesc}
+              onChange={e => setCreateDesc(e.target.value)}
+              placeholder="简短描述"
+              fullWidth
+            />
+          </div>
+          <p className="text-xs text-text-muted">
+            创建后会生成 <code>{"{name}/SKILL.md"}</code> 目录结构，可在详情页编辑文件和添加 references 等子目录
+          </p>
+        </form>
+      </AiCenterModal>
 
       {/* 远程安装对话框 */}
-      <Modal isOpen={remoteOpen} onOpenChange={setRemoteOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="modal-medium">
-              <Modal.Header>
-                <h3 className="text-base font-bold text-text-primary m-0">从 GitHub 安装 Skill</h3>
-              </Modal.Header>
-              <Modal.Body>
-                <RemoteInstallPanel onClose={() => setRemoteOpen(false)} onInstalled={refresh} />
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <AiCenterModal
+        isOpen={remoteOpen}
+        onOpenChange={setRemoteOpen}
+        title="从 GitHub 安装 Skill"
+        size="md"
+        footer={
+          <Button variant="tertiary" onPress={() => setRemoteOpen(false)}>
+            关闭
+          </Button>
+        }
+      >
+        <RemoteInstallPanel onClose={() => setRemoteOpen(false)} onInstalled={refresh} />
+      </AiCenterModal>
     </div>
   );
 }
