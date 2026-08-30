@@ -11,7 +11,6 @@ import { AuthService } from "@/modules/auth/auth.service";
 import { LlmProviderController } from "@/modules/llm/controllers/llm-provider.controller";
 import { LlmChatController } from "@/modules/llm/controllers/llm-chat.controller";
 import { LlmProviderService } from "@/modules/llm/services/llm-provider.service";
-import { LlmChatService } from "@/modules/llm/services/llm-chat.service";
 import { ChatThreadService } from "@/modules/llm/services/chat-thread.service";
 import { SkillController } from "@/modules/skill/controllers/skill.controller";
 import { SkillService } from "@/modules/skill/services/skill.service";
@@ -33,16 +32,6 @@ describe("Pavilion /api compatibility contracts", () => {
             listProviders: () => [{ id: "provider-1", name: "OpenAI", apiKey: undefined }],
             listAvailableModels: () => [],
             getSupportedTypes: () => ["openai", "ollama"]
-          }
-        },
-        {
-          provide: LlmChatService,
-          useValue: {
-            chat: () => ({ content: "hello", model: "test", providerType: "openai" }),
-            stream: async function* () {
-              yield "hel";
-              yield "lo";
-            }
           }
         },
         { provide: ChatThreadService, useValue: { list: () => [] } },
@@ -86,14 +75,13 @@ describe("Pavilion /api compatibility contracts", () => {
     expect(JSON.stringify(response.body.data)).toContain(id);
   });
 
-  it("keeps legacy chat SSE framing", async () => {
-    const response = await request(app.getHttpServer())
-      .post("/api/llm/chat/stream")
-      .send({ providerId: "provider-1", modelId: "model-1", messages: [{ role: "user", content: "hello" }] })
-      .expect(200);
-    expect(response.headers["content-type"]).toContain("text/event-stream");
-    expect(response.text).toContain('"type":"delta"');
-    expect(response.text).toContain('"type":"done"');
+  it.each(["/api/llm/chat", "/api/llm/chat/stream"])("does not expose legacy model execution at %s", async path => {
+    await request(app.getHttpServer()).post(path).send({}).expect(404);
+  });
+
+  it("keeps chat thread list enveloped", async () => {
+    const response = await request(app.getHttpServer()).get("/api/llm/chat/threads").expect(200);
+    expect(response.body).toEqual({ code: 0, data: [], msg: "ok" });
   });
 
   it("declares recoverable and idempotent usage storage", () => {
