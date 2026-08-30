@@ -9,6 +9,7 @@ import MFPage from "./MFPage";
 import LlmProviders from "../pages/LlmProviders";
 import McpServers from "../pages/McpServers";
 import Skills from "../pages/Skills";
+import Usage from "../pages/Usage";
 import { getToken } from "../api/http";
 
 /** 主应用自有路由 → 标题（用于 Tab / 菜单标题查找） */
@@ -17,6 +18,7 @@ export const routeMeta: Record<string, string> = {
   "/llm-providers": "Provider 管理",
   "/mcp-servers": "MCP 管理",
   "/skills": "Skill 管理",
+  "/usage": "用量统计",
   "/403": "403",
   "/404": "404",
   "/500": "500"
@@ -51,6 +53,7 @@ export const router = createBrowserRouter([
       { path: "/llm-providers", element: <LlmProviders /> },
       { path: "/mcp-servers", element: <McpServers /> },
       { path: "/skills", element: <Skills /> },
+      { path: "/usage", element: <Usage /> },
       { path: "/403", element: <Forbidden /> },
       { path: "/404", element: <NotFound /> },
       { path: "/500", element: <ServerError /> },
