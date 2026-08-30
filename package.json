@@ -2,6 +2,7 @@
   "name": "pavilion-mfe-monorepo",
   "private": true,
   "scripts": {
+    "dev": "pnpm dev:web & pnpm dev:service",
     "dev:web": "pnpm --parallel -r --filter './apps/**' --filter './packages/**' --filter '!@pavilion-mfe/desktop' dev",
     "dev:service": "pnpm --parallel -r --filter './services/**' dev",
     "dev:desktop": "pnpm dev:web & pnpm dev:service & pnpm --filter @pavilion-mfe/desktop dev",

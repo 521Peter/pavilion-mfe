@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from "node:url";
 import { PavilionMfe } from "@pavilion-mfe/vite";
 import chalk from "chalk";
 import mfeConfig from "./mfe.json" with { type: "json" };
+import { reactClickToComponent } from "vite-plugin-react-click-to-component";
 
 export default defineConfig(({ command, mode }: ConfigEnv) => {
   const isServe = command === "serve";
@@ -34,6 +35,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
 
   return {
     plugins: [
+      reactClickToComponent(),
       react(),
       tailwindcss(),
       PavilionMfe({
