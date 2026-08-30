@@ -30,7 +30,7 @@ export class RunService {
     return { run, controller };
   }
 
-  async finish(id: string, output: Prisma.InputJsonValue, usageSnapshot?: UsageSnapshot): Promise<void> {
+  async finish(id: string, output: Prisma.InputJsonValue, usageSnapshot?: UsageSnapshot): Promise<boolean> {
     this.controllers.delete(id);
     const updated = await this.prisma.run.updateMany({
       where: { id, status: { in: ["queued", "running"] } },
@@ -48,6 +48,7 @@ export class RunService {
         update: { type: "run.completed", data: {} }
       });
     }
+    return updated.count > 0;
   }
 
   async fail(id: string, error: unknown, cancelled = false): Promise<void> {

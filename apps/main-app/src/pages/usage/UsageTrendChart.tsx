@@ -14,7 +14,7 @@ interface UsageTrendChartProps {
 function metricValue(point: UsageTimeseriesPoint, metric: TrendMetric): number {
   if (metric === "requests") return point.totalRuns;
   if (metric === "cost") return Number(point.estimatedCost);
-  return point.inputTokens + point.outputTokens + point.cachedTokens + point.reasoningTokens;
+  return point.inputTokens + point.outputTokens;
 }
 
 function formatMetric(value: number, metric: TrendMetric): string {
@@ -27,11 +27,12 @@ export default function UsageTrendChart({ state, onRetry }: UsageTrendChartProps
   const [metric, setMetric] = useState<TrendMetric>("requests");
   const points = state.status === "success" ? state.data : [];
   const values = points.map(point => metricValue(point, metric));
-  const maxValue = Math.max(...values, 1);
+  const actualMaxValue = Math.max(...values, 0);
+  const scaleMaxValue = Math.max(actualMaxValue, 1);
   const path = values
     .map((value, index) => {
       const x = index * (800 / Math.max(points.length - 1, 1));
-      const y = 220 - (value / maxValue) * 200;
+      const y = 220 - (value / scaleMaxValue) * 200;
       return `${index === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`;
     })
     .join(" ");
@@ -116,7 +117,7 @@ export default function UsageTrendChart({ state, onRetry }: UsageTrendChartProps
               </text>
             </svg>
             <figcaption className="mt-1 text-xs text-text-muted">
-              最大值 {formatMetric(maxValue === 1 && values.every(value => value < 1) ? 0 : maxValue, metric)}
+              最大值 {formatMetric(actualMaxValue, metric)}
             </figcaption>
           </figure>
           <ul className="mt-3 grid max-h-32 grid-cols-1 gap-1 overflow-auto text-xs text-text-regular sm:grid-cols-2 xl:grid-cols-3">

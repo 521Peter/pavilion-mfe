@@ -173,8 +173,8 @@ export class InferenceService {
               usage: tokenUsage,
               deploymentId: target.deploymentId
             };
-            await this.runs.finish(run.id, toPrismaJson(result), snapshot);
-            await this.recordUsage(snapshot);
+            const completed = await this.runs.finish(run.id, toPrismaJson(result), snapshot);
+            if (completed) await this.recordUsage(snapshot);
             this.hooks.afterAttempt(request.requestId, target.deploymentId, "success");
             this.hooks.onResponse(request.requestId);
             return result;
@@ -296,8 +296,8 @@ export class InferenceService {
               latencyMs: Date.now() - started,
               fallbackCount: Math.max(0, ordinal - 1)
             };
-            await this.runs.finish(run.id, { content: output }, snapshot);
-            await this.recordUsage(snapshot);
+            const completed = await this.runs.finish(run.id, { content: output }, snapshot);
+            if (completed) await this.recordUsage(snapshot);
             this.hooks.afterAttempt(request.requestId, target.deploymentId, "success");
             this.hooks.onResponse(request.requestId);
             yield { type: "done", usage: tokenUsage, deploymentId: target.deploymentId };

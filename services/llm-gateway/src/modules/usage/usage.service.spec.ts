@@ -79,6 +79,63 @@ describe("UsageService", () => {
     expect(prisma.usageRecord.upsert).toHaveBeenCalledTimes(2);
   });
 
+  it("补录失败时下一轮从最早失败记录之前重试", async () => {
+    const fullPage = Array.from({ length: 100 }, (_, index) => ({
+      id: `run-${index + 1}`,
+      usageSnapshot: { ...snapshot, runId: `run-${index + 1}`, requestId: `request-${index + 1}` }
+    }));
+    prisma.run.findMany.mockResolvedValueOnce(fullPage).mockResolvedValueOnce(fullPage);
+    prisma.usageRecord.upsert
+      .mockRejectedValueOnce(new Error("temporarily unavailable"))
+      .mockResolvedValue({ id: "usage-2" });
+
+    await expect(service.reconcile()).resolves.toBe(99);
+    await expect(service.reconcile()).resolves.toBe(100);
+
+    expect(prisma.run.findMany).toHaveBeenNthCalledWith(2, expect.not.objectContaining({ cursor: expect.anything() }));
+    expect(prisma.usageRecord.upsert).toHaveBeenCalledTimes(200);
+  });
+
+  it("补录会跳过头部无效快照并继续寻找可处理记录", async () => {
+    const invalidRuns = Array.from({ length: 100 }, (_, index) => ({
+      id: `invalid-${index}`,
+      usageSnapshot: { requestId: `invalid-request-${index}` }
+    }));
+    prisma.run.findMany
+      .mockResolvedValueOnce(invalidRuns)
+      .mockResolvedValueOnce([{ id: "run-1", usageSnapshot: snapshot }])
+      .mockResolvedValueOnce([]);
+    prisma.usageRecord.upsert.mockResolvedValue({ id: "usage-1" });
+
+    await expect(service.reconcile()).resolves.toBe(1);
+
+    expect(prisma.run.findMany).toHaveBeenCalledTimes(2);
+    expect(prisma.run.findMany).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ cursor: { id: "invalid-99" }, skip: 1 })
+    );
+    expect(prisma.usageRecord.upsert).toHaveBeenCalledTimes(1);
+  });
+
+  it("补录单轮最多扫描十页，并从上次游标继续", async () => {
+    prisma.run.findMany.mockImplementation(async () => {
+      const page = prisma.run.findMany.mock.calls.length;
+      return Array.from({ length: 100 }, (_, index) => ({
+        id: `invalid-${page}-${index}`,
+        usageSnapshot: { requestId: `invalid-request-${page}-${index}` }
+      }));
+    });
+
+    await expect(service.reconcile()).resolves.toBe(0);
+    expect(prisma.run.findMany).toHaveBeenCalledTimes(10);
+
+    await expect(service.reconcile()).resolves.toBe(0);
+    expect(prisma.run.findMany).toHaveBeenNthCalledWith(
+      11,
+      expect.objectContaining({ cursor: { id: "invalid-10-99" }, skip: 1 })
+    );
+  });
+
   it("按 completed / (completed + failed) 计算成功率并排除 cancelled", async () => {
     prisma.run.groupBy.mockResolvedValue([
       { status: "completed", _count: { _all: 8 } },
@@ -238,6 +295,28 @@ describe("UsageService", () => {
         interval: "minute" as "hour"
       })
     ).rejects.toThrow("不支持的时间粒度");
+  });
+
+  it("时序查询保留起始时间所在的首个 UTC bucket", async () => {
+    prisma.$queryRaw
+      .mockResolvedValueOnce([
+        {
+          bucket: new Date("2026-08-01T00:00:00.000Z"),
+          totalRuns: 1,
+          completedRuns: 1,
+          failedRuns: 0,
+          cancelledRuns: 0
+        }
+      ])
+      .mockResolvedValueOnce([]);
+
+    const points = await service.timeseries({
+      from: "2026-08-01T00:37:00.000Z",
+      to: "2026-08-01T02:10:00.000Z",
+      interval: "hour"
+    });
+
+    expect(points[0]).toMatchObject({ bucket: "2026-08-01T00:00:00.000Z", totalRuns: 1, completedRuns: 1 });
   });
 
   it("按 Provider identity 聚合，并按 attempt 计数且将 null errorType 归入 UnknownError", async () => {

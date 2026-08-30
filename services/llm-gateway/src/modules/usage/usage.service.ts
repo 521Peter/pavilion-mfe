@@ -19,6 +19,8 @@ import type {
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_RANGE_MS = 366 * DAY_MS;
 const DEFAULT_RANGE_MS = 7 * DAY_MS;
+const RECONCILE_PAGE_SIZE = 100;
+const RECONCILE_MAX_PAGES = 10;
 
 interface UsageRange {
   from: Date;
@@ -105,6 +107,7 @@ function isUsageSnapshot(value: unknown): value is UsageSnapshot {
 @Injectable()
 export class UsageService {
   private readonly logger = new Logger(UsageService.name);
+  private reconcileCursor?: string;
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -135,32 +138,61 @@ export class UsageService {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async reconcile(): Promise<number> {
-    const runs = await this.prisma.run.findMany({
-      where: { status: "completed", usageSnapshot: { not: Prisma.DbNull }, usageRecords: { none: {} } },
-      select: { usageSnapshot: true },
-      orderBy: { completedAt: "asc" },
-      take: 100
-    });
-    const repairs = await Promise.all(
-      runs.map(async run => {
+    const candidates: Array<{ snapshot: UsageSnapshot; cursorBefore?: string }> = [];
+    let cursor = this.reconcileCursor;
+    let exhausted = false;
+    let invalidSnapshots = 0;
+    let pages = 0;
+    while (candidates.length < RECONCILE_PAGE_SIZE && pages < RECONCILE_MAX_PAGES) {
+      // 游标依赖上一页的最后一条记录，分页查询必须顺序执行。
+      // eslint-disable-next-line no-await-in-loop
+      const runs = await this.prisma.run.findMany({
+        where: { status: "completed", usageSnapshot: { not: Prisma.DbNull }, usageRecords: { none: {} } },
+        select: { id: true, usageSnapshot: true },
+        orderBy: [{ completedAt: "asc" }, { id: "asc" }],
+        take: RECONCILE_PAGE_SIZE,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {})
+      });
+      pages += 1;
+      if (runs.length === 0) {
+        exhausted = true;
+        break;
+      }
+      for (const run of runs) {
+        const cursorBefore = cursor;
+        cursor = run.id;
         if (!isUsageSnapshot(run.usageSnapshot)) {
-          this.logger.error({ event: "usage.reconcile.invalid_snapshot" });
-          return 0;
+          invalidSnapshots += 1;
+          continue;
         }
+        candidates.push({ snapshot: run.usageSnapshot, cursorBefore });
+        if (candidates.length === RECONCILE_PAGE_SIZE) break;
+      }
+      if (runs.length < RECONCILE_PAGE_SIZE) {
+        exhausted = true;
+        break;
+      }
+    }
+    if (invalidSnapshots > 0)
+      this.logger.error({ event: "usage.reconcile.invalid_snapshots", count: invalidSnapshots });
+    const repairs = await Promise.all(
+      candidates.map(async ({ snapshot }) => {
         try {
-          await this.record(run.usageSnapshot);
+          await this.record(snapshot);
           return 1;
         } catch (error) {
           this.logger.error({
             event: "usage.reconcile.deferred",
-            requestId: run.usageSnapshot.requestId,
-            runId: run.usageSnapshot.runId,
+            requestId: snapshot.requestId,
+            runId: snapshot.runId,
             errorType: error instanceof Error ? error.name : "UnknownError"
           });
           return 0;
         }
       })
     );
+    const firstFailure = repairs.indexOf(0);
+    this.reconcileCursor = firstFailure >= 0 ? candidates[firstFailure]?.cursorBefore : exhausted ? undefined : cursor;
     return repairs.reduce<number>((total, repaired) => total + repaired, 0);
   }
 

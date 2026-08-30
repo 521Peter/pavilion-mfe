@@ -34,3 +34,8 @@ textconv
 ttft
 uniquelocal
 unmappable
+ZADD
+ZCARD
+ZREM
+ZREMRANGEBYSCORE
+ZSCORE

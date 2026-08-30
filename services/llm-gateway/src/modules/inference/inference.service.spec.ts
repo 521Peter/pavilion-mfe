@@ -54,7 +54,7 @@ function createService() {
       Date.now();
       return { run: { id: "run-1" }, controller: new AbortController() };
     }),
-    finish: jest.fn().mockResolvedValue(undefined),
+    finish: jest.fn().mockResolvedValue(true),
     fail: jest.fn().mockResolvedValue(undefined)
   };
   const service = new InferenceService(
@@ -106,6 +106,20 @@ describe("InferenceService", () => {
     );
   });
 
+  it("Run 已被并发取消时不写入非流式用量", async () => {
+    const { service, usage, runs } = createService();
+    runs.finish.mockResolvedValue(false);
+
+    await expect(
+      service.execute(request, async () => ({
+        content: "ok",
+        usage: { inputTokens: 3, outputTokens: 5, cachedTokens: 0, reasoningTokens: 0 }
+      }))
+    ).resolves.toMatchObject({ content: "ok" });
+
+    expect(usage.record).not.toHaveBeenCalled();
+  });
+
   it("用量写入失败时仍发送流式 done 事件", async () => {
     const { service, providers, usage, runs } = createService();
     usage.record.mockRejectedValue(new Error("usage unavailable"));
@@ -132,6 +146,22 @@ describe("InferenceService", () => {
       expect.anything(),
       expect.objectContaining({ runId: "run-1", deploymentId: "deployment-1", occurredAt: expect.any(String) })
     );
+  });
+
+  it("Run 已被并发取消时不写入流式用量", async () => {
+    const { service, providers, usage, runs } = createService();
+    runs.finish.mockResolvedValue(false);
+    providers.getDeploymentModel.mockResolvedValue({
+      stream: async function* () {
+        yield { content: "ok", usage_metadata: { input_tokens: 3, output_tokens: 5 } };
+      }
+    });
+
+    const events = [];
+    for await (const event of service.stream(request)) events.push(event);
+
+    expect(events).toHaveLength(3);
+    expect(usage.record).not.toHaveBeenCalled();
   });
 
   it("在首次流式 start 前捕获请求开始时间", async () => {
