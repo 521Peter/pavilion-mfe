@@ -417,6 +417,8 @@ model Run {
   @@index([userId, createdAt])
   @@index([applicationId, createdAt])
   @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([virtualModelId, createdAt])
   @@map("runs")
 }
 
@@ -468,6 +470,7 @@ model ProviderAttempt {
   createdAt    DateTime        @default(now()) @map("created_at")
 
   @@index([requestId, attempt])
+  @@index([runId, deploymentId])
   @@map("provider_attempts")
 }
 

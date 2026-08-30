@@ -240,7 +240,7 @@ describe("UsageService", () => {
     ).rejects.toThrow("不支持的时间粒度");
   });
 
-  it("按 Provider identity 聚合 Deployment，并返回安全失败与 fallback 排行", async () => {
+  it("按 Provider identity 聚合，并按 attempt 计数且将 null errorType 归入 UnknownError", async () => {
     prisma.usageRecord.groupBy.mockImplementation(async ({ by, where }) => {
       if ("fallbackCount" in where) {
         return [
@@ -297,7 +297,9 @@ describe("UsageService", () => {
       }
     ]);
     prisma.providerAttempt.groupBy.mockResolvedValue([
-      { errorType: "TimeoutError", deploymentId: "deployment-1", _count: { _all: 3 } }
+      // 同一 Run 的两次失败 attempt 会进入同一 errorType + deployment 分组，并分别计数。
+      { errorType: null, deploymentId: "deployment-1", _count: { _all: 2 } },
+      { errorType: "TimeoutError", deploymentId: "deployment-1", _count: { _all: 1 } }
     ]);
 
     const breakdown = await service.breakdown({
@@ -316,9 +318,24 @@ describe("UsageService", () => {
         estimatedCost: "1.25"
       }
     ]);
-    expect(breakdown.failures).toEqual([
-      { errorType: "TimeoutError", providerId: "provider-1", providerName: "OpenAI", providerType: "openai", count: 3 }
+    expect(breakdown.failureAttempts).toEqual([
+      {
+        errorType: "UnknownError",
+        providerId: "provider-1",
+        providerName: "OpenAI",
+        providerType: "openai",
+        attemptCount: 2
+      },
+      {
+        errorType: "TimeoutError",
+        providerId: "provider-1",
+        providerName: "OpenAI",
+        providerType: "openai",
+        attemptCount: 1
+      }
     ]);
+    const failureWhere = prisma.providerAttempt.groupBy.mock.calls[0][0].where;
+    expect(failureWhere).not.toHaveProperty("errorType");
     expect(breakdown.fallbacks).toEqual([
       {
         deploymentId: "deployment-2",

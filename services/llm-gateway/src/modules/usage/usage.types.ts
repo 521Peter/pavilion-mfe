@@ -60,12 +60,12 @@ export interface UsageProviderBreakdownItem extends UsageDimensionBreakdownItem 
   type: string;
 }
 
-export interface UsageFailureBreakdownItem {
+export interface UsageFailureAttemptBreakdownItem {
   errorType: string;
   providerId: string;
   providerName: string;
   providerType: string;
-  count: number;
+  attemptCount: number;
 }
 
 export interface UsageFallbackBreakdownItem {
@@ -83,7 +83,7 @@ export interface UsageBreakdown {
   applications: UsageDimensionBreakdownItem[];
   virtualModels: UsageDimensionBreakdownItem[];
   providers: UsageProviderBreakdownItem[];
-  failures: UsageFailureBreakdownItem[];
+  failureAttempts: UsageFailureAttemptBreakdownItem[];
   fallbacks: UsageFallbackBreakdownItem[];
 }
 

@@ -14,7 +14,7 @@ function createUsageDouble() {
     timeseries: jest.fn().mockResolvedValue([]),
     breakdown: jest
       .fn()
-      .mockResolvedValue({ applications: [], virtualModels: [], providers: [], failures: [], fallbacks: [] }),
+      .mockResolvedValue({ applications: [], virtualModels: [], providers: [], failureAttempts: [], fallbacks: [] }),
     runs: jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 20, totalPages: 0 })
   };
 }

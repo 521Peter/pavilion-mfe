@@ -7,7 +7,7 @@ import type { UsageFilterDto, UsageRunsDto, UsageTimeseriesDto } from "./dto/usa
 import type {
   UsageBreakdown,
   UsageDimensionBreakdownItem,
-  UsageFailureBreakdownItem,
+  UsageFailureAttemptBreakdownItem,
   UsageFallbackBreakdownItem,
   UsageOverview,
   UsageProviderBreakdownItem,
@@ -298,7 +298,6 @@ export class UsageService {
     const attemptRunWhere = this.runWhere(filters, range, false);
     const attemptWhere: Prisma.ProviderAttemptWhereInput = {
       status: "failed",
-      errorType: { not: null },
       run: { is: attemptRunWhere },
       deployment: filters.providerId ? { providerId: filters.providerId } : undefined
     };
@@ -407,7 +406,7 @@ export class UsageService {
       providerMap.set(id, current);
     }
 
-    const failureMap = new Map<string, UsageFailureBreakdownItem>();
+    const failureMap = new Map<string, UsageFailureAttemptBreakdownItem>();
     for (const row of failureRows) {
       const deployment = deploymentById.get(row.deploymentId);
       const provider = deployment?.provider;
@@ -419,23 +418,23 @@ export class UsageService {
         providerId,
         providerName: provider?.name ?? "未知 Provider",
         providerType: provider?.type ?? "unknown",
-        count: 0
+        attemptCount: 0
       };
-      current.count += row._count._all;
+      current.attemptCount += row._count._all;
       failureMap.set(key, current);
     }
-    const failures = [...failureMap.values()].sort((left, right) => right.count - left.count);
-    const safeFailures =
-      failures.length <= 10
-        ? failures
+    const failureAttempts = [...failureMap.values()].sort((left, right) => right.attemptCount - left.attemptCount);
+    const safeFailureAttempts =
+      failureAttempts.length <= 10
+        ? failureAttempts
         : [
-            ...failures.slice(0, 10),
+            ...failureAttempts.slice(0, 10),
             {
               errorType: "其他",
               providerId: "other",
               providerName: "其他",
               providerType: "other",
-              count: failures.slice(10).reduce((total, item) => total + item.count, 0)
+              attemptCount: failureAttempts.slice(10).reduce((total, item) => total + item.attemptCount, 0)
             }
           ];
 
@@ -475,7 +474,7 @@ export class UsageService {
       applications: collapseDimensions(applicationItems, baseOther),
       virtualModels: collapseDimensions(virtualModelItems, baseOther),
       providers: collapseDimensions([...providerMap.values()], tail => ({ ...baseOther(tail), type: "other" })),
-      failures: safeFailures,
+      failureAttempts: safeFailureAttempts,
       fallbacks: safeFallbacks
     };
   }

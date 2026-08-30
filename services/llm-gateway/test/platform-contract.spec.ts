@@ -99,10 +99,24 @@ describe("Pavilion /api compatibility contracts", () => {
   it("declares recoverable and idempotent usage storage", () => {
     const schema = readFileSync(join(process.cwd(), "prisma/schema.prisma"), "utf8");
     const seed = readFileSync(join(process.cwd(), "prisma/seed.ts"), "utf8");
+    const migration = readFileSync(
+      join(process.cwd(), "prisma/migrations/20260829090000_add_usage_analytics/migration.sql"),
+      "utf8"
+    );
     expect(schema).toContain("usageSnapshot Json?");
     expect(schema).toContain("idempotencyKey String?");
     expect(schema).toContain("@@index([status, createdAt])");
+    expect(schema).toContain("@@index([createdAt])");
+    expect(schema).toContain("@@index([virtualModelId, createdAt])");
+    expect(schema).toContain("@@index([runId, deploymentId])");
     expect(schema).toContain("@@index([deploymentId, createdAt])");
+    expect(migration).toContain('CREATE INDEX "runs_created_at_idx"\nON "runs"("created_at");');
+    expect(migration).toContain(
+      'CREATE INDEX "runs_virtual_model_id_created_at_idx"\nON "runs"("virtual_model_id", "created_at");'
+    );
+    expect(migration).toContain(
+      'CREATE INDEX "provider_attempts_run_id_deployment_id_idx"\nON "provider_attempts"("run_id", "deployment_id");'
+    );
     expect(seed).toContain('code: "git-report-generator"');
   });
 });

@@ -20,5 +20,11 @@ CREATE UNIQUE INDEX "usage_records_idempotency_key_key"
 ON "usage_records"("idempotency_key");
 CREATE INDEX "runs_status_created_at_idx"
 ON "runs"("status", "created_at");
+CREATE INDEX "runs_created_at_idx"
+ON "runs"("created_at");
+CREATE INDEX "runs_virtual_model_id_created_at_idx"
+ON "runs"("virtual_model_id", "created_at");
+CREATE INDEX "provider_attempts_run_id_deployment_id_idx"
+ON "provider_attempts"("run_id", "deployment_id");
 CREATE INDEX "usage_records_deployment_id_created_at_idx"
 ON "usage_records"("deployment_id", "created_at");
