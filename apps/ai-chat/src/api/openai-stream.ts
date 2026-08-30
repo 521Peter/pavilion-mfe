@@ -3,6 +3,14 @@ export type ChatCompletionEvent =
   | { type: "done" }
   | { type: "error"; message: string };
 
+function invalidEvent(): never {
+  throw new Error("聊天流返回了无效事件");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 export function parseChatCompletionEvent(data: string): ChatCompletionEvent | null {
   if (data === "[DONE]") return { type: "done" };
 
@@ -10,17 +18,28 @@ export function parseChatCompletionEvent(data: string): ChatCompletionEvent | nu
   try {
     value = JSON.parse(data);
   } catch {
-    return null;
+    return invalidEvent();
   }
 
-  if (typeof value !== "object" || value === null) return null;
-  if ("error" in value && typeof value.error === "object" && value.error !== null && "message" in value.error) {
-    return typeof value.error.message === "string" ? { type: "error", message: value.error.message } : null;
+  if (!isRecord(value)) return invalidEvent();
+  if ("error" in value) {
+    if (!isRecord(value.error) || typeof value.error.message !== "string") return invalidEvent();
+    return { type: "error", message: value.error.message };
   }
 
-  if (!("choices" in value) || !Array.isArray(value.choices)) return null;
-  const content = value.choices[0]?.delta?.content;
-  return typeof content === "string" ? { type: "delta", delta: content } : null;
+  if (!Array.isArray(value.choices)) return invalidEvent();
+  const choice = value.choices[0];
+  if (!isRecord(choice)) return invalidEvent();
+  const delta = choice.delta;
+  if (!isRecord(delta)) return invalidEvent();
+
+  if ("content" in delta) {
+    return typeof delta.content === "string" ? { type: "delta", delta: delta.content } : invalidEvent();
+  }
+  if (delta.role === "assistant" && Object.keys(delta).length === 1 && choice.finish_reason === null) return null;
+  if (Object.keys(delta).length === 0 && typeof choice.finish_reason === "string") return null;
+
+  return invalidEvent();
 }
 
 function eventData(eventText: string): string | undefined {
