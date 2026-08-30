@@ -154,9 +154,7 @@ const ModelPicker: FC = () => {
             </span>
             <span className="flex flex-1 flex-col">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{m.displayName}</span>
-              <span className="text-xs text-gray-400 dark:text-gray-500">
-                {m.providerName} · {m.modelName}
-              </span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">{m.id}</span>
             </span>
           </DropdownMenuItem>
         ))}

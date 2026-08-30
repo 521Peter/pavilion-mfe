@@ -1,13 +1,11 @@
 import type { ExportedMessageRepositoryItem } from "@assistant-ui/react";
-import { api, authorizedFetch } from "./http";
+import { api, dataPlaneFetch } from "./http";
+import { readOpenAiStream } from "./openai-stream";
 
-export type AvailableModel = {
+export type VirtualModelOption = {
   id: string;
-  providerId: string;
-  providerName: string;
-  providerType: string;
-  modelName: string;
   displayName: string;
+  ownedBy: string;
 };
 
 export type ChatThread = {
@@ -23,60 +21,36 @@ export type ChatThreadDetail = ChatThread & {
 };
 
 export type ChatRequest = {
-  providerId: string;
-  modelId: string;
+  model: string;
   messages: Array<{ role: "system" | "user" | "assistant"; content: string }>;
 };
 
-type StreamEvent = { type: "delta"; delta: string } | { type: "done" } | { type: "error"; message: string };
-
-function readStreamEvent(value: unknown): StreamEvent | null {
-  if (typeof value !== "object" || value === null || !("type" in value) || typeof value.type !== "string") return null;
-  if (value.type === "done") return { type: "done" };
-  if (value.type === "delta" && "delta" in value && typeof value.delta === "string") {
-    return { type: "delta", delta: value.delta };
-  }
-  if (value.type === "error" && "message" in value && typeof value.message === "string") {
-    return { type: "error", message: value.message };
-  }
-  return null;
-}
+type OpenAiModelsResponse = {
+  data: Array<{ id: string; display_name: string; owned_by: string }>;
+};
 
 export async function* streamChat(body: ChatRequest, signal: AbortSignal): AsyncGenerator<string> {
-  const response = await authorizedFetch("/llm/chat/stream", {
+  const response = await dataPlaneFetch("/v1/chat/completions", {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify({ model: body.model, messages: body.messages, stream: true }),
     signal
   });
   if (!response.ok || !response.body) throw new Error(`聊天请求失败（${response.status}）`);
 
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value, { stream: !done });
-    const events = buffer.split("\n\n");
-    buffer = events.pop() ?? "";
-
-    for (const eventText of events) {
-      const data = eventText
-        .split("\n")
-        .find(line => line.startsWith("data: "))
-        ?.slice(6);
-      if (!data) continue;
-      const event = readStreamEvent(JSON.parse(data));
-      if (!event) throw new Error("聊天流返回了无效事件");
-      if (event.type === "delta") yield event.delta;
-      if (event.type === "error") throw new Error(event.message);
-    }
-    if (done) break;
+  for await (const event of readOpenAiStream(response, signal)) {
+    if (event.type === "delta") yield event.delta;
+    if (event.type === "error") throw new Error(event.message);
+    if (event.type === "done") return;
   }
 }
 
 export const chatApi = {
-  listModels: () => api.get<AvailableModel[]>("/llm/models"),
+  listModels: async (): Promise<VirtualModelOption[]> => {
+    const response = await dataPlaneFetch("/v1/models");
+    if (!response.ok) throw new Error(`模型列表请求失败（${response.status}）`);
+    const result: OpenAiModelsResponse = await response.json();
+    return result.data.map(model => ({ id: model.id, displayName: model.display_name, ownedBy: model.owned_by }));
+  },
   listThreads: () => api.get<ChatThread[]>("/llm/chat/threads"),
   createThread: (id: string) => api.post<ChatThread>("/llm/chat/threads", { id }),
   getThread: (id: string) => api.get<ChatThreadDetail>(`/llm/chat/threads/${encodeURIComponent(id)}`),
