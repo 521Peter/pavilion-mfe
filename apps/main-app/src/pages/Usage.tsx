@@ -43,8 +43,8 @@ function loadError(error: unknown): ResourceState<never> {
 }
 
 export default function Usage() {
-  const [rangeKey, setRangeKey] = useState<UsageRangeKey>("24h");
-  const [filters, setFilters] = useState<UsageFilters>(() => rangeFilters("24h"));
+  const [rangeKey, setRangeKey] = useState<UsageRangeKey>("7d");
+  const [filters, setFilters] = useState<UsageFilters>(() => rangeFilters("7d"));
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [options, setOptions] = useState<UsageOptions>(emptyOptions);
