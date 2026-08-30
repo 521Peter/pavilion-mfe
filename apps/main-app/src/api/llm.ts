@@ -9,7 +9,7 @@ export interface LlmProvider {
   apiKey: string | null;
   isActive: boolean;
   config: Record<string, unknown>;
-  models?: LlmModel[];
+  models: LlmModel[];
   createdAt: string;
   updatedAt: string;
 }

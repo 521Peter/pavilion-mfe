@@ -176,41 +176,32 @@ function ProviderForm({
 }
 
 // ─── 模型管理 ───
-function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: () => void }) {
-  const [models, setModels] = useState<LlmModel[]>(provider.models ?? []);
+function ModelManager({
+  provider,
+  onModelsChange,
+  onClose
+}: {
+  provider: LlmProvider;
+  onModelsChange: (models: LlmModel[]) => void;
+  onClose: () => void;
+}) {
+  const models = provider.models;
   const [newModelName, setNewModelName] = useState("");
   const [newDisplayName, setNewDisplayName] = useState("");
-  const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState(false);
-
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    try {
-      const list = await llmApi.listModels(provider.id);
-      setModels(list);
-    } catch {
-      // 忽略清理失败
-    } finally {
-      setLoading(false);
-    }
-  }, [provider.id]);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!newModelName) return;
     setAdding(true);
     try {
-      await llmApi.createModel(provider.id, {
+      const created = await llmApi.createModel(provider.id, {
         modelName: newModelName,
         displayName: newDisplayName || undefined
       });
       setNewModelName("");
       setNewDisplayName("");
-      await refresh();
+      onModelsChange([...models, created]);
     } catch (err) {
       alert(err instanceof Error ? err.message : "添加失败");
     } finally {
@@ -222,7 +213,7 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
     if (!confirm(`确认删除模型「${model.displayName ?? model.modelName}」？`)) return;
     try {
       await llmApi.deleteModel(model.id);
-      await refresh();
+      onModelsChange(models.filter(item => item.id !== model.id));
     } catch (err) {
       alert(err instanceof Error ? err.message : "删除失败");
     }
@@ -230,8 +221,8 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
 
   async function handleToggle(model: LlmModel) {
     try {
-      await llmApi.updateModel(model.id, { isActive: !model.isActive });
-      await refresh();
+      const updated = await llmApi.updateModel(model.id, { isActive: !model.isActive });
+      onModelsChange(models.map(item => (item.id === updated.id ? updated : item)));
     } catch (err) {
       alert(err instanceof Error ? err.message : "操作失败");
     }
@@ -263,13 +254,7 @@ function ModelManager({ provider, onClose }: { provider: LlmProvider; onClose: (
       </form>
 
       {/* 模型列表 */}
-      {loading ? (
-        <div className="flex flex-col gap-3">
-          {SKELETON_IDS.map(skeletonId => (
-            <Skeleton key={skeletonId} className="h-12 w-full rounded-lg" />
-          ))}
-        </div>
-      ) : models.length === 0 ? (
+      {models.length === 0 ? (
         <div className="py-10 text-center text-sm text-text-muted">暂无模型，请添加</div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -375,13 +360,13 @@ export default function LlmProviders() {
     }
   }
 
-  async function openModels(provider: LlmProvider) {
-    try {
-      const detail = await llmApi.getProvider(provider.id);
-      setModelProvider(detail);
-    } catch {
-      setModelProvider(provider);
-    }
+  function openModels(provider: LlmProvider) {
+    setModelProvider(provider);
+  }
+
+  function handleModelsChange(providerId: string, models: LlmModel[]) {
+    setProviders(current => current.map(provider => (provider.id === providerId ? { ...provider, models } : provider)));
+    setModelProvider(current => (current?.id === providerId ? { ...current, models } : current));
   }
 
   return (
@@ -460,7 +445,7 @@ export default function LlmProviders() {
               {/* 元信息 */}
               <div className="flex items-center gap-4 px-5 pb-4 text-xs text-text-muted">
                 <span className="flex items-center gap-1">
-                  <span className="font-bold text-text-regular">{provider.models?.length ?? "—"}</span>
+                  <span className="font-bold text-text-regular">{provider.models.length}</span>
                   个模型
                 </span>
                 <span>
@@ -523,7 +508,13 @@ export default function LlmProviders() {
                 </h3>
               </Modal.Header>
               <Modal.Body>
-                {modelProvider && <ModelManager provider={modelProvider} onClose={() => setModelProvider(null)} />}
+                {modelProvider && (
+                  <ModelManager
+                    provider={modelProvider}
+                    onModelsChange={models => handleModelsChange(modelProvider.id, models)}
+                    onClose={() => setModelProvider(null)}
+                  />
+                )}
               </Modal.Body>
             </Modal.Dialog>
           </Modal.Container>

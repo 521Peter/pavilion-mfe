@@ -127,7 +127,10 @@ export class LlmProviderService {
   async listProviders() {
     const providers = await this.prisma.llmProvider.findMany({
       orderBy: { createdAt: "asc" },
-      include: { credentials: { select: { id: true, name: true, kind: true, maskedHint: true, isActive: true } } }
+      include: {
+        models: { orderBy: { createdAt: "asc" } },
+        credentials: { select: { id: true, name: true, kind: true, maskedHint: true, isActive: true } }
+      }
     });
     return providers.map(provider =>
       Object.assign({}, provider, {
