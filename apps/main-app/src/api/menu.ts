@@ -1,4 +1,7 @@
 import { useSyncExternalStore } from "react";
+import { icons } from "lucide-react";
+
+type IconName = keyof typeof icons;
 
 /** 后端菜单接口返回的数据结构 */
 export interface MenuItem {
@@ -10,7 +13,7 @@ export interface MenuItem {
   orderNo: number;
   status: string;
   menuUrl: string;
-  menuIcon?: string;
+  menuIcon: IconName;
   childrenMenuInfoList?: MenuItem[];
 }
 
@@ -71,7 +74,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 0,
       status: "1",
       menuUrl: "/",
-      menuIcon: "HomeFilled"
+      menuIcon: "House"
     },
     {
       menuCode: "ai-center",
@@ -81,7 +84,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 1,
       status: "1",
       menuUrl: "",
-      menuIcon: "Setting",
+      menuIcon: "Settings",
       childrenMenuInfoList: [
         {
           menuCode: "ai-center/llm-providers",
@@ -101,7 +104,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 2,
           status: "1",
           menuUrl: "/mcp-servers",
-          menuIcon: "Connection"
+          menuIcon: "Link2"
         },
         {
           menuCode: "ai-center/skills",
@@ -111,7 +114,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 3,
           status: "1",
           menuUrl: "/skills",
-          menuIcon: "Reading"
+          menuIcon: "LibraryBig"
         }
       ]
     },
@@ -124,7 +127,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 100,
       status: "1",
       menuUrl: "",
-      menuIcon: "Compass",
+      menuIcon: "CircleSlash",
       childrenMenuInfoList: [
         {
           menuCode: "error-pages/403",
@@ -134,7 +137,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 1,
           status: "1",
           menuUrl: "/403",
-          menuIcon: "Lock"
+          menuIcon: "ShieldAlert"
         },
         {
           menuCode: "error-pages/404",
@@ -144,7 +147,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 2,
           status: "1",
           menuUrl: "/404",
-          menuIcon: "Guide"
+          menuIcon: "Signpost"
         },
         {
           menuCode: "error-pages/500",
@@ -154,7 +157,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 3,
           status: "1",
           menuUrl: "/500",
-          menuIcon: "Drizzling"
+          menuIcon: "Bug"
         }
       ]
     },
@@ -167,7 +170,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 5,
       status: "1",
       menuUrl: "/git",
-      menuIcon: "Menu",
+      menuIcon: "BookOpenText",
       childrenMenuInfoList: []
     },
     {
@@ -179,7 +182,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 6,
       status: "1",
       menuUrl: "/chat",
-      menuIcon: "Menu",
+      menuIcon: "MessageSquareDot",
       childrenMenuInfoList: []
     },
     {
@@ -191,7 +194,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
       orderNo: 7,
       status: "1",
       menuUrl: "/customer-service",
-      menuIcon: "Menu",
+      menuIcon: "Bot",
       childrenMenuInfoList: []
     }
   ];
