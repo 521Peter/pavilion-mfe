@@ -64,7 +64,13 @@ function FilterSelect({
 }
 
 export default function UsageFilters(props: UsageFiltersProps) {
-  const customValid = Boolean(props.customFrom && props.customTo && props.customFrom <= props.customTo);
+  const fromTime = new Date(props.customFrom).getTime();
+  const toTime = new Date(props.customTo).getTime();
+  const customValid =
+    Number.isFinite(fromTime) &&
+    Number.isFinite(toTime) &&
+    fromTime < toTime &&
+    toTime - fromTime <= 366 * 24 * 60 * 60 * 1000;
 
   return (
     <section aria-label="用量统计筛选" className="mb-5">

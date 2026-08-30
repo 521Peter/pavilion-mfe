@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Button, Card } from "@heroui/react";
+import { Button, Card, Skeleton } from "@heroui/react";
 import type { UsageTimeseriesPoint } from "../../api/usage";
+import type { ResourceState } from "./UsageMetrics";
 import { formatLocalTime, formatTokens, formatUsd } from "./usage-format";
 
 type TrendMetric = "requests" | "tokens" | "cost";
 
 interface UsageTrendChartProps {
-  points: UsageTimeseriesPoint[];
+  state: ResourceState<UsageTimeseriesPoint[]>;
+  onRetry: () => void;
 }
 
 function metricValue(point: UsageTimeseriesPoint, metric: TrendMetric): number {
@@ -21,8 +23,9 @@ function formatMetric(value: number, metric: TrendMetric): string {
   return value.toLocaleString();
 }
 
-export default function UsageTrendChart({ points }: UsageTrendChartProps) {
+export default function UsageTrendChart({ state, onRetry }: UsageTrendChartProps) {
   const [metric, setMetric] = useState<TrendMetric>("requests");
+  const points = state.status === "success" ? state.data : [];
   const values = points.map(point => metricValue(point, metric));
   const maxValue = Math.max(...values, 1);
   const path = values
@@ -38,6 +41,26 @@ export default function UsageTrendChart({ points }: UsageTrendChartProps) {
     { key: "tokens", label: "Token" },
     { key: "cost", label: "费用" }
   ];
+
+  if (state.status === "loading") {
+    return (
+      <Card variant="default" className="p-5">
+        <Skeleton className="h-64 w-full rounded" />
+      </Card>
+    );
+  }
+
+  if (state.status === "error") {
+    return (
+      <Card role="alert" variant="default" className="p-5">
+        <h2 className="m-0 text-base font-bold text-text-primary">用量趋势</h2>
+        <p className="mb-3 mt-2 text-sm text-danger">{state.message}</p>
+        <Button size="sm" variant="outline" onPress={onRetry}>
+          重试
+        </Button>
+      </Card>
+    );
+  }
 
   return (
     <Card variant="default" className="p-5">

@@ -1,5 +1,5 @@
-// oxlint-disable react/exhaustive-effect-dependencies -- 每个资源使用独立的 retry 触发值，外层 effect 需要主动刷新
-import { useEffect, useMemo, useState } from "react";
+/* oxlint-disable react/exhaustive-effect-dependencies -- 每个资源使用独立的 retry 触发值，外层 effect 需要主动刷新 */
+import { useEffect, useState } from "react";
 import {
   usageApi,
   type UsageBreakdown,
@@ -54,7 +54,10 @@ export default function Usage() {
   const [breakdown, setBreakdown] = useState<ResourceState<UsageBreakdown>>(initialError);
   const [runs, setRuns] = useState<ResourceState<UsageRunPage>>(initialError);
   const [page, setPage] = useState(1);
-  const [retryToken, setRetryToken] = useState(0);
+  const [overviewRetryToken, setOverviewRetryToken] = useState(0);
+  const [timeseriesRetryToken, setTimeseriesRetryToken] = useState(0);
+  const [breakdownRetryToken, setBreakdownRetryToken] = useState(0);
+  const [runsRetryToken, setRunsRetryToken] = useState(0);
   const timeseriesInterval = rangeKey === "24h" ? "hour" : "day";
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export default function Usage() {
 
     void loadOverview();
     return () => controller.abort();
-  }, [filters, retryToken]);
+  }, [filters, overviewRetryToken]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -103,7 +106,7 @@ export default function Usage() {
 
     void loadTimeseries();
     return () => controller.abort();
-  }, [filters, timeseriesInterval, retryToken]);
+  }, [filters, timeseriesInterval, timeseriesRetryToken]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -121,8 +124,7 @@ export default function Usage() {
 
     void loadBreakdown();
     return () => controller.abort();
-    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- retryToken is an explicit refresh trigger
-  }, [filters, retryToken]);
+  }, [filters, breakdownRetryToken]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,10 +142,7 @@ export default function Usage() {
 
     void loadRuns();
     return () => controller.abort();
-    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- retryToken is an explicit refresh trigger
-  }, [filters, page, retryToken]);
-
-  const trendPoints = useMemo(() => (timeseries.status === "success" ? timeseries.data : []), [timeseries]);
+  }, [filters, page, runsRetryToken]);
 
   function changeRange(range: Exclude<UsageRangeKey, "custom">) {
     setRangeKey(range);
@@ -168,7 +167,16 @@ export default function Usage() {
   }
 
   function applyCustomRange() {
-    if (!customFrom || !customTo || customFrom > customTo) return;
+    const fromTime = new Date(customFrom).getTime();
+    const toTime = new Date(customTo).getTime();
+    if (
+      !Number.isFinite(fromTime) ||
+      !Number.isFinite(toTime) ||
+      fromTime >= toTime ||
+      toTime - fromTime > 366 * 24 * 60 * 60 * 1000
+    ) {
+      return;
+    }
     setRangeKey("custom");
     setPage(1);
     setFilters(current => ({ ...current, from: customInputToIso(customFrom), to: customInputToIso(customTo) }));
@@ -202,12 +210,12 @@ export default function Usage() {
         onFilterChange={changeFilter}
       />
 
-      <UsageMetrics state={overview} onRetry={() => setRetryToken(token => token + 1)} />
+      <UsageMetrics state={overview} onRetry={() => setOverviewRetryToken(token => token + 1)} />
       <div className="mb-5">
-        <UsageTrendChart points={trendPoints} />
+        <UsageTrendChart state={timeseries} onRetry={() => setTimeseriesRetryToken(token => token + 1)} />
       </div>
-      <UsageBreakdowns state={breakdown} onRetry={() => setRetryToken(token => token + 1)} />
-      <UsageRunsTable state={runs} onPageChange={setPage} onRetry={() => setRetryToken(token => token + 1)} />
+      <UsageBreakdowns state={breakdown} onRetry={() => setBreakdownRetryToken(token => token + 1)} />
+      <UsageRunsTable state={runs} onPageChange={setPage} onRetry={() => setRunsRetryToken(token => token + 1)} />
     </main>
   );
 }
