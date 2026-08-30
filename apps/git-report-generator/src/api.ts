@@ -1,39 +1,26 @@
 import type { AvailableModel } from "./types";
+import { readOpenAiStream } from "./openai-stream";
 
-type StreamEvent = { type: "delta"; delta: string } | { type: "done" } | { type: "error"; message: string };
+type OpenAiModelsResponse = {
+  data: Array<{ id: string; display_name: string; owned_by: string }>;
+};
 
-function isAvailableModel(value: unknown): value is AvailableModel {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "id" in value &&
-    typeof value.id === "string" &&
-    "providerId" in value &&
-    typeof value.providerId === "string" &&
-    "providerName" in value &&
-    typeof value.providerName === "string" &&
-    "providerType" in value &&
-    typeof value.providerType === "string" &&
-    "modelName" in value &&
-    typeof value.modelName === "string" &&
-    "displayName" in value &&
-    typeof value.displayName === "string"
+function isOpenAiModelsResponse(value: unknown): value is OpenAiModelsResponse {
+  if (typeof value !== "object" || value === null || !("data" in value) || !Array.isArray(value.data)) return false;
+  return value.data.every(
+    model =>
+      typeof model === "object" &&
+      model !== null &&
+      "id" in model &&
+      typeof model.id === "string" &&
+      "display_name" in model &&
+      typeof model.display_name === "string" &&
+      "owned_by" in model &&
+      typeof model.owned_by === "string"
   );
 }
 
-function readStreamEvent(value: unknown): StreamEvent | null {
-  if (typeof value !== "object" || value === null || !("type" in value) || typeof value.type !== "string") return null;
-  if (value.type === "done") return { type: "done" };
-  if (value.type === "delta" && "delta" in value && typeof value.delta === "string") {
-    return { type: "delta", delta: value.delta };
-  }
-  if (value.type === "error" && "message" in value && typeof value.message === "string") {
-    return { type: "error", message: value.message };
-  }
-  return null;
-}
-
-async function authorizedFetch(path: string, options: RequestInit = {}): Promise<Response> {
+export async function authorizedFetch(path: string, options: RequestInit = {}): Promise<Response> {
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   const token = sessionStorage.getItem("pavilion_token");
@@ -47,61 +34,52 @@ async function authorizedFetch(path: string, options: RequestInit = {}): Promise
   return response;
 }
 
-export async function listModels(): Promise<AvailableModel[]> {
-  const response = await authorizedFetch("/llm/models");
-  const json: unknown = await response.json();
-  if (
-    typeof json !== "object" ||
-    json === null ||
-    !("code" in json) ||
-    typeof json.code !== "number" ||
-    !("msg" in json) ||
-    typeof json.msg !== "string" ||
-    !("data" in json) ||
-    !Array.isArray(json.data) ||
-    !json.data.every(isAvailableModel)
-  ) {
-    throw new Error("获取模型列表返回了无效数据");
+async function dataPlaneFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  const token = sessionStorage.getItem("pavilion_token");
+  const headers = new Headers(options.headers);
+  headers.set("Content-Type", "application/json");
+  headers.set("X-Pavilion-App-Code", import.meta.env.VITE_PAVILION_MFE_APP_CODE);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  const response = await fetch(path, { ...options, headers });
+  if (response.status === 401) {
+    sessionStorage.removeItem("pavilion_token");
+    window.location.href = "/login";
   }
-  if (!response.ok || json.code !== 0) throw new Error(json.msg || "获取模型列表失败");
-  return json.data;
+  return response;
+}
+
+export async function listModels(): Promise<AvailableModel[]> {
+  const response = await dataPlaneFetch("/v1/models");
+  if (!response.ok) throw new Error(`模型列表请求失败（${response.status}）`);
+  const json: unknown = await response.json();
+  if (!isOpenAiModelsResponse(json)) throw new Error("获取模型列表返回了无效数据");
+  return json.data.map(model => ({ id: model.id, displayName: model.display_name, ownedBy: model.owned_by }));
 }
 
 export async function* generateAiReport(
   body: {
-    providerId: string;
-    modelId: string;
+    model: string;
     messages: Array<{ role: "system" | "user"; content: string }>;
     temperature: number;
     maxTokens: number;
   },
   signal: AbortSignal
 ): AsyncGenerator<string> {
-  const response = await authorizedFetch("/llm/chat/stream", {
+  const response = await dataPlaneFetch("/v1/chat/completions", {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      model: body.model,
+      messages: body.messages,
+      temperature: body.temperature,
+      max_tokens: body.maxTokens,
+      stream: true
+    }),
     signal
   });
   if (!response.ok || !response.body) throw new Error(`AI 报告请求失败（${response.status}）`);
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value, { stream: !done });
-    const events = buffer.split("\n\n");
-    buffer = events.pop() ?? "";
-    for (const eventText of events) {
-      const raw = eventText
-        .split("\n")
-        .find(line => line.startsWith("data: "))
-        ?.slice(6);
-      if (!raw) continue;
-      const event = readStreamEvent(JSON.parse(raw));
-      if (!event) throw new Error("AI 报告流返回了无效事件");
-      if (event.type === "delta") yield event.delta;
-      if (event.type === "error") throw new Error(event.message);
-    }
-    if (done) break;
+  for await (const event of readOpenAiStream(response, signal)) {
+    if (event.type === "delta") yield event.delta;
+    if (event.type === "error") throw new Error(event.message);
+    if (event.type === "done") return;
   }
 }

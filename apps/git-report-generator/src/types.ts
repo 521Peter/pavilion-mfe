@@ -50,9 +50,6 @@ export interface GitReportData {
 
 export interface AvailableModel {
   id: string;
-  providerId: string;
-  providerName: string;
-  providerType: string;
-  modelName: string;
   displayName: string;
+  ownedBy: string;
 }
