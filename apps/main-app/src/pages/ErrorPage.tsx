@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useTabs } from "@pavilion-mfe/tabs/react";
 import { Button } from "@heroui/react";
-import { Icon } from "../components/Icon";
+import { ArrowLeft } from "lucide-react";
 
 export default function ErrorPage({ img, title, desc }: { img: string; title: string; desc: string }) {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function ErrorPage({ img, title, desc }: { img: string; title: st
       <h2 className="text-xl font-bold text-text-primary m-0">{title}</h2>
       <p className="text-sm font-medium text-text-muted m-0">{desc}</p>
       <Button variant="primary" onPress={goHome}>
-        <Icon name="Back" size={16} />
+        <ArrowLeft size={16} />
         返回首页
       </Button>
     </div>
