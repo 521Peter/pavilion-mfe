@@ -46,6 +46,26 @@ void test("ignores valid role-only and finish-only OpenAI events", async () => {
   assert.deepEqual(events, [{ type: "delta", delta: "你好" }]);
 });
 
+void test("rejects SSE events with empty data", async () => {
+  const response = new Response("data:\n\n");
+  const abortController = new AbortController();
+
+  await assert.rejects(async () => {
+    const events = [];
+    for await (const event of readOpenAiStream(response, abortController.signal)) events.push(event);
+  }, /聊天流返回了无效事件/);
+});
+
+void test("ignores SSE comments and keepalive events without data", async () => {
+  const response = new Response(": keepalive\n\nevent: ping\nid: heartbeat\n\n");
+  const abortController = new AbortController();
+  const events = [];
+
+  for await (const event of readOpenAiStream(response, abortController.signal)) events.push(event);
+
+  assert.deepEqual(events, []);
+});
+
 void test("cancels the reader when the request is already aborted", async () => {
   let cancelled = false;
   const response = new Response(

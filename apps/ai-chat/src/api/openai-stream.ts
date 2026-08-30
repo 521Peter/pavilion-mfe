@@ -43,13 +43,9 @@ export function parseChatCompletionEvent(data: string): ChatCompletionEvent | nu
 }
 
 function eventData(eventText: string): string | undefined {
-  return (
-    eventText
-      .split("\n")
-      .filter(line => line.startsWith("data:"))
-      .map(line => line.slice(5).trimStart())
-      .join("\n") || undefined
-  );
+  const dataLines = eventText.split("\n").filter(line => line.startsWith("data:"));
+  if (dataLines.length === 0) return undefined;
+  return dataLines.map(line => line.slice(5).trimStart()).join("\n");
 }
 
 export async function* readOpenAiStream(response: Response, signal: AbortSignal): AsyncGenerator<ChatCompletionEvent> {
@@ -76,7 +72,7 @@ export async function* readOpenAiStream(response: Response, signal: AbortSignal)
 
       for (const eventText of events) {
         const data = eventData(eventText);
-        if (!data) continue;
+        if (data === undefined) continue;
         const event = parseChatCompletionEvent(data);
         if (!event) continue;
         yield event;
