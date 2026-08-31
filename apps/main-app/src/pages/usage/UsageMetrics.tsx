@@ -15,10 +15,10 @@ interface UsageMetricsProps {
 export default function UsageMetrics({ state, onRetry }: UsageMetricsProps) {
   if (state.status === "loading") {
     return (
-      <div className="mb-5 grid grid-cols-2 gap-4 xl:grid-cols-6">
+      <div className="mb-5 flex flex-wrap gap-2.5">
         {Array.from({ length: 6 }, (_, index) => (
-          <Card key={index} variant="default" className="p-5">
-            <Skeleton className="h-20 w-full rounded" />
+          <Card key={index} variant="default" className="w-[132px] border border-border bg-card-bg p-3 shadow-sm">
+            <Skeleton className="h-11 w-full rounded" />
           </Card>
         ))}
       </div>
@@ -46,13 +46,13 @@ export default function UsageMetrics({ state, onRetry }: UsageMetricsProps) {
   ];
 
   return (
-    <div className="mb-5 grid grid-cols-2 gap-4 xl:grid-cols-6">
+    <section aria-label="关键指标" className="mb-5 flex flex-wrap gap-2.5">
       {metrics.map(metric => (
-        <Card key={metric.label} variant="default" className="p-5">
-          <p className="mb-2 text-[13px] font-medium text-text-muted">{metric.label}</p>
-          <p className="text-xl font-bold text-text-primary">{metric.value}</p>
+        <Card key={metric.label} variant="default" className="w-[132px] border border-border bg-card-bg p-3 shadow-sm">
+          <p className="mb-1 text-xs font-semibold text-text-regular">{metric.label}</p>
+          <p className="text-lg font-bold tabular-nums leading-tight text-text-primary">{metric.value}</p>
         </Card>
       ))}
-    </div>
+    </section>
   );
 }

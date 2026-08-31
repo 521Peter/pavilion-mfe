@@ -22,7 +22,7 @@ function BreakdownBars({ title, items }: BreakdownGroup) {
   const maxRuns = Math.max(...items.map(item => item.runs), 1);
 
   return (
-    <Card variant="default" className="p-5">
+    <Card variant="default" className="h-full border border-border bg-card-bg p-5 shadow-sm">
       <h3 className="mb-4 mt-0 text-sm font-bold text-text-primary">{title}</h3>
       {items.length === 0 ? (
         <p className="m-0 text-[13px] text-text-muted">暂无数据</p>
@@ -32,15 +32,17 @@ function BreakdownBars({ title, items }: BreakdownGroup) {
             <li key={item.id} className="min-w-0">
               <div className="mb-1 flex items-baseline justify-between gap-2">
                 <span className="truncate text-[13px] font-medium text-text-regular">{item.name}</span>
-                <span className="shrink-0 text-xs text-text-muted">{item.runs.toLocaleString()} 次</span>
+                <span className="shrink-0 text-xs font-medium tabular-nums text-text-regular">
+                  {item.runs.toLocaleString()} 次
+                </span>
               </div>
-              <div aria-hidden="true" className="mb-1 h-1.5 overflow-hidden rounded-full bg-card-bg">
+              <div aria-hidden="true" className="mb-1 h-1.5 overflow-hidden rounded-full bg-border/80">
                 <div
                   className="h-full rounded-full bg-primary"
                   style={{ width: `${Math.max((item.runs / maxRuns) * 100, 2)}%` }}
                 />
               </div>
-              <div className="flex justify-between gap-2 text-xs text-text-muted">
+              <div className="flex justify-between gap-2 text-xs text-text-regular">
                 <span>
                   Token {formatTokens(item.inputTokens + item.outputTokens)} · 输入 {formatTokens(item.inputTokens)} /
                   输出 {formatTokens(item.outputTokens)}
@@ -59,7 +61,7 @@ function FailureAttemptBars({ items }: { items: UsageFailureAttemptBreakdownItem
   const maxAttempts = Math.max(...items.map(item => item.attemptCount), 1);
 
   return (
-    <Card variant="default" className="p-5">
+    <Card variant="default" className="h-full border border-border bg-card-bg p-5 shadow-sm">
       <h3 className="mb-4 mt-0 text-sm font-bold text-text-primary">失败尝试排行</h3>
       {items.length === 0 ? (
         <p className="m-0 text-[13px] text-text-muted">暂无数据</p>
@@ -71,9 +73,11 @@ function FailureAttemptBars({ items }: { items: UsageFailureAttemptBreakdownItem
                 <span className="truncate text-[13px] font-medium text-text-regular">
                   {item.errorType} · {item.providerName}
                 </span>
-                <span className="shrink-0 text-xs text-text-muted">{item.attemptCount.toLocaleString()} 次</span>
+                <span className="shrink-0 text-xs font-medium tabular-nums text-text-regular">
+                  {item.attemptCount.toLocaleString()} 次
+                </span>
               </div>
-              <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-card-bg">
+              <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-border/80">
                 <div
                   className="h-full rounded-full bg-danger"
                   style={{ width: `${Math.max((item.attemptCount / maxAttempts) * 100, 2)}%` }}
@@ -91,7 +95,7 @@ function FallbackBars({ items }: { items: UsageFallbackBreakdownItem[] }) {
   const maxFallbacks = Math.max(...items.map(item => item.fallbackCount), 1);
 
   return (
-    <Card variant="default" className="p-5">
+    <Card variant="default" className="h-full border border-border bg-card-bg p-5 shadow-sm">
       <h3 className="mb-4 mt-0 text-sm font-bold text-text-primary">Fallback 排行</h3>
       {items.length === 0 ? (
         <p className="m-0 text-[13px] text-text-muted">暂无数据</p>
@@ -103,15 +107,17 @@ function FallbackBars({ items }: { items: UsageFallbackBreakdownItem[] }) {
                 <span className="truncate text-[13px] font-medium text-text-regular">
                   {item.deploymentName} · {item.upstreamModel}
                 </span>
-                <span className="shrink-0 text-xs text-text-muted">{item.fallbackCount.toLocaleString()} 次</span>
+                <span className="shrink-0 text-xs font-medium tabular-nums text-text-regular">
+                  {item.fallbackCount.toLocaleString()} 次
+                </span>
               </div>
-              <div aria-hidden="true" className="mb-1 h-1.5 overflow-hidden rounded-full bg-card-bg">
+              <div aria-hidden="true" className="mb-1 h-1.5 overflow-hidden rounded-full bg-border/80">
                 <div
                   className="h-full rounded-full bg-warning"
                   style={{ width: `${Math.max((item.fallbackCount / maxFallbacks) * 100, 2)}%` }}
                 />
               </div>
-              <p className="m-0 text-xs text-text-muted">{item.providerName}</p>
+              <p className="m-0 text-xs text-text-regular">{item.providerName}</p>
             </li>
           ))}
         </ol>
@@ -151,12 +157,26 @@ export default function UsageBreakdowns({ state, onRetry }: UsageBreakdownsProps
   ];
 
   return (
-    <div className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
-      {groups.map(group => (
-        <BreakdownBars key={group.title} title={group.title} items={group.items} />
-      ))}
-      <FailureAttemptBars items={state.data.failureAttempts.slice(0, 10)} />
-      <FallbackBars items={state.data.fallbacks.slice(0, 10)} />
+    <div className="mb-5 space-y-4">
+      <section aria-labelledby="usage-dimension-heading">
+        <h2 id="usage-dimension-heading" className="mb-3 mt-0 text-sm font-bold text-text-primary">
+          业务维度
+        </h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          {groups.map(group => (
+            <BreakdownBars key={group.title} title={group.title} items={group.items} />
+          ))}
+        </div>
+      </section>
+      <section aria-labelledby="usage-stability-heading">
+        <h2 id="usage-stability-heading" className="mb-3 mt-0 text-sm font-bold text-text-primary">
+          稳定性
+        </h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <FailureAttemptBars items={state.data.failureAttempts.slice(0, 10)} />
+          <FallbackBars items={state.data.fallbacks.slice(0, 10)} />
+        </div>
+      </section>
     </div>
   );
 }

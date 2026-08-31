@@ -1,4 +1,5 @@
 /* oxlint-disable react/exhaustive-effect-dependencies -- 每个资源使用独立的 retry 触发值，外层 effect 需要主动刷新 */
+import { Tabs } from "@heroui/react";
 import { useEffect, useState } from "react";
 import {
   usageApi,
@@ -16,6 +17,7 @@ import UsageRunsTable from "./usage/UsageRunsTable";
 import UsageTrendChart from "./usage/UsageTrendChart";
 
 const emptyOptions: UsageOptions = { applications: [], virtualModels: [], providers: [] };
+type UsageTabKey = "trend" | "breakdown" | "runs";
 
 function isoTime(date: Date): string {
   return date.toISOString();
@@ -43,6 +45,7 @@ function loadError(error: unknown): ResourceState<never> {
 }
 
 export default function Usage() {
+  const [activeTab, setActiveTab] = useState<UsageTabKey>("trend");
   const [rangeKey, setRangeKey] = useState<UsageRangeKey>("7d");
   const [filters, setFilters] = useState<UsageFilters>(() => rangeFilters("7d"));
   const [customFrom, setCustomFrom] = useState("");
@@ -91,6 +94,7 @@ export default function Usage() {
   }, [filters, overviewRetryToken]);
 
   useEffect(() => {
+    if (activeTab !== "trend") return;
     const controller = new AbortController();
 
     async function loadTimeseries() {
@@ -106,9 +110,10 @@ export default function Usage() {
 
     void loadTimeseries();
     return () => controller.abort();
-  }, [filters, timeseriesInterval, timeseriesRetryToken]);
+  }, [activeTab, filters, timeseriesInterval, timeseriesRetryToken]);
 
   useEffect(() => {
+    if (activeTab !== "breakdown") return;
     const controller = new AbortController();
 
     async function loadBreakdown() {
@@ -124,9 +129,10 @@ export default function Usage() {
 
     void loadBreakdown();
     return () => controller.abort();
-  }, [filters, breakdownRetryToken]);
+  }, [activeTab, filters, breakdownRetryToken]);
 
   useEffect(() => {
+    if (activeTab !== "runs") return;
     const controller = new AbortController();
 
     async function loadRuns() {
@@ -142,7 +148,7 @@ export default function Usage() {
 
     void loadRuns();
     return () => controller.abort();
-  }, [filters, page, runsRetryToken]);
+  }, [activeTab, filters, page, runsRetryToken]);
 
   function changeRange(range: Exclude<UsageRangeKey, "custom">) {
     setRangeKey(range);
@@ -183,39 +189,63 @@ export default function Usage() {
   }
 
   return (
-    <main className="h-full overflow-y-auto p-5 lg:p-6">
-      <div className="mb-5">
-        <h1 className="m-0 text-xl font-bold text-text-primary">用量统计</h1>
-        <p className="mt-1 text-[13px] text-text-muted">查看统一模型入口的调用、Token、费用与失败情况</p>
-      </div>
+    <main className="h-full overflow-y-auto bg-background">
+      <Tabs
+        selectedKey={activeTab}
+        onSelectionChange={key => {
+          if (key === "trend" || key === "breakdown" || key === "runs") setActiveTab(key);
+        }}
+      >
+        <Tabs.ListContainer className="mb-5 border-b border-border">
+          <Tabs.List aria-label="用量统计视图" className="bg-transparent p-0">
+            <Tabs.Tab id="trend" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              趋势分析
+              <Tabs.Indicator />
+            </Tabs.Tab>
+            <Tabs.Tab id="breakdown" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              维度排行
+              <Tabs.Indicator />
+            </Tabs.Tab>
+            <Tabs.Tab id="runs" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              调用明细
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs.ListContainer>
 
-      {optionsError && (
-        <p role="alert" className="mb-4 rounded border border-border bg-card-bg p-3 text-[13px] text-danger">
-          {optionsError}
-        </p>
-      )}
+        {optionsError && (
+          <p role="alert" className="mb-4 rounded-lg border border-danger/30 bg-danger/5 p-3 text-sm text-danger">
+            {optionsError}
+          </p>
+        )}
 
-      <UsageFiltersPanel
-        rangeKey={rangeKey}
-        customFrom={customFrom}
-        customTo={customTo}
-        options={options}
-        applicationId={filters.applicationId}
-        virtualModelId={filters.virtualModelId}
-        providerId={filters.providerId}
-        status={filters.status}
-        onRangeChange={changeRange}
-        onCustomChange={(field, value) => (field === "from" ? setCustomFrom(value) : setCustomTo(value))}
-        onApplyCustom={applyCustomRange}
-        onFilterChange={changeFilter}
-      />
+        <UsageFiltersPanel
+          rangeKey={rangeKey}
+          customFrom={customFrom}
+          customTo={customTo}
+          options={options}
+          applicationId={filters.applicationId}
+          virtualModelId={filters.virtualModelId}
+          providerId={filters.providerId}
+          status={filters.status}
+          onRangeChange={changeRange}
+          onCustomChange={(field, value) => (field === "from" ? setCustomFrom(value) : setCustomTo(value))}
+          onApplyCustom={applyCustomRange}
+          onFilterChange={changeFilter}
+        />
 
-      <UsageMetrics state={overview} onRetry={() => setOverviewRetryToken(token => token + 1)} />
-      <div className="mb-5">
-        <UsageTrendChart state={timeseries} onRetry={() => setTimeseriesRetryToken(token => token + 1)} />
-      </div>
-      <UsageBreakdowns state={breakdown} onRetry={() => setBreakdownRetryToken(token => token + 1)} />
-      <UsageRunsTable state={runs} onPageChange={setPage} onRetry={() => setRunsRetryToken(token => token + 1)} />
+        <UsageMetrics state={overview} onRetry={() => setOverviewRetryToken(token => token + 1)} />
+
+        <Tabs.Panel id="trend" className="pb-5 pt-0">
+          <UsageTrendChart state={timeseries} onRetry={() => setTimeseriesRetryToken(token => token + 1)} />
+        </Tabs.Panel>
+        <Tabs.Panel id="breakdown" className="pt-0">
+          <UsageBreakdowns state={breakdown} onRetry={() => setBreakdownRetryToken(token => token + 1)} />
+        </Tabs.Panel>
+        <Tabs.Panel id="runs" className="pb-5 pt-0">
+          <UsageRunsTable state={runs} onPageChange={setPage} onRetry={() => setRunsRetryToken(token => token + 1)} />
+        </Tabs.Panel>
+      </Tabs>
     </main>
   );
 }

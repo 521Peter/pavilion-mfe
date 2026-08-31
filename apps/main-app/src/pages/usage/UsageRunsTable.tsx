@@ -91,17 +91,17 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
   const data = state.data;
 
   return (
-    <Card variant="default" className="p-5">
+    <Card variant="default" className="border border-border bg-card-bg p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="m-0 text-base font-bold text-text-primary">调用明细</h2>
-          <p className="mt-1 text-[13px] text-text-muted">共 {data.total.toLocaleString()} 条记录</p>
+          <p className="mt-1 text-[13px] text-text-regular">共 {data.total.toLocaleString()} 条记录</p>
         </div>
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" isDisabled={data.page <= 1} onPress={() => onPageChange(data.page - 1)}>
             上一页
           </Button>
-          <span className="text-[13px] text-text-muted">
+          <span className="text-[13px] tabular-nums text-text-regular">
             {data.page} / {data.totalPages}
           </span>
           <Button
@@ -121,7 +121,7 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1000px] border-collapse text-left text-[13px]">
             <thead>
-              <tr className="border-b border-border text-text-muted">
+              <tr className="border-b border-border bg-background/70 text-text-regular">
                 <th scope="col" className="py-2.5 pr-3 font-medium">
                   时间
                 </th>
@@ -155,7 +155,10 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
               {data.items.map(run => {
                 const usage = run.usageRecords[0];
                 return (
-                  <tr key={run.id} className="border-b border-border/70 align-top">
+                  <tr
+                    key={run.id}
+                    className="border-b border-border/70 align-top transition-colors hover:bg-background/80"
+                  >
                     <td className="whitespace-nowrap py-3 pr-3">{formatLocalTime(run.createdAt)}</td>
                     <td className="py-3 pr-3">
                       <CopyRequestId requestId={run.requestId} />

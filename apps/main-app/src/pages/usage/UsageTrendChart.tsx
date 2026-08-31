@@ -64,11 +64,11 @@ export default function UsageTrendChart({ state, onRetry }: UsageTrendChartProps
   }
 
   return (
-    <Card variant="default" className="p-5">
+    <Card variant="default" className="border border-border bg-card-bg p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="m-0 text-base font-bold text-text-primary">用量趋势</h2>
-          <p className="mt-1 text-[13px] text-text-muted">按选定时间范围内的 UTC 时间桶聚合</p>
+          <p className="mt-1 text-[13px] text-text-regular">按选定时间范围内的 UTC 时间桶聚合</p>
         </div>
         <div className="flex gap-2" role="group" aria-label="趋势指标">
           {tabs.map(tab => (
@@ -109,14 +109,14 @@ export default function UsageTrendChart({ state, onRetry }: UsageTrendChartProps
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <text x="0" y="236" className="fill-text-muted" fontSize="12">
+              <text x="0" y="236" className="fill-text-regular" fontSize="12">
                 {formatLocalTime(points[0]?.bucket)}
               </text>
-              <text x="800" y="236" textAnchor="end" className="fill-text-muted" fontSize="12">
+              <text x="800" y="236" textAnchor="end" className="fill-text-regular" fontSize="12">
                 {formatLocalTime(points[points.length - 1]?.bucket)}
               </text>
             </svg>
-            <figcaption className="mt-1 text-xs text-text-muted">
+            <figcaption className="mt-1 text-xs font-medium text-text-regular">
               最大值 {formatMetric(actualMaxValue, metric)}
             </figcaption>
           </figure>
