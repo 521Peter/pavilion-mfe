@@ -1,5 +1,6 @@
 /* oxlint-disable react/exhaustive-effect-dependencies -- 每个资源使用独立的 retry 触发值，外层 effect 需要主动刷新 */
 import { Tabs } from "@heroui/react";
+import { BarChart3, ChartNoAxesCombined, ListFilter } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   usageApi,
@@ -188,6 +189,11 @@ export default function Usage() {
     setFilters(current => ({ ...current, from: customInputToIso(customFrom), to: customInputToIso(customTo) }));
   }
 
+  function resetDimensionFilters() {
+    setPage(1);
+    setFilters(current => ({ from: current.from, to: current.to }));
+  }
+
   return (
     <main className="h-full overflow-y-auto bg-background">
       <Tabs
@@ -196,17 +202,20 @@ export default function Usage() {
           if (key === "trend" || key === "breakdown" || key === "runs") setActiveTab(key);
         }}
       >
-        <Tabs.ListContainer className="mb-5 border-b border-border">
-          <Tabs.List aria-label="用量统计视图" className="bg-transparent p-0">
+        <Tabs.ListContainer className="mb-5 overflow-x-auto border-b border-border">
+          <Tabs.List aria-label="用量统计视图" className="min-w-max bg-transparent p-0">
             <Tabs.Tab id="trend" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              <ChartNoAxesCombined aria-hidden="true" className="size-4" />
               趋势分析
               <Tabs.Indicator />
             </Tabs.Tab>
             <Tabs.Tab id="breakdown" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              <BarChart3 aria-hidden="true" className="size-4" />
               维度排行
               <Tabs.Indicator />
             </Tabs.Tab>
             <Tabs.Tab id="runs" className="min-h-11 w-auto shrink-0 px-4 font-semibold text-text-regular">
+              <ListFilter aria-hidden="true" className="size-4" />
               调用明细
               <Tabs.Indicator />
             </Tabs.Tab>
@@ -232,6 +241,7 @@ export default function Usage() {
           onCustomChange={(field, value) => (field === "from" ? setCustomFrom(value) : setCustomTo(value))}
           onApplyCustom={applyCustomRange}
           onFilterChange={changeFilter}
+          onResetFilters={resetDimensionFilters}
         />
 
         <UsageMetrics state={overview} onRetry={() => setOverviewRetryToken(token => token + 1)} />

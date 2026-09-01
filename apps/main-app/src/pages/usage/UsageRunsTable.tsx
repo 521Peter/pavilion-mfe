@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Card, Chip, Skeleton } from "@heroui/react";
+import { Check, Copy } from "lucide-react";
 import type { UsageRunItem, UsageRunPage } from "../../api/usage";
 import { formatLatency, formatLocalTime, formatTokens, formatUsd } from "./usage-format";
 import type { ResourceState } from "./UsageMetrics";
@@ -28,18 +29,14 @@ function statusLabel(status: string): string {
   return labels[status] ?? status;
 }
 
-function UsageRunValues({ run }: { run: UsageRunItem }) {
-  if (run.usageRecords.length === 0) return <span className="text-text-muted">-</span>;
+function usageRunValues(run: UsageRunItem) {
+  if (run.usageRecords.length === 0) return null;
   const inputTokens = run.usageRecords.reduce((total, record) => total + record.inputTokens, 0);
   const outputTokens = run.usageRecords.reduce((total, record) => total + record.outputTokens, 0);
   const estimatedCost = run.usageRecords.reduce((total, record) => total + Number(record.estimatedCost), 0);
   const latency = [...run.usageRecords].reverse().find(record => record.latencyMs !== null)?.latencyMs;
-
-  return (
-    <span>
-      {formatTokens(inputTokens)} / {formatTokens(outputTokens)} · {formatUsd(estimatedCost)} · {formatLatency(latency)}
-    </span>
-  );
+  const fallbackCount = run.usageRecords.reduce((total, record) => total + record.fallbackCount, 0);
+  return { inputTokens, outputTokens, estimatedCost, latency, fallbackCount };
 }
 
 function CopyRequestId({ requestId }: { requestId: string }) {
@@ -57,13 +54,21 @@ function CopyRequestId({ requestId }: { requestId: string }) {
 
   return (
     <Button
-      className="max-w-40"
+      className="max-w-40 justify-start px-2"
       size="sm"
       variant="ghost"
       aria-label={`复制请求 ID ${requestId}`}
       onPress={() => void copy()}
     >
+      {copied ? (
+        <Check aria-hidden="true" className="size-3.5 text-success" />
+      ) : (
+        <Copy aria-hidden="true" className="size-3.5" />
+      )}
       <span className="truncate font-mono">{copied ? "已复制" : requestId}</span>
+      <span className="sr-only" aria-live="polite">
+        {copied ? "请求 ID 已复制" : ""}
+      </span>
     </Button>
   );
 }
@@ -102,7 +107,7 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
             上一页
           </Button>
           <span className="text-[13px] tabular-nums text-text-regular">
-            {data.page} / {data.totalPages}
+            第 {data.page} / {Math.max(data.totalPages, 1)} 页
           </span>
           <Button
             size="sm"
@@ -118,35 +123,41 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
       {data.items.length === 0 ? (
         <p className="m-0 py-10 text-center text-sm text-text-muted">当前条件下暂无调用明细</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1000px] border-collapse text-left text-[13px]">
+        <div className="max-w-full overflow-x-auto rounded-lg border border-border">
+          <table className="w-full min-w-[1180px] border-collapse text-left text-[13px]">
             <thead>
-              <tr className="border-b border-border bg-background/70 text-text-regular">
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+              <tr className="border-b border-border bg-background text-text-regular">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pl-3 pr-3 font-semibold">
                   时间
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   请求 ID
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   状态
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   来源应用
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   调用身份
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   Virtual Model
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   Provider / 模型
                 </th>
-                <th scope="col" className="py-2.5 pr-3 font-medium">
-                  用量
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
+                  Token（输入 / 输出）
                 </th>
-                <th scope="col" className="py-2.5 font-medium">
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
+                  费用
+                </th>
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
+                  延迟
+                </th>
+                <th scope="col" className="sticky top-0 z-10 py-2.5 pr-3 font-semibold">
                   Fallback
                 </th>
               </tr>
@@ -154,12 +165,13 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
             <tbody>
               {data.items.map(run => {
                 const usage = run.usageRecords[0];
+                const values = usageRunValues(run);
                 return (
                   <tr
                     key={run.id}
                     className="border-b border-border/70 align-top transition-colors hover:bg-background/80"
                   >
-                    <td className="whitespace-nowrap py-3 pr-3">{formatLocalTime(run.createdAt)}</td>
+                    <td className="whitespace-nowrap py-3 pl-3 pr-3">{formatLocalTime(run.createdAt)}</td>
                     <td className="py-3 pr-3">
                       <CopyRequestId requestId={run.requestId} />
                     </td>
@@ -176,10 +188,16 @@ export default function UsageRunsTable({ state, onPageChange, onRetry }: UsageRu
                         ? `${usage.deployment.provider.name} / ${usage.deployment.upstreamModel}`
                         : "-"}
                     </td>
-                    <td className="py-3 pr-3">
-                      <UsageRunValues run={run} />
+                    <td className="whitespace-nowrap py-3 pr-3 font-medium tabular-nums">
+                      {values ? `${formatTokens(values.inputTokens)} / ${formatTokens(values.outputTokens)}` : "-"}
                     </td>
-                    <td className="py-3">{usage?.fallbackCount ?? 0}</td>
+                    <td className="whitespace-nowrap py-3 pr-3 font-medium tabular-nums">
+                      {values ? formatUsd(values.estimatedCost) : "-"}
+                    </td>
+                    <td className="whitespace-nowrap py-3 pr-3 tabular-nums">
+                      {values ? formatLatency(values.latency) : "-"}
+                    </td>
+                    <td className="py-3 pr-3 tabular-nums">{values?.fallbackCount ?? 0}</td>
                   </tr>
                 );
               })}

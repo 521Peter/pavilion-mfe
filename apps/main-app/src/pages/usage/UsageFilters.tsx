@@ -1,5 +1,5 @@
 import { Button, Input, ListBox, Select } from "@heroui/react";
-import { CalendarDays, ChevronDown, SlidersHorizontal } from "lucide-react";
+import { CalendarDays, ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import type { UsageOptions } from "../../api/usage";
 
@@ -19,6 +19,7 @@ interface UsageFiltersProps {
   onCustomChange: (field: "from" | "to", value: string) => void;
   onApplyCustom: () => void;
   onFilterChange: (field: FilterKey, value: string) => void;
+  onResetFilters: () => void;
 }
 
 const ranges: Array<{ key: Exclude<UsageRangeKey, "custom">; label: string }> = [
@@ -84,9 +85,10 @@ export default function UsageFilters(props: UsageFiltersProps) {
   const activeFilterCount = [props.applicationId, props.virtualModelId, props.providerId, props.status].filter(
     Boolean
   ).length;
+  const customTouched = Boolean(props.customFrom || props.customTo);
 
   return (
-    <section aria-label="用量统计筛选" className="mb-5 rounded-xl border border-border bg-card-bg p-3 shadow-sm">
+    <section aria-label="用量统计筛选" className="mb-5 rounded-xl border border-border bg-card-bg p-3 shadow-sm sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2" role="group" aria-label="时间范围">
           <span className="mr-1 inline-flex items-center gap-2 text-sm font-semibold text-text-primary">
@@ -138,7 +140,7 @@ export default function UsageFilters(props: UsageFiltersProps) {
       </div>
 
       {showCustomRange && (
-        <div id="usage-custom-range" className="mt-3 flex flex-wrap items-end gap-3 border-t border-border pt-3">
+        <div id="usage-custom-range" className="mt-4 flex flex-wrap items-end gap-3 border-t border-border pt-4">
           <div>
             <label htmlFor="usage-custom-from" className="mb-1.5 block text-[13px] font-semibold text-text-regular">
               开始时间
@@ -149,6 +151,7 @@ export default function UsageFilters(props: UsageFiltersProps) {
               type="datetime-local"
               variant="primary"
               value={props.customFrom}
+              aria-describedby="usage-custom-range-help"
               onChange={event => props.onCustomChange("from", event.target.value)}
             />
           </div>
@@ -162,6 +165,7 @@ export default function UsageFilters(props: UsageFiltersProps) {
               type="datetime-local"
               variant="primary"
               value={props.customTo}
+              aria-describedby="usage-custom-range-help"
               onChange={event => props.onCustomChange("to", event.target.value)}
             />
           </div>
@@ -174,13 +178,22 @@ export default function UsageFilters(props: UsageFiltersProps) {
           >
             应用时间
           </Button>
+          <p
+            id="usage-custom-range-help"
+            role={customTouched && !customValid ? "alert" : undefined}
+            className={`m-0 w-full text-xs ${customTouched && !customValid ? "text-danger" : "text-text-regular"}`}
+          >
+            {customTouched && !customValid
+              ? "结束时间需晚于开始时间，且范围不能超过 366 天。"
+              : "自定义范围最长支持 366 天。"}
+          </p>
         </div>
       )}
 
       {showMoreFilters && (
         <div
           id="usage-advanced-filters"
-          className="mt-3 grid grid-cols-1 gap-3 border-t border-border pt-3 md:grid-cols-2 xl:grid-cols-4"
+          className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-4"
         >
           <FilterSelect
             id="usage-application"
@@ -214,6 +227,14 @@ export default function UsageFilters(props: UsageFiltersProps) {
             ]}
             onChange={value => props.onFilterChange("status", value)}
           />
+          {activeFilterCount > 0 && (
+            <div className="flex items-end md:col-span-2 xl:col-span-4 xl:justify-end">
+              <Button size="sm" variant="ghost" onPress={props.onResetFilters}>
+                <RotateCcw aria-hidden="true" className="size-4" />
+                清空 {activeFilterCount} 项筛选
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </section>
