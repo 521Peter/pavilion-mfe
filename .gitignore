@@ -13,3 +13,4 @@ coverage/
 vite.config.ts.timestamp-*
 release
 services/llm-gateway/generated
+__pycache__/
