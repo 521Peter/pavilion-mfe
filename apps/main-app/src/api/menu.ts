@@ -124,7 +124,7 @@ async function doFetchMenus(): Promise<MenuItem[]> {
           orderNo: 4,
           status: "1",
           menuUrl: "/usage",
-          menuIcon: "ChartBar"
+          menuIcon: "ChartColumn"
         }
       ]
     },

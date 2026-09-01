@@ -249,7 +249,7 @@ export default function Sidebar() {
           className="flex justify-center items-center w-8 h-8 rounded-sm text-white/40 transition-colors shrink-0 hover:text-white/80 hover:bg-white/[0.08]"
           onClick={() => setIsCollapse(c => !c)}
         >
-          <Icon name={isCollapse ? "ChevronDown" : "ChevronUp"} size={18} className="animate-icon-swap" />
+          <Icon name={isCollapse ? "ChevronRight" : "ChevronLeft"} size={18} className="animate-icon-swap" />
         </div>
       </div>
 

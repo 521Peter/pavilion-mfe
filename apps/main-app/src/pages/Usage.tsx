@@ -246,7 +246,7 @@ export default function Usage() {
 
         <UsageMetrics state={overview} onRetry={() => setOverviewRetryToken(token => token + 1)} />
 
-        <Tabs.Panel id="trend" className="pb-5 pt-0">
+        <Tabs.Panel id="trend" className="pb-5 pt-0 px-0">
           <UsageTrendChart state={timeseries} onRetry={() => setTimeseriesRetryToken(token => token + 1)} />
         </Tabs.Panel>
         <Tabs.Panel id="breakdown" className="pt-0">
