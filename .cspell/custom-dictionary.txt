@@ -8,13 +8,13 @@ chagee
 chagee's
 ciphertext
 evalsha
+glpat
 heroui
 hodfords
 langchain
 langgraph
 linklocal
 lintstagedrc
-glpat
 modelcontextprotocol
 netrc
 nums
@@ -22,6 +22,7 @@ numstat
 oauthtoken
 ollama
 onwarn
+pathspecs
 PEXPIRE
 PTTL
 qwen
@@ -29,11 +30,11 @@ Qwen
 rspack
 shadcn
 Streamable
-pathspecs
 textconv
 ttft
 uniquelocal
 unmappable
+xyflow
 ZADD
 ZCARD
 ZREM
