@@ -14,8 +14,8 @@ function App() {
         <Separator aria-label="Resize panels" className="resize-separator" />
         {/* 流程节点 */}
         <Panel className="h-full" minSize="80%">
-          <section className="flex h-full items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-500 shadow-sm">
-            right
+          <section className="flex h-full items-center justify-center rounded-2xl border border-slate-200 bg-white font-medium text-slate-500 shadow-sm">
+            请在左侧添加客户群体，然后开始分析。
           </section>
         </Panel>
       </Group>
