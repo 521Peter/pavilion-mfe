@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+html,
+body {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: #f1f5f9;
+}
+
+/* 分割器样式 */
+.resize-separator {
+  --separator-line: #dbe3ec;
+  --separator-line-strong: #94a3b8;
+  --separator-accent: #2563eb;
+  --separator-accent-soft: #93c5fd;
+
+  position: relative;
+  width: 1.25rem;
+  border-radius: 9999px;
+  cursor: ew-resize;
+  outline: none;
+}
+
+.resize-separator::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--separator-line) 12%,
+    var(--separator-line) 88%,
+    transparent
+  );
+  transition:
+    width 180ms ease,
+    background 180ms ease;
+}
+
+.resize-separator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 2.25rem;
+  transform: translate(-50%, -50%) scaleX(0.5);
+  border-radius: inherit;
+  background: linear-gradient(to bottom, var(--separator-line), var(--separator-line-strong));
+  box-shadow: 0 1px 3px rgb(15 23 42 / 16%);
+  opacity: 0;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.resize-separator:hover::before,
+.resize-separator:active::before,
+.resize-separator:focus-visible::before {
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--separator-accent-soft) 8%,
+    var(--separator-accent) 50%,
+    var(--separator-accent-soft) 92%,
+    transparent
+  );
+}
+
+.resize-separator:hover::after,
+.resize-separator:active::after,
+.resize-separator:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scaleX(1);
+}
+
+.resize-separator:active::after,
+.resize-separator:focus-visible::after {
+  background: linear-gradient(to bottom, var(--separator-accent-soft), var(--separator-accent));
+  box-shadow:
+    0 1px 4px rgb(37 99 235 / 32%),
+    0 0 0 4px rgb(37 99 235 / 12%);
+}
